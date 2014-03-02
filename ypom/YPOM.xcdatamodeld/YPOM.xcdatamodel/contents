@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3401" systemVersion="13C64" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Broker" representedClassName="Broker" syncable="YES">
+        <attribute name="auth" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="host" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="passwd" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="port" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="tls" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="url" optional="YES" transient="YES" attributeType="String" syncable="YES"/>
+        <attribute name="user" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="hasUsers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="User" inverseName="belongsTo" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="Message" representedClassName="Message" syncable="YES">
+        <attribute name="acknowledged" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="content" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="delivered" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="msgid" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="out" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="url" optional="YES" transient="YES" attributeType="String" syncable="YES"/>
+        <relationship name="belongsTo" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="hasMessages" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="Myself" representedClassName="Myself" syncable="YES">
+        <relationship name="myUser" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="me" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="User" representedClassName="User" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pk" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="selected" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="sk" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="url" optional="YES" transient="YES" attributeType="String" syncable="YES"/>
+        <relationship name="belongsTo" maxCount="1" deletionRule="Nullify" destinationEntity="Broker" inverseName="hasUsers" inverseEntity="Broker" syncable="YES"/>
+        <relationship name="hasMessages" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Message" inverseName="belongsTo" inverseEntity="Message" syncable="YES"/>
+        <relationship name="me" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Myself" inverseName="myUser" inverseEntity="Myself" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Broker" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Message" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Myself" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="User" positionX="0" positionY="0" width="0" height="0"/>
+    </elements>
+</model>

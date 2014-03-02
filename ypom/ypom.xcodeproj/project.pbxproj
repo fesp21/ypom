@@ -1,0 +1,673 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		842CB21A18BFC27900804D8D /* MQTTClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 842CB21918BFC27900804D8D /* MQTTClient.framework */; };
+		842CB24918BFCCC800804D8D /* YPOM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 842CB24718BFCCC800804D8D /* YPOM.xcdatamodeld */; };
+		842CB26418BFCEAE00804D8D /* Myself+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB26318BFCEAE00804D8D /* Myself+Create.m */; };
+		842CB26718BFCEC900804D8D /* User+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB26618BFCEC900804D8D /* User+Create.m */; };
+		842CB26A18BFCEDC00804D8D /* Broker+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB26918BFCEDC00804D8D /* Broker+Create.m */; };
+		842CB26D18BFCEF300804D8D /* Message+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB26C18BFCEF300804D8D /* Message+Create.m */; };
+		842CB27B18BFEAB100804D8D /* CoreDataTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB27818BFEAB100804D8D /* CoreDataTVC.m */; };
+		842CB27C18BFEAB100804D8D /* YPOMUsersTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB27A18BFEAB100804D8D /* YPOMUsersTVC.m */; };
+		842CB28518BFFD7500804D8D /* YPOMMessagesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB28418BFFD7500804D8D /* YPOMMessagesTVC.m */; };
+		8470C49A18C2785600133A87 /* YPOMSettingsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C49918C2785600133A87 /* YPOMSettingsTVC.m */; };
+		8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */; };
+		84A652DF18BF477000E804B1 /* randombytes.c in Sources */ = {isa = PBXBuildFile; fileRef = 84A652DC18BF477000E804B1 /* randombytes.c */; };
+		84A652E018BF477000E804B1 /* tweetnacl.c in Sources */ = {isa = PBXBuildFile; fileRef = 84A652DD18BF477000E804B1 /* tweetnacl.c */; };
+		84C1B37518BE8AA100C77138 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37418BE8AA100C77138 /* Foundation.framework */; };
+		84C1B37718BE8AA100C77138 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37618BE8AA100C77138 /* CoreGraphics.framework */; };
+		84C1B37918BE8AA100C77138 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37818BE8AA100C77138 /* UIKit.framework */; };
+		84C1B37F18BE8AA100C77138 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 84C1B37D18BE8AA100C77138 /* InfoPlist.strings */; };
+		84C1B38118BE8AA100C77138 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C1B38018BE8AA100C77138 /* main.m */; };
+		84C1B38518BE8AA100C77138 /* YPOMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C1B38418BE8AA100C77138 /* YPOMAppDelegate.m */; };
+		84C1B38818BE8AA100C77138 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C1B38618BE8AA100C77138 /* Main_iPhone.storyboard */; };
+		84C1B38B18BE8AA100C77138 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C1B38918BE8AA100C77138 /* Main_iPad.storyboard */; };
+		84C1B39318BE8AA100C77138 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84C1B39218BE8AA100C77138 /* Images.xcassets */; };
+		84C1B39A18BE8AA100C77138 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B39918BE8AA100C77138 /* XCTest.framework */; };
+		84C1B39B18BE8AA100C77138 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37418BE8AA100C77138 /* Foundation.framework */; };
+		84C1B39C18BE8AA100C77138 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37818BE8AA100C77138 /* UIKit.framework */; };
+		84C1B3A418BE8AA100C77138 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 84C1B3A218BE8AA100C77138 /* InfoPlist.strings */; };
+		84C1B3A618BE8AA100C77138 /* ypomTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C1B3A518BE8AA100C77138 /* ypomTests.m */; };
+		84C1B3B118BE8B1300C77138 /* YPOM.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C1B3B018BE8B1300C77138 /* YPOM.m */; };
+		84E4CD1C18C2CA3D00279EAA /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E4CD1B18C2CA3D00279EAA /* Message.m */; };
+		84E4CD1F18C2CA3D00279EAA /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E4CD1E18C2CA3D00279EAA /* User.m */; };
+		84E4CD2218C2CA3D00279EAA /* Myself.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E4CD2118C2CA3D00279EAA /* Myself.m */; };
+		84E4CD2518C2CA3D00279EAA /* Broker.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E4CD2418C2CA3D00279EAA /* Broker.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		842CB21518BFC24D00804D8D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 842CB20F18BFC24D00804D8D /* MQTTClient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8461912A1883E56800101409;
+			remoteInfo = MQTTClient;
+		};
+		842CB21718BFC24D00804D8D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 842CB20F18BFC24D00804D8D /* MQTTClient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8461913A1883E56800101409;
+			remoteInfo = MQTTClientTests;
+		};
+		84C1B39D18BE8AA100C77138 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84C1B36918BE8AA100C77138 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84C1B37018BE8AA100C77138;
+			remoteInfo = ypom;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		842CB20F18BFC24D00804D8D /* MQTTClient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MQTTClient.xcodeproj; path = "../../MQTT-Client-Framework/MQTTClient/MQTTClient.xcodeproj"; sourceTree = "<group>"; };
+		842CB21918BFC27900804D8D /* MQTTClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MQTTClient.framework; path = "../../MQTT-Client-Framework/MQTTClient/dist/MQTTClient.framework"; sourceTree = "<group>"; };
+		842CB24818BFCCC800804D8D /* YPOM.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = YPOM.xcdatamodel; sourceTree = "<group>"; };
+		842CB26218BFCEAE00804D8D /* Myself+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Myself+Create.h"; sourceTree = "<group>"; };
+		842CB26318BFCEAE00804D8D /* Myself+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Myself+Create.m"; sourceTree = "<group>"; };
+		842CB26518BFCEC900804D8D /* User+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "User+Create.h"; sourceTree = "<group>"; };
+		842CB26618BFCEC900804D8D /* User+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "User+Create.m"; sourceTree = "<group>"; };
+		842CB26818BFCEDC00804D8D /* Broker+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Broker+Create.h"; sourceTree = "<group>"; };
+		842CB26918BFCEDC00804D8D /* Broker+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Broker+Create.m"; sourceTree = "<group>"; };
+		842CB26B18BFCEF300804D8D /* Message+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Message+Create.h"; sourceTree = "<group>"; };
+		842CB26C18BFCEF300804D8D /* Message+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Message+Create.m"; sourceTree = "<group>"; };
+		842CB27718BFEAB100804D8D /* CoreDataTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreDataTVC.h; path = ../CoreDataTVC.h; sourceTree = "<group>"; };
+		842CB27818BFEAB100804D8D /* CoreDataTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CoreDataTVC.m; path = ../CoreDataTVC.m; sourceTree = "<group>"; };
+		842CB27918BFEAB100804D8D /* YPOMUsersTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YPOMUsersTVC.h; path = ../YPOMUsersTVC.h; sourceTree = "<group>"; };
+		842CB27A18BFEAB100804D8D /* YPOMUsersTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YPOMUsersTVC.m; path = ../YPOMUsersTVC.m; sourceTree = "<group>"; };
+		842CB28318BFFD7500804D8D /* YPOMMessagesTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YPOMMessagesTVC.h; path = ../YPOMMessagesTVC.h; sourceTree = "<group>"; };
+		842CB28418BFFD7500804D8D /* YPOMMessagesTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YPOMMessagesTVC.m; path = ../YPOMMessagesTVC.m; sourceTree = "<group>"; };
+		8470C49818C2785600133A87 /* YPOMSettingsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMSettingsTVC.h; sourceTree = "<group>"; };
+		8470C49918C2785600133A87 /* YPOMSettingsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMSettingsTVC.m; sourceTree = "<group>"; };
+		8470C4C218C2B9DE00133A87 /* YPOMNewTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMNewTVCell.h; sourceTree = "<group>"; };
+		8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMNewTVCell.m; sourceTree = "<group>"; };
+		84A652DC18BF477000E804B1 /* randombytes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = randombytes.c; sourceTree = "<group>"; };
+		84A652DD18BF477000E804B1 /* tweetnacl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tweetnacl.c; sourceTree = "<group>"; };
+		84A652DE18BF477000E804B1 /* tweetnacl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tweetnacl.h; sourceTree = "<group>"; };
+		84C1B37118BE8AA100C77138 /* ypom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ypom.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C1B37418BE8AA100C77138 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		84C1B37618BE8AA100C77138 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		84C1B37818BE8AA100C77138 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		84C1B37C18BE8AA100C77138 /* ypom-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ypom-Info.plist"; sourceTree = "<group>"; };
+		84C1B37E18BE8AA100C77138 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		84C1B38018BE8AA100C77138 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		84C1B38218BE8AA100C77138 /* ypom-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ypom-Prefix.pch"; sourceTree = "<group>"; };
+		84C1B38318BE8AA100C77138 /* YPOMAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YPOMAppDelegate.h; sourceTree = "<group>"; };
+		84C1B38418BE8AA100C77138 /* YPOMAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YPOMAppDelegate.m; sourceTree = "<group>"; };
+		84C1B38718BE8AA100C77138 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
+		84C1B38A18BE8AA100C77138 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
+		84C1B39218BE8AA100C77138 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		84C1B39818BE8AA100C77138 /* ypomTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ypomTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C1B39918BE8AA100C77138 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		84C1B3A118BE8AA100C77138 /* ypomTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ypomTests-Info.plist"; sourceTree = "<group>"; };
+		84C1B3A318BE8AA100C77138 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		84C1B3A518BE8AA100C77138 /* ypomTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ypomTests.m; sourceTree = "<group>"; };
+		84C1B3AF18BE8B1300C77138 /* YPOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOM.h; sourceTree = "<group>"; };
+		84C1B3B018BE8B1300C77138 /* YPOM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOM.m; sourceTree = "<group>"; };
+		84E4CD1A18C2CA3D00279EAA /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		84E4CD1B18C2CA3D00279EAA /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
+		84E4CD1D18C2CA3D00279EAA /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		84E4CD1E18C2CA3D00279EAA /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		84E4CD2018C2CA3D00279EAA /* Myself.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Myself.h; sourceTree = "<group>"; };
+		84E4CD2118C2CA3D00279EAA /* Myself.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Myself.m; sourceTree = "<group>"; };
+		84E4CD2318C2CA3D00279EAA /* Broker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Broker.h; sourceTree = "<group>"; };
+		84E4CD2418C2CA3D00279EAA /* Broker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Broker.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84C1B36E18BE8AA100C77138 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				842CB21A18BFC27900804D8D /* MQTTClient.framework in Frameworks */,
+				84C1B37718BE8AA100C77138 /* CoreGraphics.framework in Frameworks */,
+				84C1B37918BE8AA100C77138 /* UIKit.framework in Frameworks */,
+				84C1B37518BE8AA100C77138 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84C1B39518BE8AA100C77138 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C1B39A18BE8AA100C77138 /* XCTest.framework in Frameworks */,
+				84C1B39C18BE8AA100C77138 /* UIKit.framework in Frameworks */,
+				84C1B39B18BE8AA100C77138 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		842CB21018BFC24D00804D8D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				842CB21618BFC24D00804D8D /* libMQTTClient.a */,
+				842CB21818BFC24D00804D8D /* MQTTClientTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		842CB23618BFCA4800804D8D /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				842CB24718BFCCC800804D8D /* YPOM.xcdatamodeld */,
+				84E4CD2318C2CA3D00279EAA /* Broker.h */,
+				84E4CD2418C2CA3D00279EAA /* Broker.m */,
+				84E4CD2018C2CA3D00279EAA /* Myself.h */,
+				84E4CD2118C2CA3D00279EAA /* Myself.m */,
+				84E4CD1D18C2CA3D00279EAA /* User.h */,
+				84E4CD1E18C2CA3D00279EAA /* User.m */,
+				84E4CD1A18C2CA3D00279EAA /* Message.h */,
+				84E4CD1B18C2CA3D00279EAA /* Message.m */,
+				842CB26218BFCEAE00804D8D /* Myself+Create.h */,
+				842CB26318BFCEAE00804D8D /* Myself+Create.m */,
+				842CB26518BFCEC900804D8D /* User+Create.h */,
+				842CB26618BFCEC900804D8D /* User+Create.m */,
+				842CB26818BFCEDC00804D8D /* Broker+Create.h */,
+				842CB26918BFCEDC00804D8D /* Broker+Create.m */,
+				842CB26B18BFCEF300804D8D /* Message+Create.h */,
+				842CB26C18BFCEF300804D8D /* Message+Create.m */,
+			);
+			name = CoreData;
+			sourceTree = "<group>";
+		};
+		842CB23718BFCA6600804D8D /* NaCl */ = {
+			isa = PBXGroup;
+			children = (
+				84A652DC18BF477000E804B1 /* randombytes.c */,
+				84A652DD18BF477000E804B1 /* tweetnacl.c */,
+				84A652DE18BF477000E804B1 /* tweetnacl.h */,
+			);
+			name = NaCl;
+			sourceTree = "<group>";
+		};
+		84C1B36818BE8AA100C77138 = {
+			isa = PBXGroup;
+			children = (
+				842CB23618BFCA4800804D8D /* CoreData */,
+				842CB23718BFCA6600804D8D /* NaCl */,
+				84C1B37A18BE8AA100C77138 /* ypom */,
+				84C1B39F18BE8AA100C77138 /* ypomTests */,
+				84C1B37318BE8AA100C77138 /* Frameworks */,
+				84C1B37218BE8AA100C77138 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		84C1B37218BE8AA100C77138 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84C1B37118BE8AA100C77138 /* ypom.app */,
+				84C1B39818BE8AA100C77138 /* ypomTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84C1B37318BE8AA100C77138 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				842CB21918BFC27900804D8D /* MQTTClient.framework */,
+				842CB20F18BFC24D00804D8D /* MQTTClient.xcodeproj */,
+				84C1B37418BE8AA100C77138 /* Foundation.framework */,
+				84C1B37618BE8AA100C77138 /* CoreGraphics.framework */,
+				84C1B37818BE8AA100C77138 /* UIKit.framework */,
+				84C1B39918BE8AA100C77138 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		84C1B37A18BE8AA100C77138 /* ypom */ = {
+			isa = PBXGroup;
+			children = (
+				84C1B38318BE8AA100C77138 /* YPOMAppDelegate.h */,
+				84C1B38418BE8AA100C77138 /* YPOMAppDelegate.m */,
+				84C1B3AF18BE8B1300C77138 /* YPOM.h */,
+				84C1B3B018BE8B1300C77138 /* YPOM.m */,
+				84C1B38618BE8AA100C77138 /* Main_iPhone.storyboard */,
+				84C1B38918BE8AA100C77138 /* Main_iPad.storyboard */,
+				8470C4C218C2B9DE00133A87 /* YPOMNewTVCell.h */,
+				8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */,
+				8470C49818C2785600133A87 /* YPOMSettingsTVC.h */,
+				8470C49918C2785600133A87 /* YPOMSettingsTVC.m */,
+				842CB27718BFEAB100804D8D /* CoreDataTVC.h */,
+				842CB27818BFEAB100804D8D /* CoreDataTVC.m */,
+				842CB27918BFEAB100804D8D /* YPOMUsersTVC.h */,
+				842CB27A18BFEAB100804D8D /* YPOMUsersTVC.m */,
+				842CB28318BFFD7500804D8D /* YPOMMessagesTVC.h */,
+				842CB28418BFFD7500804D8D /* YPOMMessagesTVC.m */,
+				84C1B39218BE8AA100C77138 /* Images.xcassets */,
+				84C1B37B18BE8AA100C77138 /* Supporting Files */,
+			);
+			path = ypom;
+			sourceTree = "<group>";
+		};
+		84C1B37B18BE8AA100C77138 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				84C1B37C18BE8AA100C77138 /* ypom-Info.plist */,
+				84C1B37D18BE8AA100C77138 /* InfoPlist.strings */,
+				84C1B38018BE8AA100C77138 /* main.m */,
+				84C1B38218BE8AA100C77138 /* ypom-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		84C1B39F18BE8AA100C77138 /* ypomTests */ = {
+			isa = PBXGroup;
+			children = (
+				84C1B3A518BE8AA100C77138 /* ypomTests.m */,
+				84C1B3A018BE8AA100C77138 /* Supporting Files */,
+			);
+			path = ypomTests;
+			sourceTree = "<group>";
+		};
+		84C1B3A018BE8AA100C77138 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				84C1B3A118BE8AA100C77138 /* ypomTests-Info.plist */,
+				84C1B3A218BE8AA100C77138 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		84C1B37018BE8AA100C77138 /* ypom */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C1B3A918BE8AA100C77138 /* Build configuration list for PBXNativeTarget "ypom" */;
+			buildPhases = (
+				84C1B36D18BE8AA100C77138 /* Sources */,
+				84C1B36E18BE8AA100C77138 /* Frameworks */,
+				84C1B36F18BE8AA100C77138 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ypom;
+			productName = ypom;
+			productReference = 84C1B37118BE8AA100C77138 /* ypom.app */;
+			productType = "com.apple.product-type.application";
+		};
+		84C1B39718BE8AA100C77138 /* ypomTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C1B3AC18BE8AA100C77138 /* Build configuration list for PBXNativeTarget "ypomTests" */;
+			buildPhases = (
+				84C1B39418BE8AA100C77138 /* Sources */,
+				84C1B39518BE8AA100C77138 /* Frameworks */,
+				84C1B39618BE8AA100C77138 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				84C1B39E18BE8AA100C77138 /* PBXTargetDependency */,
+			);
+			name = ypomTests;
+			productName = ypomTests;
+			productReference = 84C1B39818BE8AA100C77138 /* ypomTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84C1B36918BE8AA100C77138 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = YPOM;
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Christoph Krey";
+				TargetAttributes = {
+					84C1B39718BE8AA100C77138 = {
+						TestTargetID = 84C1B37018BE8AA100C77138;
+					};
+				};
+			};
+			buildConfigurationList = 84C1B36C18BE8AA100C77138 /* Build configuration list for PBXProject "ypom" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 84C1B36818BE8AA100C77138;
+			productRefGroup = 84C1B37218BE8AA100C77138 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 842CB21018BFC24D00804D8D /* Products */;
+					ProjectRef = 842CB20F18BFC24D00804D8D /* MQTTClient.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				84C1B37018BE8AA100C77138 /* ypom */,
+				84C1B39718BE8AA100C77138 /* ypomTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		842CB21618BFC24D00804D8D /* libMQTTClient.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libMQTTClient.a;
+			remoteRef = 842CB21518BFC24D00804D8D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		842CB21818BFC24D00804D8D /* MQTTClientTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = MQTTClientTests.xctest;
+			remoteRef = 842CB21718BFC24D00804D8D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		84C1B36F18BE8AA100C77138 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C1B38B18BE8AA100C77138 /* Main_iPad.storyboard in Resources */,
+				84C1B39318BE8AA100C77138 /* Images.xcassets in Resources */,
+				84C1B38818BE8AA100C77138 /* Main_iPhone.storyboard in Resources */,
+				84C1B37F18BE8AA100C77138 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84C1B39618BE8AA100C77138 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C1B3A418BE8AA100C77138 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84C1B36D18BE8AA100C77138 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				842CB27C18BFEAB100804D8D /* YPOMUsersTVC.m in Sources */,
+				84A652DF18BF477000E804B1 /* randombytes.c in Sources */,
+				84C1B3B118BE8B1300C77138 /* YPOM.m in Sources */,
+				8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */,
+				842CB28518BFFD7500804D8D /* YPOMMessagesTVC.m in Sources */,
+				84A652E018BF477000E804B1 /* tweetnacl.c in Sources */,
+				84C1B38118BE8AA100C77138 /* main.m in Sources */,
+				84E4CD1F18C2CA3D00279EAA /* User.m in Sources */,
+				8470C49A18C2785600133A87 /* YPOMSettingsTVC.m in Sources */,
+				842CB26718BFCEC900804D8D /* User+Create.m in Sources */,
+				84C1B38518BE8AA100C77138 /* YPOMAppDelegate.m in Sources */,
+				842CB24918BFCCC800804D8D /* YPOM.xcdatamodeld in Sources */,
+				842CB26418BFCEAE00804D8D /* Myself+Create.m in Sources */,
+				842CB26A18BFCEDC00804D8D /* Broker+Create.m in Sources */,
+				842CB27B18BFEAB100804D8D /* CoreDataTVC.m in Sources */,
+				84E4CD1C18C2CA3D00279EAA /* Message.m in Sources */,
+				842CB26D18BFCEF300804D8D /* Message+Create.m in Sources */,
+				84E4CD2518C2CA3D00279EAA /* Broker.m in Sources */,
+				84E4CD2218C2CA3D00279EAA /* Myself.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84C1B39418BE8AA100C77138 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C1B3A618BE8AA100C77138 /* ypomTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		84C1B39E18BE8AA100C77138 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 84C1B37018BE8AA100C77138 /* ypom */;
+			targetProxy = 84C1B39D18BE8AA100C77138 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		84C1B37D18BE8AA100C77138 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				84C1B37E18BE8AA100C77138 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		84C1B38618BE8AA100C77138 /* Main_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				84C1B38718BE8AA100C77138 /* Base */,
+			);
+			name = Main_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		84C1B38918BE8AA100C77138 /* Main_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				84C1B38A18BE8AA100C77138 /* Base */,
+			);
+			name = Main_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		84C1B3A218BE8AA100C77138 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				84C1B3A318BE8AA100C77138 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		84C1B3A718BE8AA100C77138 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		84C1B3A818BE8AA100C77138 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		84C1B3AA18BE8AA100C77138 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/ckrey/MQTT-Client-Framework/MQTTClient/dist",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ypom/ypom-Prefix.pch";
+				INFOPLIST_FILE = "ypom/ypom-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		84C1B3AB18BE8AA100C77138 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/ckrey/MQTT-Client-Framework/MQTTClient/dist",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ypom/ypom-Prefix.pch";
+				INFOPLIST_FILE = "ypom/ypom-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		84C1B3AD18BE8AA100C77138 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ypom.app/ypom";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ypom/ypom-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "ypomTests/ypomTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		84C1B3AE18BE8AA100C77138 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ypom.app/ypom";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ypom/ypom-Prefix.pch";
+				INFOPLIST_FILE = "ypomTests/ypomTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84C1B36C18BE8AA100C77138 /* Build configuration list for PBXProject "ypom" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C1B3A718BE8AA100C77138 /* Debug */,
+				84C1B3A818BE8AA100C77138 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C1B3A918BE8AA100C77138 /* Build configuration list for PBXNativeTarget "ypom" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C1B3AA18BE8AA100C77138 /* Debug */,
+				84C1B3AB18BE8AA100C77138 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C1B3AC18BE8AA100C77138 /* Build configuration list for PBXNativeTarget "ypomTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C1B3AD18BE8AA100C77138 /* Debug */,
+				84C1B3AE18BE8AA100C77138 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		842CB24718BFCCC800804D8D /* YPOM.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				842CB24818BFCCC800804D8D /* YPOM.xcdatamodel */,
+			);
+			currentVersion = 842CB24818BFCCC800804D8D /* YPOM.xcdatamodel */;
+			path = YPOM.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 84C1B36918BE8AA100C77138 /* Project object */;
+}
