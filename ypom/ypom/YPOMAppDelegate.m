@@ -290,8 +290,6 @@
                                retain:YES
                                   qos:2];
             
-            [self.session subscribeToTopic:@"ypom/+/+/+" atLevel:2];
-            [self.session subscribeToTopic:[NSString stringWithFormat:@"ypom/+/+/%@/+/+/+", self.myself.myUser.name] atLevel:2];
             break;
         }
         default:
@@ -429,6 +427,7 @@
             }
         }
     }
+    [self saveContext];
 }
 
 - (void)connect:(id)object

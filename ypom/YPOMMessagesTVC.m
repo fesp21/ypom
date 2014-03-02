@@ -92,7 +92,7 @@ size_t isutf8(unsigned char *str, size_t len)
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Message" inManagedObjectContext:delegate.managedObjectContext];
     [fetchRequest setEntity:entity];
 
-    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"belongsTo.selected = TRUE"];
+    //fetchRequest.predicate = [NSPredicate predicateWithFormat:@"belongsTo.selected = TRUE"];
     
     // Set the batch size to a suitable number.
     [fetchRequest setFetchBatchSize:20];
@@ -247,6 +247,7 @@ size_t isutf8(unsigned char *str, size_t len)
     
     newTVCell.message.content = [[NSData alloc] init];
     
+    [delegate saveContext];
     
 }
 

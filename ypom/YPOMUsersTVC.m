@@ -98,6 +98,10 @@
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [tableView cellForRowAtIndexPath:indexPath].accessoryType = [user.selected boolValue] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    [delegate saveContext];
+
 }
 
 @end

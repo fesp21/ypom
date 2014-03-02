@@ -46,6 +46,7 @@
 {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     [delegate connect:nil];
+    [delegate saveContext];
 }
 
 - (void)changed
