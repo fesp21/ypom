@@ -12,7 +12,7 @@
 @interface YPOM ()
 @end
 
-#define LEN 256
+#define LEN 512
 void randombytes(unsigned char *ptr, unsigned long long length);
 
 @implementation YPOM
@@ -47,10 +47,14 @@ void randombytes(unsigned char *ptr, unsigned long long length);
     for (unsigned long long i = 0; i < crypto_box_ZEROBYTES; i++) {
         m[i] = 0;
     }
+    for (unsigned long long i = 0; i < crypto_box_BOXZEROBYTES; i++) {
+        c[i] = 0;
+    }
     memcpy(m + crypto_box_ZEROBYTES, message.bytes, message.length);
     crypto_box(c, m, crypto_box_ZEROBYTES + message.length, self.n.bytes, self.pk.bytes, self.sk.bytes);
     
-    return [NSData dataWithBytes:c length:crypto_box_ZEROBYTES + message.length];
+    return [NSData dataWithBytes:c + crypto_box_BOXZEROBYTES
+                          length:message.length + (crypto_box_ZEROBYTES - crypto_box_BOXZEROBYTES)];
 }
 
 - (NSData *)boxOpen:(NSData *)cipher
@@ -58,11 +62,19 @@ void randombytes(unsigned char *ptr, unsigned long long length);
     unsigned char m[LEN];
     unsigned char c[LEN];
     
-    memcpy(c, cipher.bytes, cipher.length);
-    if (crypto_box_open(m, c, cipher.length, self.n.bytes, self.pk.bytes, self.sk.bytes)) {
+    for (unsigned long long i = 0; i < crypto_box_ZEROBYTES; i++) {
+        m[i] = 0;
+    }
+    for (unsigned long long i = 0; i < crypto_box_BOXZEROBYTES; i++) {
+        c[i] = 0;
+    }
+
+    memcpy(c + crypto_box_BOXZEROBYTES, cipher.bytes, cipher.length);
+    if (crypto_box_open(m, c, crypto_box_BOXZEROBYTES + cipher.length, self.n.bytes, self.pk.bytes, self.sk.bytes)) {
         return nil;
     } else {
-        return [NSData dataWithBytes:m + crypto_box_ZEROBYTES length:cipher.length - crypto_box_ZEROBYTES];
+        return [NSData dataWithBytes:m + crypto_box_ZEROBYTES
+                              length:cipher.length - (crypto_box_ZEROBYTES - crypto_box_BOXZEROBYTES)];
     }
 }
 

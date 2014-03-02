@@ -119,6 +119,13 @@ size_t isutf8(unsigned char *str, size_t len)
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     NSLog(@"applicationDidBecomeActive");
     
+    YPOM *ypom = [[YPOM alloc] init];
+    ypom.pk = [[NSData alloc] initWithBase64EncodedString:@"Q3JhGszpF6wbDcOSEuo4ZFy1UJlc9TtllNisXRNgTGg=" options:0];
+    ypom.sk = [[NSData alloc] initWithBase64EncodedString:@"UmfV8d4DBMp2DpT2Cn044AhCW2gWH6ZwY7GNRu74+E0=" options:0];
+    ypom.n  = [[NSData alloc] initWithBase64EncodedString:@"krJdmEweG8fPhHtTNYJSetv9UoMd4fZ6" options:0];
+    NSData *m = [ypom boxOpen:[[NSData alloc] initWithBase64EncodedString:@"fnraIXi3CMabWBUlvlQkCivJRbdAmTsgNsyaimjtGAUCAG/e0h5uAI0j3DCPbqF3ti/P5LrnD2C44GMw3RXxKFKuxUE7/PCM9f52g3IJDCARcug7MVX0FfCA" options:0]];
+    NSLog(@"m:%@ %@", m, [YPOMAppDelegate dataToString:m]);
+    
     self.myself = [Myself existsMyselfInManagedObjectContext:self.managedObjectContext];
     if (!self.myself) {
         YPOM *ypom = [[YPOM alloc] init];
@@ -421,13 +428,14 @@ size_t isutf8(unsigned char *str, size_t len)
                 NSLog(@"a:%@", a);
                 
                 NSData *nbin = [[NSData alloc] initWithBase64EncodedData:a[0]
-                                                                 options:NSDataBase64DecodingIgnoreUnknownCharacters];
+                                                                 options:0];
                 NSLog(@"nbin:%@", nbin);
+                ypom.n = nbin;
+                
                 NSData *mbin = [[NSData alloc] initWithBase64EncodedData:a[1]
-                                                                 options:NSDataBase64DecodingIgnoreUnknownCharacters];
+                                                                 options:0];
                 NSLog(@"mbin:%@", mbin);
                 
-                ypom.n = nbin;
                 
                 content = [ypom boxOpen:mbin];
                 NSLog(@"content:%@", content);
@@ -485,10 +493,10 @@ size_t isutf8(unsigned char *str, size_t len)
                                                         inManagedObjectContext:self.managedObjectContext];
                         message.acknowledged = @(TRUE);
                     } else {
-                        // data other than json _type msg is silently ignored
+                        NSLog(@"unknown _type:%@", dictionary[@"_type"]);
                     }
                 } else {
-                    // data other than json is silently ignored
+                    NSLog(@"illegal json:%@", error);
                 }
 
             } else {
