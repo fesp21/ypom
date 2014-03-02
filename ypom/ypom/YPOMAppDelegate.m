@@ -364,7 +364,12 @@
             ypom.sk = self.myself.myUser.sk;
             NSData *content = nil;
             if (ypom.pk && ypom.sk) {
-                content = [ypom boxOpen:data];
+                NSLog(@"%@", data);
+                
+                NSData *d = [[NSData alloc] initWithBase64EncodedData:data options:NSDataBase64DecodingIgnoreUnknownCharacters];
+                NSLog(@"%@", d);
+
+                content = [ypom boxOpen:d];
             }
             
             if (content) {
@@ -392,8 +397,17 @@
                         YPOM *ypom = [[YPOM alloc] init];
                         ypom.pk = sender.pk;
                         ypom.sk = self.myself.myUser.sk;
+                        
+                        NSLog(@"data:%@", data);
+                        
+                        NSData *e = [ypom box:data];
+                        NSLog(@"e:%@", e);
 
-                        [self.session publishData:[ypom box:data]
+                        
+                        NSData *b64 = [e base64EncodedDataWithOptions:0];
+                        NSLog(@"b:64%@", b64);
+
+                        [self.session publishData:b64
                                           onTopic:[NSString stringWithFormat:@"ypom/%@/%@/%@/%@/%@/%@",
                                                    sender.belongsTo.host,
                                                    sender.belongsTo.port,

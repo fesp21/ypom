@@ -228,7 +228,17 @@ size_t isutf8(unsigned char *str, size_t len)
     
     NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
     
-    [delegate.session publishData:[ypom box:data]
+    
+    NSLog(@"data:%@", data);
+    NSData *e = [ypom box:data];
+    
+    NSLog(@"e:%@", e);
+
+    
+    NSData *b64 = [e base64EncodedDataWithOptions:0];
+    NSLog(@"b64: %@", b64);
+    
+    [delegate.session publishData:b64
                           onTopic:[NSString stringWithFormat:@"ypom/%@/%@/%@/%@/%@/%@",
                                    newTVCell.message.belongsTo.belongsTo.host,
                                    newTVCell.message.belongsTo.belongsTo.port,
