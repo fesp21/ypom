@@ -13,6 +13,7 @@
 @end
 
 #define LEN 256
+void randombytes(unsigned char *ptr, unsigned long long length);
 
 @implementation YPOM
 
@@ -21,9 +22,7 @@
     self = [super init];
     
     unsigned char n[crypto_box_NONCEBYTES];
-    for (unsigned long long i = 0; i < crypto_box_NONCEBYTES; i++){
-        n[i] = 0;
-    }
+    randombytes(n, crypto_box_NONCEBYTES);
     _n = [[NSData alloc] initWithBytes:n length:crypto_box_NONCEBYTES];
     
     return self;
