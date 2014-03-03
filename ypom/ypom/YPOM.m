@@ -43,6 +43,9 @@ void randombytes(unsigned char *ptr, unsigned long long length);
 {
     unsigned char m[LEN];
     unsigned char c[LEN];
+    unsigned char p[crypto_box_PUBLICKEYBYTES];
+    unsigned char s[crypto_box_SECRETKEYBYTES];
+    unsigned char n[crypto_box_NONCEBYTES];
     
     NSLog(@"ypom p:%@", self.pk);
     NSLog(@"ypom s:%@", self.sk);
@@ -53,7 +56,11 @@ void randombytes(unsigned char *ptr, unsigned long long length);
         m[i] = 0;
     }
     memcpy(m + crypto_box_ZEROBYTES, message.bytes, message.length);
-    crypto_box(c, m, crypto_box_ZEROBYTES + message.length, self.n.bytes, self.pk.bytes, self.sk.bytes);
+    memcpy(p, self.pk.bytes, crypto_box_PUBLICKEYBYTES);
+    memcpy(s, self.sk.bytes, crypto_box_SECRETKEYBYTES);
+    memcpy(n, self.n.bytes, crypto_box_NONCEBYTES);
+    
+    crypto_box(c, m, crypto_box_ZEROBYTES + message.length, n, p, s);
     
     NSData *cipher = [NSData dataWithBytes:c + crypto_box_BOXZEROBYTES
                                     length:message.length + crypto_box_ZEROBYTES - crypto_box_BOXZEROBYTES];
@@ -66,6 +73,9 @@ void randombytes(unsigned char *ptr, unsigned long long length);
 {
     unsigned char m[LEN];
     unsigned char c[LEN];
+    unsigned char p[crypto_box_PUBLICKEYBYTES];
+    unsigned char s[crypto_box_SECRETKEYBYTES];
+    unsigned char n[crypto_box_NONCEBYTES];
     
     NSLog(@"ypom p:%@", self.pk);
     NSLog(@"ypom s:%@", self.sk);
@@ -77,7 +87,11 @@ void randombytes(unsigned char *ptr, unsigned long long length);
     }
 
     memcpy(c + crypto_box_BOXZEROBYTES, cipher.bytes, cipher.length);
-    if (crypto_box_open(m, c, crypto_box_BOXZEROBYTES + cipher.length, self.n.bytes, self.pk.bytes, self.sk.bytes)) {
+    memcpy(p, self.pk.bytes, crypto_box_PUBLICKEYBYTES);
+    memcpy(s, self.sk.bytes, crypto_box_SECRETKEYBYTES);
+    memcpy(n, self.n.bytes, crypto_box_NONCEBYTES);
+
+    if (crypto_box_open(m, c, crypto_box_BOXZEROBYTES + cipher.length, n, p, s)) {
         return nil;
     } else {
         NSData *message = [NSData dataWithBytes:m + crypto_box_ZEROBYTES

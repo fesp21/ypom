@@ -67,28 +67,28 @@
     self.user.text = delegate.broker.user;
     self.password.text = delegate.broker.passwd;
     
-    [self.tableView resignFirstResponder];
 }
 
 - (IBAction)nameChanged:(UITextField *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.myself.myUser.name = sender.text;
     [self changed];
+    [self.tableView resignFirstResponder];
 }
 
 - (IBAction)keypairPressed:(UIButton *)sender {
     YPOM *ypom = [[YPOM alloc] init];
     [ypom createKeyPair];
+    NSLog(@"ypom p:%@", ypom.pk);
+    NSLog(@"ypom s:%@", ypom.sk);
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    User *user = [User userWithPk:ypom.pk
-                             name:self.name.text
-           inManagedObjectContext:delegate.managedObjectContext];
-    user.sk = ypom.sk;
-    user.name = self.name.text;
-    delegate.myself.myUser = user;
-    
+    delegate.myself.myUser = [User userWithPk:ypom.pk
+                                         name:self.name.text
+                       inManagedObjectContext:delegate.managedObjectContext];
+    delegate.myself.myUser.sk = ypom.sk;
+
     [self changed];
 }
 - (IBAction)hostChanged:(UITextField *)sender {

@@ -412,9 +412,9 @@
             if (ypom.pk && ypom.sk) {
                 NSString *s = [YPOMAppDelegate dataToString:data];
                 NSArray *a = [s componentsSeparatedByString:@":"];
-                NSData *nbin = [[NSData alloc] initWithBase64EncodedData:a[0] options:0];
+                NSData *nbin = [[NSData alloc] initWithBase64EncodedString:a[0] options:0];
                 ypom.n = nbin;
-                NSData *mbin = [[NSData alloc] initWithBase64EncodedData:a[1] options:0];
+                NSData *mbin = [[NSData alloc] initWithBase64EncodedString:a[1] options:0];
                 content = [ypom boxOpen:mbin];
             }
             
