@@ -12,63 +12,14 @@
 #import "User+Create.h"
 #import "Broker+Create.h"
 #import "Message+Create.h"
+#include "isutf8.h"
 
 @interface YPOMAppDelegate ()
 @property (nonatomic) UIBackgroundTaskIdentifier bgTask;
 @property (strong, nonatomic) NSError *lastError;
 @property (nonatomic) NSInteger errorCount;
-
+@property (strong, nonatomic) NSData *deviceToken;
 @end
-
-size_t isutf8(unsigned char *str, size_t len);
-/*
- Check if the given unsigned char * is a valid utf-8 sequence.
- 
- Return value :
- If the string is valid utf-8, 0 is returned.
- Else the position, starting from 1, is returned.
- 
- Valid utf-8 sequences look like this :
- 0xxxxxxx
- 110xxxxx 10xxxxxx
- 1110xxxx 10xxxxxx 10xxxxxx
- 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
- 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
- 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
- */
-
-size_t isutf8(unsigned char *str, size_t len)
-{
-    size_t i = 0;
-    size_t continuation_bytes = 0;
-    
-    while (i < len)
-    {
-        if (str[i] <= 0x7F)
-            continuation_bytes = 0;
-        else if (str[i] >= 0xC0 /*11000000*/ && str[i] <= 0xDF /*11011111*/)
-            continuation_bytes = 1;
-        else if (str[i] >= 0xE0 /*11100000*/ && str[i] <= 0xEF /*11101111*/)
-            continuation_bytes = 2;
-        else if (str[i] >= 0xF0 /*11110000*/ && str[i] <= 0xF4 /* Cause of RFC 3629 */)
-            continuation_bytes = 3;
-        else
-            return i + 1;
-        i += 1;
-        while (i < len && continuation_bytes > 0
-               && str[i] >= 0x80
-               && str[i] <= 0xBF)
-        {
-            i += 1;
-            continuation_bytes -= 1;
-        }
-        if (continuation_bytes != 0)
-            return i + 1;
-    }
-    return 0;
-}
-
-
 
 @implementation YPOMAppDelegate
 
@@ -79,6 +30,8 @@ size_t isutf8(unsigned char *str, size_t len)
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     NSLog(@"didFinishLaunchingWithOptions");
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeAlert];
+
     return YES;
 }
 
@@ -118,14 +71,7 @@ size_t isutf8(unsigned char *str, size_t len)
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     NSLog(@"applicationDidBecomeActive");
-    
-    YPOM *ypom = [[YPOM alloc] init];
-    ypom.pk = [[NSData alloc] initWithBase64EncodedString:@"Q3JhGszpF6wbDcOSEuo4ZFy1UJlc9TtllNisXRNgTGg=" options:0];
-    ypom.sk = [[NSData alloc] initWithBase64EncodedString:@"UmfV8d4DBMp2DpT2Cn044AhCW2gWH6ZwY7GNRu74+E0=" options:0];
-    ypom.n  = [[NSData alloc] initWithBase64EncodedString:@"krJdmEweG8fPhHtTNYJSetv9UoMd4fZ6" options:0];
-    NSData *m = [ypom boxOpen:[[NSData alloc] initWithBase64EncodedString:@"fnraIXi3CMabWBUlvlQkCivJRbdAmTsgNsyaimjtGAUCAG/e0h5uAI0j3DCPbqF3ti/P5LrnD2C44GMw3RXxKFKuxUE7/PCM9f52g3IJDCARcug7MVX0FfCA" options:0]];
-    NSLog(@"m:%@ %@", m, [YPOMAppDelegate dataToString:m]);
-    
+        
     self.myself = [Myself existsMyselfInManagedObjectContext:self.managedObjectContext];
     if (!self.myself) {
         YPOM *ypom = [[YPOM alloc] init];
@@ -336,6 +282,9 @@ size_t isutf8(unsigned char *str, size_t len)
             jsonObject[@"_type"] = @"usr";
             jsonObject[@"name"] = self.myself.myUser.name;
             jsonObject[@"pk"] = [self.myself.myUser.pk base64EncodedStringWithOptions:0];
+            if (self.deviceToken) {
+                jsonObject[@"dev"] = [self.deviceToken base64EncodedStringWithOptions:0];
+            }
             
             NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
 
@@ -421,24 +370,12 @@ size_t isutf8(unsigned char *str, size_t len)
             ypom.sk = self.myself.myUser.sk;
             NSData *content = nil;
             if (ypom.pk && ypom.sk) {
-                NSLog(@"data:%@", data);
                 NSString *s = [YPOMAppDelegate dataToString:data];
-                NSLog(@"s:%@", s);
                 NSArray *a = [s componentsSeparatedByString:@":"];
-                NSLog(@"a:%@", a);
-                
-                NSData *nbin = [[NSData alloc] initWithBase64EncodedData:a[0]
-                                                                 options:0];
-                NSLog(@"nbin:%@", nbin);
+                NSData *nbin = [[NSData alloc] initWithBase64EncodedData:a[0] options:0];
                 ypom.n = nbin;
-                
-                NSData *mbin = [[NSData alloc] initWithBase64EncodedData:a[1]
-                                                                 options:0];
-                NSLog(@"mbin:%@", mbin);
-                
-                
+                NSData *mbin = [[NSData alloc] initWithBase64EncodedData:a[1] options:0];
                 content = [ypom boxOpen:mbin];
-                NSLog(@"content:%@", content);
             }
             
             if (content) {
@@ -467,13 +404,9 @@ size_t isutf8(unsigned char *str, size_t len)
                         ypom.pk = sender.pk;
                         ypom.sk = self.myself.myUser.sk;
                         
-                        NSLog(@"data:%@", data);
                         NSData *e = [ypom box:data];
-                        NSLog(@"e:%@", e);
                         NSString *b64 = [e base64EncodedStringWithOptions:0];
-                        NSLog(@"b:64%@", b64);
                         NSString *n64 = [ypom.n base64EncodedStringWithOptions:0];
-                        NSLog(@"n64: %@", n64);
                         
                         [self.session publishData:[[NSString stringWithFormat:@"%@:%@", n64, b64] dataUsingEncoding:NSUTF8StringEncoding]
                                           onTopic:[NSString stringWithFormat:@"ypom/%@/%@/%@/%@/%@/%@",
@@ -510,6 +443,15 @@ size_t isutf8(unsigned char *str, size_t len)
         }
     }
     [self saveContext];
+}
+
+- (void)messageDelivered:(MQTTSession *)session msgID:(UInt16)msgID
+{
+    NSLog(@"messageDelivered: %ud", msgID);
+    Message *message = [Message existsMessageWithMsgId:msgID inManagedObjectContext:self.managedObjectContext];
+    if (message) {
+        message.delivered = @(TRUE);
+    }
 }
 
 - (void)connect:(id)object
@@ -553,6 +495,33 @@ size_t isutf8(unsigned char *str, size_t len)
     return [NSString stringWithFormat:@"%@", [data description]];
 }
 
+/*
+ *
+ * Remote Notifications
+ *
+ */
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+{
+    NSLog(@"didFailToRegisterForRemoteNotificationsWithError %@", error);
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+    NSLog(@"App didReceiveRemoteNotification %@", userInfo);
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
+    NSLog(@"App didReceiveRemoteNotification fetchCompletionHandler %@", userInfo);
+    completionHandler(UIBackgroundFetchResultNewData);
+}
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+    NSLog(@"App didRegisterForRemoteNotificationsWithDeviceToken %@", deviceToken);
+    self.deviceToken = deviceToken;
+}
 
 
 @end

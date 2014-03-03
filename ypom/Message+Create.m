@@ -39,14 +39,38 @@
 
 + (Message *)existsMessageWithTimestamp:(NSDate *)timestamp
                                     out:(BOOL)out
-                              belongsTo:(User *)user
-      inManagedObjectContext:(NSManagedObjectContext *)context
+belongsTo:(User *)user
+inManagedObjectContext:(NSManagedObjectContext *)context
 {
     Message *message = nil;
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Message"];
     request.predicate = [NSPredicate predicateWithFormat:@"timestamp = %@ AND out = %@AND belongsTo = %@",
                          timestamp, @(out), user];
+    
+    NSError *error = nil;
+    
+    NSArray *matches = [context executeFetchRequest:request error:&error];
+    
+    if (!matches) {
+        // handle error
+    } else {
+        if ([matches count]) {
+            message = [matches lastObject];
+        }
+    }
+    
+    return message;
+}
+
++ (Message *)existsMessageWithMsgId:(UInt16)msgId
+             inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    Message *message = nil;
+    
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Message"];
+    request.predicate = [NSPredicate predicateWithFormat:@"msgid = %@ AND out = TRUE and delivered = FALSE",
+                         @(msgId)];
     
     NSError *error = nil;
     

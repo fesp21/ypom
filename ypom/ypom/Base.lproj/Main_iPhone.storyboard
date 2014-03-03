@@ -24,10 +24,10 @@
             </objects>
             <point key="canvasLocation" x="132" y="180"/>
         </scene>
-        <!--Table View Controller - Messages-->
+        <!--MessagesTVC - Messages-->
         <scene sceneID="2fw-6B-c2W">
             <objects>
-                <tableViewController id="LJz-yo-Ved" sceneMemberID="viewController">
+                <tableViewController id="LJz-yo-Ved" customClass="YPOMMessagesTVC" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Ieu-Ck-Ow9">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -54,6 +54,35 @@
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="NewMessage" id="22G-ak-jvX" customClass="YPOMNewTVCell">
+                                <rect key="frame" x="0.0" y="163" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="22G-ak-jvX" id="6Ss-KK-5P9">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <button opaque="NO" tag="2" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6uO-Bp-Gag">
+                                            <rect key="frame" x="264" y="7" width="36" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" title="Send">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="send:" destination="LJz-yo-Ved" eventType="touchUpInside" id="Ahp-g9-RIw"/>
+                                            </connections>
+                                        </button>
+                                        <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qlY-r1-Qeh">
+                                            <rect key="frame" x="20" y="7" width="236" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits"/>
+                                            <connections>
+                                                <action selector="keyboardReturn:" destination="LJz-yo-Ved" eventType="editingDidEndOnExit" id="YKr-cF-wsz"/>
+                                            </connections>
+                                        </textField>
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -108,9 +137,10 @@
                                                     <rect key="frame" x="74" y="7" width="165" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" enablesReturnKeyAutomatically="YES"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="done"/>
                                                     <connections>
                                                         <action selector="nameChanged:" destination="ib0-nQ-qfr" eventType="editingDidEnd" id="9XU-iy-HQH"/>
+                                                        <action selector="textFieldReturn:" destination="ib0-nQ-qfr" eventType="editingDidEndOnExit" id="8Hz-Lq-TQ0"/>
                                                     </connections>
                                                 </textField>
                                             </subviews>
@@ -181,9 +211,10 @@
                                                     <rect key="frame" x="65" y="7" width="235" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="URL" enablesReturnKeyAutomatically="YES"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="URL" returnKeyType="done"/>
                                                     <connections>
                                                         <action selector="hostChanged:" destination="ib0-nQ-qfr" eventType="editingDidEnd" id="Ldv-S4-zKN"/>
+                                                        <action selector="textFieldReturn:" destination="ib0-nQ-qfr" eventType="editingDidEndOnExit" id="Sxt-6q-BQ3"/>
                                                     </connections>
                                                 </textField>
                                             </subviews>
@@ -219,9 +250,10 @@
                                                     <rect key="frame" x="61" y="7" width="143" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numberPad" enablesReturnKeyAutomatically="YES"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
                                                     <connections>
                                                         <action selector="portChanged:" destination="ib0-nQ-qfr" eventType="editingDidEnd" id="Gnk-6t-xZp"/>
+                                                        <action selector="textFieldReturn:" destination="ib0-nQ-qfr" eventType="editingDidEndOnExit" id="5Xm-mu-9aL"/>
                                                     </connections>
                                                 </textField>
                                             </subviews>
@@ -257,8 +289,9 @@
                                                     <rect key="frame" x="64" y="7" width="135" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" enablesReturnKeyAutomatically="YES"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="done"/>
                                                     <connections>
+                                                        <action selector="textFieldReturn:" destination="ib0-nQ-qfr" eventType="editingDidEndOnExit" id="aG9-hy-rmC"/>
                                                         <action selector="userChanged:" destination="ib0-nQ-qfr" eventType="editingDidEnd" id="L1u-CB-Xgo"/>
                                                     </connections>
                                                 </textField>
@@ -282,9 +315,10 @@
                                                     <rect key="frame" x="104" y="8" width="196" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" enablesReturnKeyAutomatically="YES"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="done" secureTextEntry="YES"/>
                                                     <connections>
                                                         <action selector="passwordChanged:" destination="ib0-nQ-qfr" eventType="editingDidEnd" id="pS5-Ae-MMa"/>
+                                                        <action selector="textFieldReturn:" destination="ib0-nQ-qfr" eventType="editingDidEndOnExit" id="D9T-Qn-OP4"/>
                                                     </connections>
                                                 </textField>
                                             </subviews>
@@ -317,10 +351,10 @@
             </objects>
             <point key="canvasLocation" x="1171" y="940"/>
         </scene>
-        <!--Table View Controller - Users-->
+        <!--UsersTVC - Users-->
         <scene sceneID="xmK-JW-2f4">
             <objects>
-                <tableViewController id="dl8-4y-aQO" sceneMemberID="viewController">
+                <tableViewController id="dl8-4y-aQO" customClass="YPOMUsersTVC" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="B7z-qu-kya">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

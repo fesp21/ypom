@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface YPOMSettingsTVC : UITableViewController
+@interface YPOMSettingsTVC : UITableViewController <UITextFieldDelegate>
 
 @end

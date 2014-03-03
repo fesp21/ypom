@@ -14,23 +14,16 @@
 #import "YPOMNewTVCell.h"
 #import "YPOM.h"
 
+#include "isutf8.h"
+
 @interface YPOMMessagesTVC ()
 @end
 
 @implementation YPOMMessagesTVC
 
-/*
-- (void)setTableView:(UITableView *)tableView
-{
-    [super setTableView:tableView];
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
-    [self.tableView reloadData];
-}
-*/
-
 - (void)viewWillAppear:(BOOL)animated
 {
+    self.fetchedResultsController = nil;
     [self.tableView reloadData];
 }
 
@@ -44,7 +37,7 @@
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Message" inManagedObjectContext:delegate.managedObjectContext];
     [fetchRequest setEntity:entity];
 
-    //fetchRequest.predicate = [NSPredicate predicateWithFormat:@"belongsTo.selected = TRUE"];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"belongsTo.selected = TRUE"];
     
     // Set the batch size to a suitable number.
     [fetchRequest setFetchBatchSize:20];
@@ -84,7 +77,6 @@
     Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
 
     UITableViewCell *cell;
-    NSLog(@"%f %f", [message.timestamp timeIntervalSince1970], FUTURE);
     if ([message.timestamp timeIntervalSince1970] == FUTURE) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"NewMessage" forIndexPath:indexPath];
     } else {
@@ -105,7 +97,11 @@
                                                                     dateStyle:NSDateFormatterShortStyle
                                                                     timeStyle:NSDateFormatterMediumStyle]];
         if ([message.out boolValue]) {
-            cell.backgroundColor = [UIColor colorWithRed:0.75 green:0.75 blue:1.0 alpha:1.0];
+            if ([message.delivered boolValue]) {
+                cell.backgroundColor = [UIColor colorWithRed:0.75 green:0.75 blue:1.0 alpha:1.0];
+            } else {
+                cell.backgroundColor = [UIColor colorWithRed:0.75 green:0.75 blue:0.75 alpha:1.0];
+            }
         } else {
             cell.backgroundColor = [UIColor colorWithRed:0.75 green:1.0 blue:0.75 alpha:1.0];
         }
@@ -179,41 +175,44 @@
     jsonObject[@"payload"] = [[text.text dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
     
     NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-    
-    
-    NSLog(@"data:%@", data);
     NSData *e = [ypom box:data];
-    
-    NSLog(@"e:%@", e);
-
-    
     NSString *b64 = [e base64EncodedStringWithOptions:0];
-    NSLog(@"b64: %@", b64);
-    
     NSString *n64 = [ypom.n base64EncodedStringWithOptions:0];
-    NSLog(@"n64: %@", n64);
 
-    [delegate.session publishData:[[NSString stringWithFormat:@"%@:%@", n64, b64] dataUsingEncoding:NSUTF8StringEncoding]
-                          onTopic:[NSString stringWithFormat:@"ypom/%@/%@/%@/%@/%@/%@",
-                                   newTVCell.message.belongsTo.belongsTo.host,
-                                   newTVCell.message.belongsTo.belongsTo.port,
-                                   newTVCell.message.belongsTo.name,
-                                   delegate.myself.myUser.belongsTo.host,
-                                   delegate.myself.myUser.belongsTo.port,
-                                   delegate.myself.myUser.name]
-                           retain:NO
-                              qos:2];
+    UInt16 msgId = [delegate.session publishData:[[NSString stringWithFormat:@"%@:%@", n64, b64]
+                                                  dataUsingEncoding:NSUTF8StringEncoding]
+                                         onTopic:[NSString stringWithFormat:@"ypom/%@/%@/%@/%@/%@/%@",
+                                                  newTVCell.message.belongsTo.belongsTo.host,
+                                                  newTVCell.message.belongsTo.belongsTo.port,
+                                                  newTVCell.message.belongsTo.name,
+                                                  delegate.myself.myUser.belongsTo.host,
+                                                  delegate.myself.myUser.belongsTo.port,
+                                                  delegate.myself.myUser.name]
+                                          retain:NO
+                                             qos:2];
     
-    [Message messageWithContent:[[NSData alloc] initWithBase64EncodedString:jsonObject[@"payload"] options:0]
-                      timestamp:[NSDate dateWithTimeIntervalSince1970:[jsonObject[@"timestamp"] doubleValue]]
-                            out:YES
-                      belongsTo:newTVCell.message.belongsTo
-         inManagedObjectContext:delegate.managedObjectContext];
+    Message *message = [Message messageWithContent:[[NSData alloc]
+                                                    initWithBase64EncodedString:jsonObject[@"payload"] options:0]
+                                         timestamp:[NSDate dateWithTimeIntervalSince1970:[jsonObject[@"timestamp"] doubleValue]]
+                                               out:YES
+                                         belongsTo:newTVCell.message.belongsTo
+                            inManagedObjectContext:delegate.managedObjectContext];
+    
+    message.msgid = @(msgId);
+    if (msgId) {
+        message.delivered = @(FALSE);
+    } else {
+        message.delivered = @(TRUE);
+    }
     
     newTVCell.message.content = [[NSData alloc] init];
     
     [delegate saveContext];
     
+}
+
+- (IBAction)keyboardReturn:(UITextField *)sender {
+    [sender resignFirstResponder];
 }
 
 

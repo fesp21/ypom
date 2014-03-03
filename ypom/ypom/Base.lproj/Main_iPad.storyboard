@@ -73,7 +73,7 @@
                                                     <rect key="frame" x="74" y="7" width="561" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits" autocorrectionType="no"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" enablesReturnKeyAutomatically="YES"/>
                                                     <connections>
                                                         <action selector="nameChanged:" destination="hiG-AY-FZR" eventType="editingDidEnd" id="KMf-q5-zqu"/>
                                                     </connections>
@@ -156,7 +156,7 @@
                                                     <rect key="frame" x="65" y="7" width="683" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="URL"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="URL" enablesReturnKeyAutomatically="YES"/>
                                                     <connections>
                                                         <action selector="hostChanged:" destination="hiG-AY-FZR" eventType="editingDidEnd" id="LpR-vD-hCK"/>
                                                     </connections>
@@ -188,7 +188,7 @@
                                                     <rect key="frame" x="61" y="7" width="591" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numberPad"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numberPad" enablesReturnKeyAutomatically="YES"/>
                                                     <connections>
                                                         <action selector="portChanged:" destination="hiG-AY-FZR" eventType="editingDidEnd" id="f0d-pN-ter"/>
                                                     </connections>
@@ -232,7 +232,7 @@
                                                     <rect key="frame" x="70" y="7" width="577" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits" autocorrectionType="no"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" enablesReturnKeyAutomatically="YES"/>
                                                     <connections>
                                                         <action selector="userChanged:" destination="hiG-AY-FZR" eventType="editingDidEnd" id="c4a-rF-PXZ"/>
                                                     </connections>
@@ -257,7 +257,7 @@
                                                     <rect key="frame" x="104" y="7" width="644" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits" autocorrectionType="no"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" enablesReturnKeyAutomatically="YES" secureTextEntry="YES"/>
                                                     <connections>
                                                         <action selector="passwordChanged:" destination="hiG-AY-FZR" eventType="editingDidEnd" id="zJc-0f-8aX"/>
                                                     </connections>
@@ -352,8 +352,8 @@
                                     <rect key="frame" x="0.0" y="0.0" width="768" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zuq-VU-zc1">
-                                            <rect key="frame" x="702" y="7" width="36" height="30"/>
+                                        <button opaque="NO" tag="2" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zuq-VU-zc1">
+                                            <rect key="frame" x="712" y="7" width="36" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <state key="normal" title="Send">
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -363,10 +363,13 @@
                                             </connections>
                                         </button>
                                         <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="GX0-dM-njS">
-                                            <rect key="frame" x="20" y="7" width="674" height="30"/>
+                                            <rect key="frame" x="20" y="7" width="684" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <textInputTraits key="textInputTraits"/>
+                                            <connections>
+                                                <action selector="keyboardReturn:" destination="EEa-Az-ltI" eventType="editingDidEndOnExit" id="1ya-bL-hwv"/>
+                                            </connections>
                                         </textField>
                                     </subviews>
                                 </tableViewCellContentView>

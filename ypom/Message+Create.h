@@ -15,11 +15,16 @@
                       timestamp:(NSDate *)timestamp
                             out:(BOOL)out
                          belongsTo:(User *)user
-         inManagedObjectContext:(NSManagedObjectContext *)context;
+inManagedObjectContext:(NSManagedObjectContext *)context;
+
 + (Message *)existsMessageWithTimestamp:(NSDate *)timestamp
                                     out:(BOOL)out
-belongsTo:(User *)user
+                              belongsTo:(User *)user
                  inManagedObjectContext:(NSManagedObjectContext *)context;
+
++ (Message *)existsMessageWithMsgId:(UInt16)msgId
+             inManagedObjectContext:(NSManagedObjectContext *)context;
+
 
 - (NSString *)url;
 

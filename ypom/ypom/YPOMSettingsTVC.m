@@ -36,7 +36,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-
+    
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     [delegate disconnect:nil];
     [self changed];
@@ -110,9 +110,10 @@
                  inManagedObjectContext:delegate.managedObjectContext];
     }
     delegate.myself.myUser.belongsTo = broker;
-
+    
     [self changed];
 }
+
 - (IBAction)portChanged:(UITextField *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
@@ -158,6 +159,11 @@
     delegate.myself.myUser.belongsTo.passwd = sender.text;
     
     [self changed];
+    [sender resignFirstResponder];
+}
+
+-(IBAction)textFieldReturn:(id)sender
+{
     [sender resignFirstResponder];
 }
 

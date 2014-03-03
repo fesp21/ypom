@@ -18,14 +18,6 @@
 
 @implementation YPOMUsersTVC
 
-- (void)setTableView:(UITableView *)tableView
-{
-    [super setTableView:tableView];
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
-    [self.tableView reloadData];
-}
-
 #pragma mark - Fetched results controller
 
 - (NSFetchedResultsController *)setupFRC
@@ -89,6 +81,7 @@
 {
     User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.textLabel.text = [NSString stringWithFormat:@"%@", user.name];
+    cell.accessoryType = [user.selected boolValue] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -97,7 +90,6 @@
     user.selected = @(![user.selected boolValue]);
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [tableView cellForRowAtIndexPath:indexPath].accessoryType = [user.selected boolValue] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     [delegate saveContext];
