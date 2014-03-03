@@ -55,7 +55,6 @@
     self.bgTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^
                    {
                        NSLog(@"BackgroundTaskExpirationHandler");
-                       
                        [self connectionClosed];
                    }];
 
@@ -77,26 +76,31 @@
         YPOM *ypom = [[YPOM alloc] init];
         [ypom createKeyPair];
         
-        Broker *broker = [Broker brokerWithHost:@"localhost"
-                                           port:1883
-                                            tls:NO
-                                           auth:NO
-                                           user:@""
-                                       password:@""
-                         inManagedObjectContext:self.managedObjectContext];
-        
-        User *user = [User userWithName:[NSString stringWithFormat:@"%@",
+        User *user = [User userWithPk:ypom.pk
+                                 name:[NSString stringWithFormat:@"%@",
                                          [[UIDevice currentDevice].name stringByReplacingOccurrencesOfString:@" " withString:@"_"]]
-                                     pk:ypom.pk
-                                     sk:ypom.sk
-                                 broker:broker
                  inManagedObjectContext:self.managedObjectContext];
-        self.myself = [Myself myselfWithUser:user inManagedObjectContext:self.managedObjectContext];
+        
+        user.sk = ypom.sk;
+        
+        self.myself = [Myself myselfWithUser:user
+                      inManagedObjectContext:self.managedObjectContext];
+    }
+    
+    self.broker = [Broker existsBroker:self.managedObjectContext];
+    if (!self.broker) {
+        self.broker = [Broker brokerWithHost:@"localhost"
+                                        port:1883
+                                         tls:NO
+                                        auth:NO
+                                        user:@""
+                                    password:@""
+                      inManagedObjectContext:self.managedObjectContext];
     }
 
     self.session = [[MQTTSession alloc] initWithClientId:self.myself.myUser.name
-                                                userName:[self.myself.myUser.belongsTo.auth boolValue] ? self.myself.myUser.belongsTo.user : nil
-                                                password:[self.myself.myUser.belongsTo.auth boolValue] ? self.myself.myUser.belongsTo.passwd : nil
+                                                userName:[self.broker.auth boolValue] ? self.broker.user : nil
+                                                password:[self.broker.auth boolValue] ? self.broker.passwd : nil
                                                keepAlive:60
                                             cleanSession:NO
                                                     will:NO
@@ -274,8 +278,11 @@
     switch (eventCode) {
         case MQTTSessionEventConnected:
         {
-            [self.session subscribeToTopic:@"ypom/+/+/+" atLevel:2];
-            [self.session subscribeToTopic:[NSString stringWithFormat:@"ypom/+/+/%@/+/+/+", self.myself.myUser.name] atLevel:2];
+            [self.session subscribeToTopic:@"ypom/+"
+                                   atLevel:2];
+            [self.session subscribeToTopic:[NSString stringWithFormat:@"ypom/%@/+",
+                                            [self.myself.myUser base32EncodedPk]]
+                                   atLevel:2];
 
             NSError *error;
             NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
@@ -289,10 +296,8 @@
             NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
 
             [self.session publishData:data
-                              onTopic:[NSString stringWithFormat:@"ypom/%@/%@/%@",
-                                       self.myself.myUser.belongsTo.host,
-                                       self.myself.myUser.belongsTo.port,
-                                       self.myself.myUser.name]
+                              onTopic:[NSString stringWithFormat:@"ypom/%@",
+                                       [self.myself.myUser base32EncodedPk]]
                                retain:YES
                                   qos:2];
             
@@ -315,60 +320,49 @@
     
     NSArray *components = [topic pathComponents];
     
-    if ([components count] >= 3) {
-        Broker *broker = [Broker brokerWithHost:components[1]
-                                           port:[components[2] unsignedIntValue]
-                                            tls:NO
-                                           auth:NO
-                                           user:@""
-                                       password:@""
-                         inManagedObjectContext:self.managedObjectContext];
+    if ([components count] == 2) {
         
-        if ([components count] == 4) {
-            
-            NSError *error;
-            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-            if (dictionary) {
-                if ([dictionary[@"_type"] isEqualToString:@"usr"]) {
-                    NSData *pk = [[NSData alloc] initWithBase64EncodedString:dictionary[@"pk"] options:0];
-                    User *user = [User existsUserWithName:components[3] broker:broker inManagedObjectContext:self.managedObjectContext];
-                    if (user) {
-                        user.pk = pk;
-                    } else {
-                        user = [User userWithName:components[3] pk:data sk:nil broker:broker inManagedObjectContext:self.managedObjectContext];
-                    }
-                    
-                    [Message messageWithContent:[[NSData alloc] init]
-                                      timestamp:[NSDate dateWithTimeIntervalSince1970:FUTURE]
-                                            out:YES
-                                      belongsTo:user
-                         inManagedObjectContext:self.managedObjectContext];
+        NSError *error;
+        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+        if (dictionary) {
+            if ([dictionary[@"_type"] isEqualToString:@"usr"]) {
+                User *user = [User existsUserWithBase32EncodedPk:components[1]
+                                          inManagedObjectContext:self.managedObjectContext];
+                if (user) {
+                    user.name = dictionary[@"name"];
                 } else {
-                    // data other than json _type msg is silently ignored
+                    user = [User userWithBase32EncodedPk:components[1]
+                                                    name:dictionary[@"name"]
+                                  inManagedObjectContext:self.managedObjectContext];
                 }
+                
+                [Message messageWithContent:nil
+                                contentType:nil
+                                  timestamp:[NSDate dateWithTimeIntervalSince1970:FUTURE]
+                                        outgoing:YES
+                                  belongsTo:user
+                     inManagedObjectContext:self.managedObjectContext];
             } else {
-                // data other than json is silently ignored
+                NSLog(@"unknown _type:%@", dictionary[@"_type"]);
             }
-            
-        } else  if ([components count] == 7) {
-            
-            User *user = [User existsUserWithName:components[3] broker:broker inManagedObjectContext:self.managedObjectContext];
-            Broker *sendingBroker = [Broker brokerWithHost:components[4]
-                                                      port:[components[5] unsignedIntValue]
-                                                       tls:NO
-                                                      auth:NO
-                                                      user:@""
-                                                  password:@""
+        } else {
+            NSLog(@"illegal json:%@", error);
+        }
+    
+    }
+
+    if ([components count] == 3) {
+        User *receiver = [User existsUserWithBase32EncodedPk:components[1]
+                                      inManagedObjectContext:self.managedObjectContext];
+        
+        User *sender = [User existsUserWithBase32EncodedPk:components[2]
                                     inManagedObjectContext:self.managedObjectContext];
-            User *sender = [User existsUserWithName:components[6] broker:sendingBroker inManagedObjectContext:self.managedObjectContext];
-            if (!sender) {
-                sender = [User userWithName:components[6] pk:nil sk:nil broker:sendingBroker inManagedObjectContext:self.managedObjectContext];
-            }
-            
+        if (sender && receiver) {
             YPOM *ypom = [[YPOM alloc] init];
             ypom.pk = sender.pk;
-            ypom.sk = self.myself.myUser.sk;
+            ypom.sk = receiver.sk;
             NSData *content = nil;
+            
             if (ypom.pk && ypom.sk) {
                 NSString *s = [YPOMAppDelegate dataToString:data];
                 NSArray *a = [s componentsSeparatedByString:@":"];
@@ -379,22 +373,25 @@
             }
             
             if (content) {
-                NSLog(@"boxOpen r:%@ s:%@ m:%@", user.name, sender.name, content);
+                NSLog(@"boxOpen r:%@ s:%@ m:%@", [receiver base32EncodedPk], [sender base32EncodedPk], content);
+                
                 NSError *error;
                 NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:content options:0 error:&error];
                 if (dictionary) {
                     if ([dictionary[@"_type"] isEqualToString:@"msg"]) {
-                        NSData *payload = [[NSData alloc] initWithBase64EncodedString:dictionary[@"payload"] options:0];
+                        NSData *content = [[NSData alloc] initWithBase64EncodedString:dictionary[@"content"] options:0];
                         NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
-                        [Message messageWithContent:payload
+                        NSString *contentType = dictionary[@"content-type"];
+                        [Message messageWithContent:content
+                                         contentType:contentType
                                           timestamp:timestamp
-                                                out:NO
-                                             belongsTo:sender
+                                           outgoing:NO
+                                          belongsTo:sender
                              inManagedObjectContext:self.managedObjectContext];
                         
                         NSError *error;
                         NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-
+                        
                         jsonObject[@"_type"] = @"ack";
                         jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
                         
@@ -402,28 +399,24 @@
                         
                         YPOM *ypom = [[YPOM alloc] init];
                         ypom.pk = sender.pk;
-                        ypom.sk = self.myself.myUser.sk;
+                        ypom.sk = receiver.sk;
                         
                         NSData *e = [ypom box:data];
                         NSString *b64 = [e base64EncodedStringWithOptions:0];
                         NSString *n64 = [ypom.n base64EncodedStringWithOptions:0];
                         
                         [self.session publishData:[[NSString stringWithFormat:@"%@:%@", n64, b64] dataUsingEncoding:NSUTF8StringEncoding]
-                                          onTopic:[NSString stringWithFormat:@"ypom/%@/%@/%@/%@/%@/%@",
-                                                   sender.belongsTo.host,
-                                                   sender.belongsTo.port,
-                                                   sender.name,
-                                                   self.myself.myUser.belongsTo.host,
-                                                   self.myself.myUser.belongsTo.port,
-                                                   self.myself.myUser.name]
+                                          onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
+                                                   [sender base32EncodedPk],
+                                                   [receiver base32EncodedPk]]
                                            retain:NO
                                               qos:2];
+                        
                     } else if ([dictionary[@"_type"] isEqualToString:@"ack"]) {
                         NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
                         Message *message = [Message existsMessageWithTimestamp:timestamp
-                                                                           out:YES
-                                                                        belongsTo:user
-                                                        inManagedObjectContext:self.managedObjectContext];
+                                                                      outgoing:YES
+                                                                     belongsTo:sender                                                        inManagedObjectContext:self.managedObjectContext];
                         message.acknowledged = @(TRUE);
                     } else {
                         NSLog(@"unknown _type:%@", dictionary[@"_type"]);
@@ -431,15 +424,18 @@
                 } else {
                     NSLog(@"illegal json:%@", error);
                 }
-
+                
             } else {
-                NSLog(@"Can't boxOpen r:%@ s:%@ d:%@", user.name, sender.name, data);
+                NSLog(@"Can't boxOpen r:%@ s:%@ d:%@", [receiver base32EncodedPk], [sender base32EncodedPk], data);
                 [Message messageWithContent:[@"Can't boxOpen" dataUsingEncoding:NSUTF8StringEncoding]
+                                contentType:nil
                                   timestamp:[NSDate date]
-                                        out:NO
-                                     belongsTo:sender
+                                    outgoing:NO
+                                  belongsTo:sender
                      inManagedObjectContext:self.managedObjectContext];
             }
+        } else {
+            NSLog(@"Unknown receiver (%@ ) or sender (%@)", components[1], components[2]);
         }
     }
     [self saveContext];
@@ -456,15 +452,19 @@
 
 - (void)connect:(id)object
 {
-    [self.session connectToHost:self.myself.myUser.belongsTo.host
-                           port:[self.myself.myUser.belongsTo.port unsignedIntValue]
-                       usingSSL:[self.myself.myUser.belongsTo.tls boolValue]];
+    [self.session connectToHost:self.broker.host
+                           port:[self.broker.port unsignedIntValue]
+                       usingSSL:[self.broker.tls boolValue]];
+}
+
+- (void)unsubscribe:(id)object
+{
+    [self.session unsubscribeTopic:@"ypom/+"];
+    [self.session unsubscribeTopic:[NSString stringWithFormat:@"ypom/%@/+", self.myself.myUser.name]];
 }
 
 - (void)disconnect:(id)object
 {
-    [self.session unsubscribeTopic:@"ypom/+/+/+"];
-    [self.session unsubscribeTopic:[NSString stringWithFormat:@"ypom/+/+/%@/+/+/+", self.myself.myUser.name]];
     [self.session close];
 }
 

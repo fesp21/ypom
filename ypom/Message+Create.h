@@ -12,20 +12,18 @@
 
 @interface Message (Create)
 + (Message *)messageWithContent:(NSData *)content
+                    contentType:(NSString *)contentType
                       timestamp:(NSDate *)timestamp
-                            out:(BOOL)out
+                       outgoing:(BOOL)outgoing
                          belongsTo:(User *)user
 inManagedObjectContext:(NSManagedObjectContext *)context;
 
 + (Message *)existsMessageWithTimestamp:(NSDate *)timestamp
-                                    out:(BOOL)out
+                               outgoing:(BOOL)outgoing
                               belongsTo:(User *)user
                  inManagedObjectContext:(NSManagedObjectContext *)context;
 
 + (Message *)existsMessageWithMsgId:(UInt16)msgId
              inManagedObjectContext:(NSManagedObjectContext *)context;
-
-
-- (NSString *)url;
 
 @end

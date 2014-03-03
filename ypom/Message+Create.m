@@ -11,13 +11,14 @@
 
 @implementation Message (Create)
 + (Message *)messageWithContent:(NSData *)content
+                    contentType:(NSString *)contentType
                       timestamp:(NSDate *)timestamp
-                            out:(BOOL)out
+                       outgoing:(BOOL)outgoing
                          belongsTo:(User *)user
          inManagedObjectContext:(NSManagedObjectContext *)context
 {
     Message *message = [Message existsMessageWithTimestamp:timestamp
-                                                       out:out
+                                                  outgoing:outgoing
                                                     belongsTo:user
                                     inManagedObjectContext:context];
     
@@ -26,8 +27,9 @@
         message = [NSEntityDescription insertNewObjectForEntityForName:@"Message" inManagedObjectContext:context];
         
         message.timestamp = timestamp;
-        message.out = @(out);
+        message.outgoing = @(outgoing);
         message.content = content;
+        message.contenttype = contentType;
         message.belongsTo = user;
         message.delivered = @(NO);
         message.acknowledged = @(NO);
@@ -38,15 +40,15 @@
 }
 
 + (Message *)existsMessageWithTimestamp:(NSDate *)timestamp
-                                    out:(BOOL)out
-belongsTo:(User *)user
-inManagedObjectContext:(NSManagedObjectContext *)context
+                               outgoing:(BOOL)outgoing
+                              belongsTo:(User *)user
+                 inManagedObjectContext:(NSManagedObjectContext *)context
 {
     Message *message = nil;
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Message"];
-    request.predicate = [NSPredicate predicateWithFormat:@"timestamp = %@ AND out = %@AND belongsTo = %@",
-                         timestamp, @(out), user];
+    request.predicate = [NSPredicate predicateWithFormat:@"timestamp = %@ AND outgoing = %@AND belongsTo = %@",
+                         timestamp, @(outgoing), user];
     
     NSError *error = nil;
     
@@ -69,7 +71,7 @@ inManagedObjectContext:(NSManagedObjectContext *)context
     Message *message = nil;
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Message"];
-    request.predicate = [NSPredicate predicateWithFormat:@"msgid = %@ AND out = TRUE and delivered = FALSE",
+    request.predicate = [NSPredicate predicateWithFormat:@"msgid = %@ AND outgoing = TRUE and delivered = FALSE",
                          @(msgId)];
     
     NSError *error = nil;
@@ -86,12 +88,5 @@ inManagedObjectContext:(NSManagedObjectContext *)context
     
     return message;
 }
-
-- (NSString *)url
-{
-    return [NSString stringWithFormat:@"%@:%@", self.belongsTo.url, self.belongsTo.name];
-}
-
-
 
 @end

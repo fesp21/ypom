@@ -2,12 +2,11 @@
 //  User.m
 //  ypom
 //
-//  Created by Christoph Krey on 02.03.14.
+//  Created by Christoph Krey on 03.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
 #import "User.h"
-#import "Broker.h"
 #import "Message.h"
 #import "Myself.h"
 
@@ -18,8 +17,7 @@
 @dynamic pk;
 @dynamic selected;
 @dynamic sk;
-@dynamic url;
-@dynamic belongsTo;
+@dynamic group;
 @dynamic hasMessages;
 @dynamic me;
 

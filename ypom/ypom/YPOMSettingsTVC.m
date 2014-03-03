@@ -38,6 +38,7 @@
     [super viewWillAppear:animated];
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    [delegate unsubscribe:nil];
     [delegate disconnect:nil];
     [self changed];
 }
@@ -58,29 +59,20 @@
     self.pk.text = [delegate.myself.myUser.pk base64EncodedStringWithOptions:0];
     self.sk.text = [delegate.myself.myUser.sk base64EncodedStringWithOptions:0];
     
-    self.host.text = delegate.myself.myUser.belongsTo.host;
-    self.port.text = [NSString stringWithFormat:@"%@", delegate.myself.myUser.belongsTo.port];
-    self.tls.on = [delegate.myself.myUser.belongsTo.tls boolValue];
+    self.host.text = delegate.broker.host;
+    self.port.text = [NSString stringWithFormat:@"%@", delegate.broker.port];
+    self.tls.on = [delegate.broker.tls boolValue];
     
-    self.auth.on = [delegate.myself.myUser.belongsTo.auth boolValue];
-    self.user.text = delegate.myself.myUser.belongsTo.user;
-    self.password.text = delegate.myself.myUser.belongsTo.passwd;
+    self.auth.on = [delegate.broker.auth boolValue];
+    self.user.text = delegate.broker.user;
+    self.password.text = delegate.broker.passwd;
     
     [self.tableView resignFirstResponder];
 }
 
 - (IBAction)nameChanged:(UITextField *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-
-    User *user = [User existsUserWithName:sender.text broker:delegate.myself.myUser.belongsTo inManagedObjectContext:delegate.managedObjectContext];
-    if (!user) {
-        user = [User userWithName:sender.text
-                               pk:nil
-                               sk:nil
-                           broker:delegate.myself.myUser.belongsTo
-           inManagedObjectContext:delegate.managedObjectContext];
-    }
-    delegate.myself.myUser = user;
+    delegate.myself.myUser.name = sender.text;
     [self changed];
 }
 
@@ -89,27 +81,20 @@
     [ypom createKeyPair];
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    delegate.myself.myUser.pk = ypom.pk;
-    delegate.myself.myUser.sk = ypom.sk;
+    
+    User *user = [User userWithPk:ypom.pk
+                             name:self.name.text
+           inManagedObjectContext:delegate.managedObjectContext];
+    user.sk = ypom.sk;
+    user.name = self.name.text;
+    delegate.myself.myUser = user;
     
     [self changed];
 }
 - (IBAction)hostChanged:(UITextField *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    Broker *broker = [Broker existsBrokerWithHost:sender.text
-                                             port:[self.port.text intValue]
-                           inManagedObjectContext:delegate.managedObjectContext];
-    if (!broker) {
-        broker = [Broker brokerWithHost:sender.text
-                                   port:[self.port.text intValue]
-                                    tls:self.tls.on
-                                   auth:self.auth.on
-                                   user:self.user.text
-                               password:self.password.text
-                 inManagedObjectContext:delegate.managedObjectContext];
-    }
-    delegate.myself.myUser.belongsTo = broker;
+    delegate.broker.host = sender.text;
     
     [self changed];
 }
@@ -117,49 +102,37 @@
 - (IBAction)portChanged:(UITextField *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    Broker *broker = [Broker existsBrokerWithHost:self.host.text
-                                             port:[sender.text intValue]
-                           inManagedObjectContext:delegate.managedObjectContext];
-    if (!broker) {
-        broker = [Broker brokerWithHost:self.host.text
-                                   port:[sender.text intValue]
-                                    tls:self.tls.on
-                                   auth:self.auth.on
-                                   user:self.user.text
-                               password:self.password.text
-                 inManagedObjectContext:delegate.managedObjectContext];
-    }
-    delegate.myself.myUser.belongsTo = broker;
+    delegate.broker.port =  @([sender.text intValue]);
+    
     [self changed];
 }
 - (IBAction)tlsChanged:(UISwitch *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    delegate.myself.myUser.belongsTo.tls = @(sender.on);
+    delegate.broker.tls = @(sender.on);
     
     [self changed];
 }
 - (IBAction)authChanged:(UISwitch *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    delegate.myself.myUser.belongsTo.auth = @(sender.on);
+    delegate.broker.auth = @(sender.on);
     
     [self changed];
 }
 - (IBAction)userChanged:(UITextField *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    delegate.myself.myUser.belongsTo.user = sender.text;
+    delegate.broker.user = sender.text;
     
     [self changed];
 }
 - (IBAction)passwordChanged:(UITextField *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    delegate.myself.myUser.belongsTo.passwd = sender.text;
+    delegate.broker.passwd = sender.text;
     
     [self changed];
-    [sender resignFirstResponder];
 }
 
 -(IBAction)textFieldReturn:(id)sender

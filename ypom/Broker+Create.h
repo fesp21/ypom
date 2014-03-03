@@ -16,12 +16,6 @@
                       user:(NSString *)user
                   password:(NSString *)password
     inManagedObjectContext:(NSManagedObjectContext *)context;
-+ (Broker *)existsBrokerWithHost:(NSString *)host
-                            port:(UInt16)port
-          inManagedObjectContext:(NSManagedObjectContext *)context;
-
-- (NSComparisonResult)compare:(Broker *)broker;
-
-- (NSString *)url;
++ (Broker *)existsBroker:(NSManagedObjectContext *)context;
 
 @end

@@ -7,37 +7,45 @@
 //
 
 #import "User+Create.h"
+#include "base32.h"
+#include "tweetnacl.h"
 
 @implementation User (Create)
-+ (User *)userWithName:(NSString *)name
-                    pk:(NSData *)pk
-                    sk:(NSData *)sk
-                broker:(Broker *)broker
++ (User *)userWithPk:(NSData *)pk
+                    name:(NSString *)name
 inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    User *user = [User existsUserWithName:name broker:broker inManagedObjectContext:context];
+    User *user = [User existsUserWithPk:pk inManagedObjectContext:context];
     
     if (!user) {
         
         user = [NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:context];
         
-        user.name = name;
         user.pk = pk;
-        user.sk = sk;
-        user.belongsTo = broker;
+        user.name = name;
     }
     
     return user;
 }
 
-+ (User *)existsUserWithName:(NSString *)name
-                      broker:(Broker *)broker
-      inManagedObjectContext:(NSManagedObjectContext *)context
++ (User *)userWithBase32EncodedPk:(NSString *)pk32
+                             name:(NSString *)name
+           inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    unsigned char pk[UNBASE32_LEN(BASE32_LEN(crypto_box_PUBLICKEYBYTES))];
+    base32_decode((unsigned char *)[pk32 UTF8String], pk);
+    
+    return [User userWithPk:[[NSData alloc] initWithBytes:pk length:crypto_box_PUBLICKEYBYTES]
+                       name:name inManagedObjectContext:context];
+}
+
++ (User *)existsUserWithPk:(NSData *)pk
+    inManagedObjectContext:(NSManagedObjectContext *)context
 {
     User *user = nil;
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"User"];
-    request.predicate = [NSPredicate predicateWithFormat:@"belongsTo = %@ AND name = %@", broker, name];
+    request.predicate = [NSPredicate predicateWithFormat:@"pk = %@", pk];
     
     NSError *error = nil;
     
@@ -54,19 +62,28 @@ inManagedObjectContext:(NSManagedObjectContext *)context
     return user;
 }
 
++ (User *)existsUserWithBase32EncodedPk:(NSString *)pk32
+                 inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    unsigned char pk[UNBASE32_LEN(BASE32_LEN(crypto_box_PUBLICKEYBYTES))];
+    base32_decode((unsigned char *)[pk32 UTF8String], pk);
+    
+    return [User existsUserWithPk:[[NSData alloc] initWithBytes:pk length:crypto_box_PUBLICKEYBYTES]
+           inManagedObjectContext:context];
+}
+
 - (NSComparisonResult)compare:(User *)user
 {
-    NSComparisonResult r = [self.belongsTo compare:user.belongsTo];
-    if (r == NSOrderedSame) {
-        return [self.name compare:user.name];
-    }
-    return r;
+    return [[self base32EncodedPk] compare:[user base32EncodedPk]];
 }
 
-- (NSString *)url
+- (NSString *)base32EncodedPk
 {
-    return [NSString stringWithFormat:@"%@:%@", self.belongsTo.url, self.belongsTo.port];
+    unsigned char pk32[BASE32_LEN(crypto_box_PUBLICKEYBYTES) + 1];
+    base32_encode(self.pk.bytes, crypto_box_PUBLICKEYBYTES, pk32);
+    pk32[sizeof(pk32) - 1] = 0;
+    
+    return [NSString stringWithUTF8String:(char *)pk32];
 }
-
 
 @end

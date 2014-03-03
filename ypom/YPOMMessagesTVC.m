@@ -43,12 +43,10 @@
     [fetchRequest setFetchBatchSize:20];
     
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor0 = [[NSSortDescriptor alloc] initWithKey:@"belongsTo.belongsTo.host" ascending:YES];
-    NSSortDescriptor *sortDescriptor1 = [[NSSortDescriptor alloc] initWithKey:@"belongsTo.belongsTo.port" ascending:YES];
-    NSSortDescriptor *sortDescriptor2 = [[NSSortDescriptor alloc] initWithKey:@"belongsTo.name" ascending:YES];
-    NSSortDescriptor *sortDescriptor3 = [[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:NO];
-    NSSortDescriptor *sortDescriptor4 = [[NSSortDescriptor alloc] initWithKey:@"out" ascending:YES];
-    NSArray *sortDescriptors = @[sortDescriptor0, sortDescriptor1, sortDescriptor2, sortDescriptor3, sortDescriptor4];
+    NSSortDescriptor *sortDescriptor1 = [[NSSortDescriptor alloc] initWithKey:@"belongsTo.name" ascending:YES];
+    NSSortDescriptor *sortDescriptor2 = [[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:NO];
+    NSSortDescriptor *sortDescriptor3 = [[NSSortDescriptor alloc] initWithKey:@"outgoing" ascending:YES];
+    NSArray *sortDescriptors = @[sortDescriptor1, sortDescriptor2, sortDescriptor3];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
     
@@ -56,7 +54,7 @@
     // nil for section name key path means "no sections".
     NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                                                                                 managedObjectContext:delegate.managedObjectContext
-                                                                                                  sectionNameKeyPath:@"url"
+                                                                                                  sectionNameKeyPath:@"belongsTo.name"
                                                                                                            cacheName:nil];
     aFetchedResultsController.delegate = self;
     
@@ -96,7 +94,7 @@
                                      [NSDateFormatter localizedStringFromDate:message.timestamp
                                                                     dateStyle:NSDateFormatterShortStyle
                                                                     timeStyle:NSDateFormatterMediumStyle]];
-        if ([message.out boolValue]) {
+        if ([message.outgoing boolValue]) {
             if ([message.delivered boolValue]) {
                 cell.backgroundColor = [UIColor colorWithRed:0.75 green:0.75 blue:1.0 alpha:1.0];
             } else {
@@ -123,7 +121,8 @@
     
     Message *message = [[info objects] firstObject];
     
-    return [NSString stringWithFormat:@"%@:%@/%@", message.belongsTo.belongsTo.host, message.belongsTo.belongsTo.port, message.belongsTo.name];
+    return message ? [NSString stringWithFormat:@"%@ (%@)", message.belongsTo.name, [message.belongsTo base32EncodedPk]] :
+    @"no users selected or no messages available";
 }
 
 
@@ -172,7 +171,7 @@
     NSDate *timestamp = [NSDate date];
     jsonObject[@"_type"] = @"msg";
     jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
-    jsonObject[@"payload"] = [[text.text dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
+    jsonObject[@"content"] = [[text.text dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
     
     NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
     NSData *e = [ypom box:data];
@@ -181,20 +180,19 @@
 
     UInt16 msgId = [delegate.session publishData:[[NSString stringWithFormat:@"%@:%@", n64, b64]
                                                   dataUsingEncoding:NSUTF8StringEncoding]
-                                         onTopic:[NSString stringWithFormat:@"ypom/%@/%@/%@/%@/%@/%@",
-                                                  newTVCell.message.belongsTo.belongsTo.host,
-                                                  newTVCell.message.belongsTo.belongsTo.port,
-                                                  newTVCell.message.belongsTo.name,
-                                                  delegate.myself.myUser.belongsTo.host,
-                                                  delegate.myself.myUser.belongsTo.port,
-                                                  delegate.myself.myUser.name]
+                                         onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
+                                                  [newTVCell.message.belongsTo base32EncodedPk],
+                                                  [delegate.myself.myUser base32EncodedPk]]
                                           retain:NO
                                              qos:2];
     
     Message *message = [Message messageWithContent:[[NSData alloc]
-                                                    initWithBase64EncodedString:jsonObject[@"payload"] options:0]
-                                         timestamp:[NSDate dateWithTimeIntervalSince1970:[jsonObject[@"timestamp"] doubleValue]]
-                                               out:YES
+                                                    initWithBase64EncodedString:jsonObject[@"content"]
+                                                    options:0]
+                                       contentType:nil
+                                         timestamp:[NSDate dateWithTimeIntervalSince1970:
+                                                    [jsonObject[@"timestamp"] doubleValue]]
+                                          outgoing:YES
                                          belongsTo:newTVCell.message.belongsTo
                             inManagedObjectContext:delegate.managedObjectContext];
     
