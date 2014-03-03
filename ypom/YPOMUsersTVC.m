@@ -68,6 +68,8 @@
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    NSLog(@"usr n:%@ p:%@ s:%@ b:%@", user.name, user.pk, user.sk, user.selected);
+    
     cell.textLabel.text = [NSString stringWithFormat:@"%@", user.name];
     cell.accessoryType = [user.selected boolValue] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [user base32EncodedPk]];
