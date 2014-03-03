@@ -70,7 +70,53 @@
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     NSLog(@"applicationDidBecomeActive");
-        
+    
+#ifdef DEBUG
+    
+    NSString *message = @"{abcde aösl kaslufowi  asdölkf jaiopwef  asölkf apoiuf ewf}";
+    NSLog(@"message: %@", message);
+
+    NSData *messagebuffer = [message dataUsingEncoding:NSUTF8StringEncoding];
+    NSLog(@"messagebuffer: %@", messagebuffer);
+
+    YPOM *y1 = [[YPOM alloc] init];
+    [y1 createKeyPair];
+    
+    
+    YPOM *y2 = [[YPOM alloc] init];
+    [y2 createKeyPair];
+    
+    YPOM *y = [[YPOM alloc] init];
+    y.pk = y2.pk;
+    y.sk = y1.sk;
+
+    NSData *cipher = [y box:messagebuffer];
+    NSLog(@"cipher: %@", cipher);
+
+    YPOM *z = [[YPOM alloc] init];
+    z.pk = y1.pk;
+    z.sk = y2.sk;
+    z.n = y.n;
+    
+    NSData *cipherbuffer = [z boxOpen:cipher];
+    
+    NSLog(@"cipherbuffer: %@", cipherbuffer);
+
+    NSString *roundtrip;
+    
+    if (cipherbuffer) {
+        roundtrip = [YPOMAppDelegate dataToString:cipherbuffer];
+    }
+    
+    NSLog(@"roundtrip: %@", roundtrip);
+
+    if (![message isEqualToString:roundtrip]) {
+        NSLog(@"roundtrip failed");
+        abort();
+    }
+    
+#endif
+    
     self.myself = [Myself existsMyselfInManagedObjectContext:self.managedObjectContext];
     if (!self.myself) {
         YPOM *ypom = [[YPOM alloc] init];
