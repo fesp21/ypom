@@ -44,6 +44,11 @@ void randombytes(unsigned char *ptr, unsigned long long length);
     unsigned char m[LEN];
     unsigned char c[LEN];
     
+    NSLog(@"ypom p:%@", self.pk);
+    NSLog(@"ypom s:%@", self.sk);
+    NSLog(@"ypom n:%@", self.n);
+    NSLog(@"ypom m:%@", message);
+    
     for (unsigned long long i = 0; i < crypto_box_ZEROBYTES; i++) {
         m[i] = 0;
     }
@@ -53,14 +58,22 @@ void randombytes(unsigned char *ptr, unsigned long long length);
     memcpy(m + crypto_box_ZEROBYTES, message.bytes, message.length);
     crypto_box(c, m, crypto_box_ZEROBYTES + message.length, self.n.bytes, self.pk.bytes, self.sk.bytes);
     
-    return [NSData dataWithBytes:c + crypto_box_BOXZEROBYTES
-                          length:message.length + (crypto_box_ZEROBYTES - crypto_box_BOXZEROBYTES)];
+    NSData *cipher = [NSData dataWithBytes:c + crypto_box_BOXZEROBYTES
+                                    length:message.length + (crypto_box_ZEROBYTES - crypto_box_BOXZEROBYTES)];
+    NSLog(@"ypom c:%@", cipher);
+    
+    return cipher;
 }
 
 - (NSData *)boxOpen:(NSData *)cipher
 {
     unsigned char m[LEN];
     unsigned char c[LEN];
+    
+    NSLog(@"ypom p:%@", self.pk);
+    NSLog(@"ypom s:%@", self.sk);
+    NSLog(@"ypom n:%@", self.n);
+    NSLog(@"ypom c:%@", cipher);
     
     for (unsigned long long i = 0; i < crypto_box_ZEROBYTES; i++) {
         m[i] = 0;

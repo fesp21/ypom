@@ -15,12 +15,12 @@
 		842CB27B18BFEAB100804D8D /* CoreDataTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB27818BFEAB100804D8D /* CoreDataTVC.m */; };
 		842CB27C18BFEAB100804D8D /* YPOMUsersTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB27A18BFEAB100804D8D /* YPOMUsersTVC.m */; };
 		842CB28518BFFD7500804D8D /* YPOMMessagesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB28418BFFD7500804D8D /* YPOMMessagesTVC.m */; };
+		842F257018C4E5E300F3BF4A /* MQTTClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 842CB21918BFC27900804D8D /* MQTTClient.framework */; };
 		8470C49A18C2785600133A87 /* YPOMSettingsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C49918C2785600133A87 /* YPOMSettingsTVC.m */; };
 		8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */; };
 		847A52DB18C3DE45004EF999 /* isutf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A52DA18C3DE45004EF999 /* isutf8.c */; };
 		847A52E018C3DF2E004EF999 /* randombytes.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A52DD18C3DF2E004EF999 /* randombytes.c */; };
 		847A52E118C3DF2E004EF999 /* tweetnacl.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A52DE18C3DF2E004EF999 /* tweetnacl.c */; };
-		847A52E218C3DF84004EF999 /* MQTTClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 842CB21918BFC27900804D8D /* MQTTClient.framework */; };
 		847A5A4118C4B24F004EF999 /* base32.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4018C4B24F004EF999 /* base32.c */; };
 		847A5A4418C4C34F004EF999 /* Broker.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4318C4C34F004EF999 /* Broker.m */; };
 		847A5A4718C4C350004EF999 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4618C4C350004EF999 /* Message.m */; };
@@ -131,7 +131,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				847A52E218C3DF84004EF999 /* MQTTClient.framework in Frameworks */,
+				842F257018C4E5E300F3BF4A /* MQTTClient.framework in Frameworks */,
 				84C1B37718BE8AA100C77138 /* CoreGraphics.framework in Frameworks */,
 				84C1B37918BE8AA100C77138 /* UIKit.framework in Frameworks */,
 				84C1B37518BE8AA100C77138 /* Foundation.framework in Frameworks */,
