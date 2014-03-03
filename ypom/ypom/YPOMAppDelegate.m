@@ -407,8 +407,8 @@
             YPOM *ypom = [[YPOM alloc] init];
             ypom.pk = sender.pk;
             ypom.sk = receiver.sk;
-            NSData *content = nil;
             
+            NSData *content = nil;
             if (ypom.pk && ypom.sk) {
                 NSString *s = [YPOMAppDelegate dataToString:data];
                 NSArray *a = [s componentsSeparatedByString:@":"];
@@ -418,14 +418,12 @@
                 content = [ypom boxOpen:mbin];
             }
             
-            if (content) {
-                NSLog(@"boxOpen r:%@ s:%@ m:%@", [receiver base32EncodedPk], [sender base32EncodedPk], content);
-                
+            if (content) {                
                 NSError *error;
                 NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:content options:0 error:&error];
                 if (dictionary) {
                     if ([dictionary[@"_type"] isEqualToString:@"msg"]) {
-                        NSData *content = [[NSData alloc] initWithBase64EncodedString:dictionary[@"content"] options:0];
+                        NSData *content = dictionary[@"content"] ? [[NSData alloc] initWithBase64EncodedString:dictionary[@"content"] options:0] : nil;
                         NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
                         NSString *contentType = dictionary[@"content-type"];
                         [Message messageWithContent:content
@@ -472,7 +470,6 @@
                 }
                 
             } else {
-                NSLog(@"Can't boxOpen r:%@ s:%@ d:%@", [receiver base32EncodedPk], [sender base32EncodedPk], data);
                 [Message messageWithContent:[@"Can't boxOpen" dataUsingEncoding:NSUTF8StringEncoding]
                                 contentType:nil
                                   timestamp:[NSDate date]
