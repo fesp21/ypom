@@ -56,7 +56,7 @@ void randombytes(unsigned char *ptr, unsigned long long length);
     crypto_box(c, m, crypto_box_ZEROBYTES + message.length, self.n.bytes, self.pk.bytes, self.sk.bytes);
     
     NSData *cipher = [NSData dataWithBytes:c + crypto_box_BOXZEROBYTES
-                                    length:message.length + crypto_box_ZEROBYTES];
+                                    length:message.length + crypto_box_ZEROBYTES - crypto_box_BOXZEROBYTES];
     NSLog(@"ypom c:%@", cipher);
     
     return cipher;
@@ -81,7 +81,7 @@ void randombytes(unsigned char *ptr, unsigned long long length);
         return nil;
     } else {
         NSData *message = [NSData dataWithBytes:m + crypto_box_ZEROBYTES
-                                         length:cipher.length + crypto_box_BOXZEROBYTES];
+                                         length:cipher.length + crypto_box_BOXZEROBYTES - crypto_box_ZEROBYTES];
         NSLog(@"ypom m:%@", message);
 
         return message;
