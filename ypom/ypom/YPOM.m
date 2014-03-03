@@ -53,7 +53,7 @@ void randombytes(unsigned char *ptr, unsigned long long length);
         m[i] = 0;
     }
     memcpy(m + crypto_box_ZEROBYTES, message.bytes, message.length);
-    crypto_box(c, m, crypto_box_ZEROBYTES + message.length, self.n.bytes, self.pk.bytes, self.sk.bytes);
+    crypto_box(c, m, crypto_box_ZEROBYTES + message.length, self.n.bytes, self.sk.bytes, self.pk.bytes);
     
     NSData *cipher = [NSData dataWithBytes:c + crypto_box_BOXZEROBYTES
                                     length:message.length + crypto_box_ZEROBYTES - crypto_box_BOXZEROBYTES];
@@ -77,7 +77,7 @@ void randombytes(unsigned char *ptr, unsigned long long length);
     }
 
     memcpy(c + crypto_box_BOXZEROBYTES, cipher.bytes, cipher.length);
-    if (crypto_box_open(m, c, crypto_box_BOXZEROBYTES + cipher.length, self.n.bytes, self.pk.bytes, self.sk.bytes)) {
+    if (crypto_box_open(m, c, crypto_box_BOXZEROBYTES + cipher.length, self.n.bytes, self.sk.bytes, self.pk.bytes)) {
         return nil;
     } else {
         NSData *message = [NSData dataWithBytes:m + crypto_box_ZEROBYTES
