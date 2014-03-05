@@ -8,11 +8,14 @@
 
 #import "YPOMAppDelegate.h"
 #import "YPOM.h"
+#import "YPOM+Wire.h"
 #import <CoreData/CoreData.h>
 #import "User+Create.h"
 #import "Broker+Create.h"
 #import "Message+Create.h"
 #include "isutf8.h"
+#include "NSString+HexToData.h"
+#include "NSString+stringWithData.h"
 
 @interface YPOMAppDelegate ()
 @property (nonatomic) UIBackgroundTaskIdentifier bgTask;
@@ -71,14 +74,24 @@
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     NSLog(@"applicationDidBecomeActive");
     
-#ifdef DEBUG
-    
-    NSString *message = @"{abcde aösl kaslufowi  asdölkf jaiopwef  asölkf apoiuf ewf}";
-    NSLog(@"message: %@", message);
-
-    NSData *messagebuffer = [message dataUsingEncoding:NSUTF8StringEncoding];
+#undef TESTING
+#ifdef TESTING
+    // SETUP
+    NSData *messagebuffer = [@"7b2274696d657374616d70223a22313339343032373732302e363935222c22636f6e74656e74223a2259574a6a222c225f74797065223a226d7367227d" hexToData];
     NSLog(@"messagebuffer: %@", messagebuffer);
-
+    NSString *message = [NSString stringWithData:messagebuffer];
+    NSLog(@"message: %@", message);
+    
+    YPOM *z;
+    NSString *wireString;
+    NSString *roundtrip;
+    
+    // TEST 1
+    
+    z = nil;
+    wireString = nil;
+    roundtrip = nil;
+    
     YPOM *y1 = [[YPOM alloc] init];
     [y1 createKeyPair];
     
@@ -89,29 +102,76 @@
     YPOM *y = [[YPOM alloc] init];
     y.pk = y2.pk;
     y.sk = y1.sk;
-
-    NSData *cipher = [y box:messagebuffer];
-    NSLog(@"cipher: %@", cipher);
-
-    YPOM *z = [[YPOM alloc] init];
-    z.pk = y1.pk;
-    z.sk = y2.sk;
-    z.n = y.n;
+    y.message = messagebuffer;
     
-    NSData *cipherbuffer = [z boxOpen:cipher];
-    
-    NSLog(@"cipherbuffer: %@", cipherbuffer);
+    wireString = [y wireString];
+    NSLog(@"wireString: %@", wireString);
 
-    NSString *roundtrip;
-    
-    if (cipherbuffer) {
-        roundtrip = [YPOMAppDelegate dataToString:cipherbuffer];
+    z = [YPOM ypomFromWire:wireString pk:y1.pk sk:y2.sk];
+
+    // EVALUATION 1
+    NSLog(@"z.message: %@", z.message);
+    if (z.message) {
+        roundtrip = [NSString stringWithData:z.message];
     }
-    
     NSLog(@"roundtrip: %@", roundtrip);
-
     if (![message isEqualToString:roundtrip]) {
         NSLog(@"roundtrip failed");
+        abort();
+    }
+    
+    // TEST 2
+    
+    z = nil;
+    wireString = nil;
+    roundtrip = nil;
+    
+    YPOM *sender = [[YPOM alloc] init];
+    sender.pk = [@"4d3c6146625a5a4b0687522f8a792733c2184487cacc7b12d6da2de3fff5884d" hexToData];
+    sender.sk = [@"e8feff189a2af1c39781e0ec196bab6d24495d4925b79a622800bd8d1103e3f5" hexToData];
+    sender.nonce = [@"6d40886852dc0a5973c0146bf974bbee21157077bd91939d" hexToData];
+    
+    sender.message = messagebuffer;
+    
+    wireString = [sender wireString];
+    NSLog(@"wireString: %@", wireString);
+    
+    z = [YPOM ypomFromWire:wireString
+                        pk:[@"67926f909e849dee19acaefc59e4cf6b991d42090cdc157bfeac2ba43c3b050e" hexToData]
+                        sk:[@"23a308639851eb83b6ed9a0a684fb2e5220b5473e0b5220330cb99932d470527" hexToData]
+         ];
+    
+    // EVALUATION 2
+    NSLog(@"z.message: %@", z.message);
+    if (z.message) {
+        roundtrip = [NSString stringWithData:z.message];
+    }
+    NSLog(@"roundtrip: %@", roundtrip);
+    if (![message isEqualToString:roundtrip]) {
+        NSLog(@"roundtrip failed");
+        abort();
+    }
+    
+    // TEST 3
+    
+    z = nil;
+    wireString = @"aj5WGkY7uzkWu7flEeDBMs3NK+fVrJ4o:k4X56l80ES92XbAhaZBYIEA5YoUzGxoIi3a93FR6XlJPvOMN+wMa/cNXD6xoVeErWY0nc/4vS5C96nVp6XYQd6Rgcl0MvrjOviHlObs=";
+    roundtrip = nil;
+    
+    NSLog(@"wireString: %@", wireString);
+    
+    z = [YPOM ypomFromWire:wireString
+                        pk:[@"67926f909e849dee19acaefc59e4cf6b991d42090cdc157bfeac2ba43c3b050e" hexToData]
+                        sk:[@"23a308639851eb83b6ed9a0a684fb2e5220b5473e0b5220330cb99932d470527" hexToData]
+         ];
+    
+    // EVALUATION 2
+    NSLog(@"z.message: %@", z.message);
+    if (z.message) {
+        roundtrip = [NSString stringWithData:z.message];
+    }
+    NSLog(@"roundtrip: %@", roundtrip);
+    if (!roundtrip) {
         abort();
     }
     
@@ -385,7 +445,7 @@
                 [Message messageWithContent:nil
                                 contentType:nil
                                   timestamp:[NSDate dateWithTimeIntervalSince1970:FUTURE]
-                                        outgoing:YES
+                                   outgoing:YES
                                   belongsTo:user
                      inManagedObjectContext:self.managedObjectContext];
             } else {
@@ -394,91 +454,72 @@
         } else {
             NSLog(@"illegal json:%@", error);
         }
-    
+        
     }
-
+    
     if ([components count] == 3) {
         User *receiver = [User existsUserWithBase32EncodedPk:components[1]
                                       inManagedObjectContext:self.managedObjectContext];
         
         User *sender = [User existsUserWithBase32EncodedPk:components[2]
                                     inManagedObjectContext:self.managedObjectContext];
-        if (sender && receiver) {
-            YPOM *ypom = [[YPOM alloc] init];
-            ypom.pk = sender.pk;
-            ypom.sk = receiver.sk;
-            
-            NSData *content = nil;
-            if (ypom.pk && ypom.sk) {
-                NSString *s = [YPOMAppDelegate dataToString:data];
-                NSArray *a = [s componentsSeparatedByString:@":"];
-                NSData *nbin = [[NSData alloc] initWithBase64EncodedString:a[0] options:0];
-                ypom.n = nbin;
-                NSData *mbin = [[NSData alloc] initWithBase64EncodedString:a[1] options:0];
-                content = [ypom boxOpen:mbin];
-            }
-            
-            if (content) {                
-                NSError *error;
-                NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:content options:0 error:&error];
-                if (dictionary) {
-                    if ([dictionary[@"_type"] isEqualToString:@"msg"]) {
-                        NSData *content = dictionary[@"content"] ? [[NSData alloc] initWithBase64EncodedString:dictionary[@"content"] options:0] : nil;
-                        NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
-                        NSString *contentType = dictionary[@"content-type"];
-                        [Message messageWithContent:content
-                                         contentType:contentType
-                                          timestamp:timestamp
-                                           outgoing:NO
-                                          belongsTo:sender
-                             inManagedObjectContext:self.managedObjectContext];
-                        
-                        NSError *error;
-                        NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-                        
-                        jsonObject[@"_type"] = @"ack";
-                        jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
-                        
-                        NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-                        
-                        YPOM *ypom = [[YPOM alloc] init];
-                        ypom.pk = sender.pk;
-                        ypom.sk = receiver.sk;
-                        
-                        NSData *e = [ypom box:data];
-                        NSString *b64 = [e base64EncodedStringWithOptions:0];
-                        NSString *n64 = [ypom.n base64EncodedStringWithOptions:0];
-                        
-                        [self.session publishData:[[NSString stringWithFormat:@"%@:%@", n64, b64] dataUsingEncoding:NSUTF8StringEncoding]
-                                          onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
-                                                   [sender base32EncodedPk],
-                                                   [receiver base32EncodedPk]]
-                                           retain:NO
-                                              qos:2];
-                        
-                    } else if ([dictionary[@"_type"] isEqualToString:@"ack"]) {
-                        NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
-                        Message *message = [Message existsMessageWithTimestamp:timestamp
-                                                                      outgoing:YES
-                                                                     belongsTo:sender                                                        inManagedObjectContext:self.managedObjectContext];
-                        message.acknowledged = @(TRUE);
-                    } else {
-                        NSLog(@"unknown _type:%@", dictionary[@"_type"]);
-                    }
+        
+        YPOM *ypom = [YPOM ypomFromWire:[NSString stringWithData:data] pk:sender.pk sk:receiver.sk];
+        
+        if (ypom.message) {
+            NSError *error;
+            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:ypom.message options:0 error:&error];
+            if (dictionary) {
+                if ([dictionary[@"_type"] isEqualToString:@"msg"]) {
+                    NSData *content = dictionary[@"content"] ? [[NSData alloc] initWithBase64EncodedString:dictionary[@"content"] options:0] : nil;
+                    NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
+                    NSString *contentType = dictionary[@"content-type"];
+                    [Message messageWithContent:content
+                                    contentType:contentType
+                                      timestamp:timestamp
+                                       outgoing:NO
+                                      belongsTo:sender
+                         inManagedObjectContext:self.managedObjectContext];
+                    
+                    YPOM *ypom = [[YPOM alloc] init];
+                    ypom.pk = sender.pk;
+                    ypom.sk = receiver.sk;
+                    
+                    NSError *error;
+                    NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+                    
+                    jsonObject[@"_type"] = @"ack";
+                    jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
+                    
+                    ypom.message = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+                    
+                    [self.session publishData:[[ypom wireString] dataUsingEncoding:NSUTF8StringEncoding]
+                                      onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
+                                               [sender base32EncodedPk],
+                                               [receiver base32EncodedPk]]
+                                       retain:NO
+                                          qos:2];
+                    
+                } else if ([dictionary[@"_type"] isEqualToString:@"ack"]) {
+                    NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
+                    Message *message = [Message existsMessageWithTimestamp:timestamp
+                                                                  outgoing:YES
+                                                                 belongsTo:sender                                                        inManagedObjectContext:self.managedObjectContext];
+                    message.acknowledged = @(TRUE);
                 } else {
-                    NSLog(@"illegal json:%@", error);
+                    NSLog(@"unknown _type:%@", dictionary[@"_type"]);
                 }
-                
             } else {
-                [Message messageWithContent:[@"Can't boxOpen" dataUsingEncoding:NSUTF8StringEncoding]
-                                contentType:nil
-                                  timestamp:[NSDate date]
-                                    outgoing:NO
-                                  belongsTo:sender
-                     inManagedObjectContext:self.managedObjectContext];
+                NSLog(@"illegal json:%@", error);
             }
+            
         } else {
-            NSLog(@"Unknown receiver (%@ ) or sender (%@)", components[1], components[2]);
+            [Message messageWithContent:[@"Can't boxOpen" dataUsingEncoding:NSUTF8StringEncoding]
+                            contentType:nil
+                              timestamp:[NSDate date]
+                               outgoing:NO
+                              belongsTo:sender
+                 inManagedObjectContext:self.managedObjectContext];
         }
     }
     [self saveContext];
@@ -511,33 +552,6 @@
     [self.session close];
 }
 
-+ (NSString *)dataToString:(NSData *)data
-{
-    for (int i = 0; i < data.length; i++) {
-        char c;
-        [data getBytes:&c range:NSMakeRange(i, 1)];
-    }
-    
-    NSString *message = [[NSString alloc] init];
-    
-    for (int i = 0; i < data.length; i++) {
-        char c;
-        [data getBytes:&c range:NSMakeRange(i, 1)];
-        message = [message stringByAppendingFormat:@"%c", c];
-    }
-    
-    if (isutf8((unsigned char*)[data bytes], data.length) == 0) {
-        const char *cp = [message cStringUsingEncoding:NSISOLatin1StringEncoding];
-        if (cp) {
-            NSString *u = [NSString stringWithUTF8String:cp];
-            return [NSString stringWithFormat:@"%@", u];
-        } else {
-            return [NSString stringWithFormat:@"%@", [data description]];
-        }
-    }
-    return [NSString stringWithFormat:@"%@", [data description]];
-}
-
 /*
  *
  * Remote Notifications
@@ -566,5 +580,5 @@
     self.deviceToken = deviceToken;
 }
 
-
 @end
+

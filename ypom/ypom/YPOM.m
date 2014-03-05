@@ -23,7 +23,7 @@ void randombytes(unsigned char *ptr, unsigned long long length);
     
     unsigned char n[crypto_box_NONCEBYTES];
     randombytes(n, crypto_box_NONCEBYTES);
-    _n = [[NSData alloc] initWithBytes:n length:crypto_box_NONCEBYTES];
+    _nonce = [[NSData alloc] initWithBytes:n length:crypto_box_NONCEBYTES];
     
     return self;
 }
@@ -41,32 +41,9 @@ void randombytes(unsigned char *ptr, unsigned long long length);
 
 - (NSData *)box:(NSData *)message
 {
-    unsigned char m[LEN];
-    unsigned char c[LEN];
-    unsigned char p[crypto_box_PUBLICKEYBYTES];
-    unsigned char s[crypto_box_SECRETKEYBYTES];
-    unsigned char n[crypto_box_NONCEBYTES];
-    
-    NSLog(@"ypom p:%@", self.pk);
-    NSLog(@"ypom s:%@", self.sk);
-    NSLog(@"ypom n:%@", self.n);
-    NSLog(@"ypom m:%@", message);
-    
-    for (unsigned long long i = 0; i < crypto_box_ZEROBYTES; i++) {
-        m[i] = 0;
-    }
-    memcpy(m + crypto_box_ZEROBYTES, message.bytes, message.length);
-    memcpy(p, self.pk.bytes, crypto_box_PUBLICKEYBYTES);
-    memcpy(s, self.sk.bytes, crypto_box_SECRETKEYBYTES);
-    memcpy(n, self.n.bytes, crypto_box_NONCEBYTES);
-    
-    crypto_box(c, m, crypto_box_ZEROBYTES + message.length, n, p, s);
-    
-    NSData *cipher = [NSData dataWithBytes:c + crypto_box_BOXZEROBYTES
-                                    length:message.length + crypto_box_ZEROBYTES - crypto_box_BOXZEROBYTES];
-    NSLog(@"ypom c:%@", cipher);
-    
-    return cipher;
+    self.message = message;
+
+    return self.cipher;
 }
 
 - (NSData *)boxOpen:(NSData *)cipher
@@ -77,10 +54,10 @@ void randombytes(unsigned char *ptr, unsigned long long length);
     unsigned char s[crypto_box_SECRETKEYBYTES];
     unsigned char n[crypto_box_NONCEBYTES];
     
-    NSLog(@"ypom p:%@", self.pk);
-    NSLog(@"ypom s:%@", self.sk);
-    NSLog(@"ypom n:%@", self.n);
-    NSLog(@"ypom c:%@", cipher);
+    NSLog(@"ypom.pk:%@", self.pk);
+    NSLog(@"ypom.sk:%@", self.sk);
+    NSLog(@"ypom.nonce:%@", self.nonce);
+    NSLog(@"ypom.cipher:%@", cipher);
     
     for (unsigned long long i = 0; i < crypto_box_BOXZEROBYTES; i++) {
         c[i] = 0;
@@ -89,17 +66,46 @@ void randombytes(unsigned char *ptr, unsigned long long length);
     memcpy(c + crypto_box_BOXZEROBYTES, cipher.bytes, cipher.length);
     memcpy(p, self.pk.bytes, crypto_box_PUBLICKEYBYTES);
     memcpy(s, self.sk.bytes, crypto_box_SECRETKEYBYTES);
-    memcpy(n, self.n.bytes, crypto_box_NONCEBYTES);
+    memcpy(n, self.nonce.bytes, crypto_box_NONCEBYTES);
 
     if (crypto_box_open(m, c, crypto_box_BOXZEROBYTES + cipher.length, n, p, s)) {
-        return nil;
+        self.message = nil;
     } else {
-        NSData *message = [NSData dataWithBytes:m + crypto_box_ZEROBYTES
+        self.message = [NSData dataWithBytes:m + crypto_box_ZEROBYTES
                                          length:cipher.length + crypto_box_BOXZEROBYTES - crypto_box_ZEROBYTES];
-        NSLog(@"ypom m:%@", message);
-
-        return message;
+        NSLog(@"ypom.message:%@", self.message);
     }
+    return self.message;
+}
+
+- (NSData *)cipher
+{
+    unsigned char m[LEN];
+    unsigned char c[LEN];
+    unsigned char p[crypto_box_PUBLICKEYBYTES];
+    unsigned char s[crypto_box_SECRETKEYBYTES];
+    unsigned char n[crypto_box_NONCEBYTES];
+    
+    NSLog(@"ypom.p:%@", self.pk);
+    NSLog(@"ypom.s:%@", self.sk);
+    NSLog(@"ypom.nonce:%@", self.nonce);
+    NSLog(@"ypom.message:%@", self.message);
+    
+    for (unsigned long long i = 0; i < crypto_box_ZEROBYTES; i++) {
+        m[i] = 0;
+    }
+    memcpy(m + crypto_box_ZEROBYTES, self.message.bytes, self.message.length);
+    memcpy(p, self.pk.bytes, crypto_box_PUBLICKEYBYTES);
+    memcpy(s, self.sk.bytes, crypto_box_SECRETKEYBYTES);
+    memcpy(n, self.nonce.bytes, crypto_box_NONCEBYTES);
+    
+    crypto_box(c, m, crypto_box_ZEROBYTES + self.message.length, n, p, s);
+    
+    NSData *cipher = [NSData dataWithBytes:c + crypto_box_BOXZEROBYTES
+                                    length:self.message.length + crypto_box_ZEROBYTES - crypto_box_BOXZEROBYTES];
+    NSLog(@"ypom.cipher:%@", cipher);
+    
+    return cipher;
 }
 
 @end

@@ -11,7 +11,9 @@
 @interface YPOM : NSObject
 @property (strong, nonatomic) NSData *pk;
 @property (strong, nonatomic) NSData *sk;
-@property (strong, nonatomic) NSData *n;
+@property (strong, nonatomic) NSData *nonce;
+@property (strong, nonatomic) NSData *message;
+@property (readonly, nonatomic) NSData *cipher;
 
 - (void)createKeyPair;
 - (NSData *)box:(NSData *)message;

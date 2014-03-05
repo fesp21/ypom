@@ -13,6 +13,8 @@
 #import "YPOMAppDelegate.h"
 #import "YPOMNewTVCell.h"
 #import "YPOM.h"
+#import "YPOM+Wire.h"
+#import "NSString+stringWithData.h"
 
 #include "isutf8.h"
 
@@ -89,7 +91,7 @@
     Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
     if ([cell.reuseIdentifier isEqualToString:@"Message"]) {
-        cell.textLabel.text = [NSString stringWithFormat:@"%@", [YPOMMessagesTVC dataToString:message.content]];
+        cell.textLabel.text = [NSString stringWithFormat:@"%@", [NSString stringWithData:message.content]];
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",
                                      [NSDateFormatter localizedStringFromDate:message.timestamp
                                                                     dateStyle:NSDateFormatterShortStyle
@@ -126,32 +128,6 @@
 }
 
 
-+ (NSString *)dataToString:(NSData *)data
-{
-    for (int i = 0; i < data.length; i++) {
-        char c;
-        [data getBytes:&c range:NSMakeRange(i, 1)];
-    }
-    
-    NSString *message = [[NSString alloc] init];
-    
-    for (int i = 0; i < data.length; i++) {
-        char c;
-        [data getBytes:&c range:NSMakeRange(i, 1)];
-        message = [message stringByAppendingFormat:@"%c", c];
-    }
-    
-    if (isutf8((unsigned char*)[data bytes], data.length) == 0) {
-        const char *cp = [message cStringUsingEncoding:NSISOLatin1StringEncoding];
-        if (cp) {
-            NSString *u = [NSString stringWithUTF8String:cp];
-            return [NSString stringWithFormat:@"%@", u];
-        } else {
-            return [NSString stringWithFormat:@"%@", [data description]];
-        }
-    }
-    return [NSString stringWithFormat:@"%@", [data description]];
-}
 
 - (IBAction)send:(UIButton *)sender {
     UIView *view = (UIView *)sender.superview;
@@ -173,13 +149,9 @@
     jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
     jsonObject[@"content"] = [[text.text dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
     
-    NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-    NSData *e = [ypom box:data];
-    NSString *b64 = [e base64EncodedStringWithOptions:0];
-    NSString *n64 = [ypom.n base64EncodedStringWithOptions:0];
-
-    UInt16 msgId = [delegate.session publishData:[[NSString stringWithFormat:@"%@:%@", n64, b64]
-                                                  dataUsingEncoding:NSUTF8StringEncoding]
+    ypom.message = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+    
+    UInt16 msgId = [delegate.session publishData:[[ypom wireString] dataUsingEncoding:NSUTF8StringEncoding]
                                          onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
                                                   [newTVCell.message.belongsTo base32EncodedPk],
                                                   [delegate.myself.myUser base32EncodedPk]]
@@ -203,10 +175,7 @@
         message.delivered = @(TRUE);
     }
     
-    newTVCell.message.content = [[NSData alloc] init];
-    
     [delegate saveContext];
-    
 }
 
 - (IBAction)keyboardReturn:(UITextField *)sender {

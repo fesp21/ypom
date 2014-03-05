@@ -102,7 +102,7 @@ extern int crypto_core_hsalsa20_tweet(unsigned char *,const unsigned char *,cons
 #define crypto_hashblocks_VERSION crypto_hashblocks_sha512_VERSION
 #define crypto_hashblocks_sha512_tweet_STATEBYTES 64
 #define crypto_hashblocks_sha512_tweet_BLOCKBYTES 128
-extern int crypto_hashblocks_sha512_tweet(unsigned char *,const unsigned char *,unsigned long long);
+extern unsigned long long crypto_hashblocks_sha512_tweet(unsigned char *,const unsigned char *,unsigned long long);
 #define crypto_hashblocks_sha512_tweet_VERSION "-"
 #define crypto_hashblocks_sha512 crypto_hashblocks_sha512_tweet
 #define crypto_hashblocks_sha512_STATEBYTES crypto_hashblocks_sha512_tweet_STATEBYTES
@@ -111,7 +111,7 @@ extern int crypto_hashblocks_sha512_tweet(unsigned char *,const unsigned char *,
 #define crypto_hashblocks_sha512_IMPLEMENTATION "crypto_hashblocks/sha512/tweet"
 #define crypto_hashblocks_sha256_tweet_STATEBYTES 32
 #define crypto_hashblocks_sha256_tweet_BLOCKBYTES 64
-extern int crypto_hashblocks_sha256_tweet(unsigned char *,const unsigned char *,unsigned long long);
+extern unsigned long long crypto_hashblocks_sha256_tweet(unsigned char *,const unsigned char *,unsigned long long);
 #define crypto_hashblocks_sha256_tweet_VERSION "-"
 #define crypto_hashblocks_sha256 crypto_hashblocks_sha256_tweet
 #define crypto_hashblocks_sha256_STATEBYTES crypto_hashblocks_sha256_tweet_STATEBYTES

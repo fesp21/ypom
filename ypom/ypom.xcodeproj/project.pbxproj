@@ -41,6 +41,9 @@
 		84C1B3A418BE8AA100C77138 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 84C1B3A218BE8AA100C77138 /* InfoPlist.strings */; };
 		84C1B3A618BE8AA100C77138 /* ypomTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C1B3A518BE8AA100C77138 /* ypomTests.m */; };
 		84C1B3B118BE8B1300C77138 /* YPOM.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C1B3B018BE8B1300C77138 /* YPOM.m */; };
+		84CC0E8E18C7544D00D5985E /* NSString+HexToData.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CC0E8D18C7544D00D5985E /* NSString+HexToData.m */; };
+		84CC0E9418C7554D00D5985E /* NSString+stringWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CC0E9318C7554D00D5985E /* NSString+stringWithData.m */; };
+		84CC0E9718C7584F00D5985E /* YPOM+Wire.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CC0E9618C7584F00D5985E /* YPOM+Wire.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,13 +92,13 @@
 		8470C49918C2785600133A87 /* YPOMSettingsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMSettingsTVC.m; sourceTree = "<group>"; };
 		8470C4C218C2B9DE00133A87 /* YPOMNewTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMNewTVCell.h; sourceTree = "<group>"; };
 		8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMNewTVCell.m; sourceTree = "<group>"; };
-		847A52DA18C3DE45004EF999 /* isutf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = isutf8.c; sourceTree = "<group>"; };
-		847A52DC18C3DE60004EF999 /* isutf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = isutf8.h; sourceTree = "<group>"; };
+		847A52DA18C3DE45004EF999 /* isutf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = isutf8.c; path = ypom/isutf8.c; sourceTree = "<group>"; };
+		847A52DC18C3DE60004EF999 /* isutf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = isutf8.h; path = ypom/isutf8.h; sourceTree = "<group>"; };
 		847A52DD18C3DF2E004EF999 /* randombytes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = randombytes.c; sourceTree = SOURCE_ROOT; };
 		847A52DE18C3DF2E004EF999 /* tweetnacl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tweetnacl.c; sourceTree = SOURCE_ROOT; };
 		847A52DF18C3DF2E004EF999 /* tweetnacl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tweetnacl.h; sourceTree = SOURCE_ROOT; };
-		847A5A3F18C4B24F004EF999 /* base32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base32.h; sourceTree = "<group>"; };
-		847A5A4018C4B24F004EF999 /* base32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base32.c; sourceTree = "<group>"; };
+		847A5A3F18C4B24F004EF999 /* base32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = base32.h; path = ypom/base32.h; sourceTree = "<group>"; };
+		847A5A4018C4B24F004EF999 /* base32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = base32.c; path = ypom/base32.c; sourceTree = "<group>"; };
 		847A5A4218C4C34F004EF999 /* Broker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Broker.h; sourceTree = "<group>"; };
 		847A5A4318C4C34F004EF999 /* Broker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Broker.m; sourceTree = "<group>"; };
 		847A5A4518C4C350004EF999 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
@@ -124,6 +127,12 @@
 		84C1B3A518BE8AA100C77138 /* ypomTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ypomTests.m; sourceTree = "<group>"; };
 		84C1B3AF18BE8B1300C77138 /* YPOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOM.h; sourceTree = "<group>"; };
 		84C1B3B018BE8B1300C77138 /* YPOM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOM.m; sourceTree = "<group>"; };
+		84CC0E8C18C7544D00D5985E /* NSString+HexToData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+HexToData.h"; path = "ypom/NSString+HexToData.h"; sourceTree = "<group>"; };
+		84CC0E8D18C7544D00D5985E /* NSString+HexToData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+HexToData.m"; path = "ypom/NSString+HexToData.m"; sourceTree = "<group>"; };
+		84CC0E9218C7554D00D5985E /* NSString+stringWithData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+stringWithData.h"; sourceTree = "<group>"; };
+		84CC0E9318C7554D00D5985E /* NSString+stringWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+stringWithData.m"; sourceTree = "<group>"; };
+		84CC0E9518C7584F00D5985E /* YPOM+Wire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "YPOM+Wire.h"; sourceTree = "<group>"; };
+		84CC0E9618C7584F00D5985E /* YPOM+Wire.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "YPOM+Wire.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +198,17 @@
 		84C1B36818BE8AA100C77138 = {
 			isa = PBXGroup;
 			children = (
+				84CC0E9218C7554D00D5985E /* NSString+stringWithData.h */,
+				84CC0E9318C7554D00D5985E /* NSString+stringWithData.m */,
+				84CC0E8C18C7544D00D5985E /* NSString+HexToData.h */,
+				84CC0E8D18C7544D00D5985E /* NSString+HexToData.m */,
+				847A5A3F18C4B24F004EF999 /* base32.h */,
+				847A5A4018C4B24F004EF999 /* base32.c */,
+				847A52DD18C3DF2E004EF999 /* randombytes.c */,
+				847A52DE18C3DF2E004EF999 /* tweetnacl.c */,
+				847A52DF18C3DF2E004EF999 /* tweetnacl.h */,
+				847A52DA18C3DE45004EF999 /* isutf8.c */,
+				847A52DC18C3DE60004EF999 /* isutf8.h */,
 				842CB23618BFCA4800804D8D /* CoreData */,
 				84C1B37A18BE8AA100C77138 /* ypom */,
 				84C1B39F18BE8AA100C77138 /* ypomTests */,
@@ -222,17 +242,12 @@
 		84C1B37A18BE8AA100C77138 /* ypom */ = {
 			isa = PBXGroup;
 			children = (
-				847A5A3F18C4B24F004EF999 /* base32.h */,
-				847A5A4018C4B24F004EF999 /* base32.c */,
-				847A52DD18C3DF2E004EF999 /* randombytes.c */,
-				847A52DE18C3DF2E004EF999 /* tweetnacl.c */,
-				847A52DF18C3DF2E004EF999 /* tweetnacl.h */,
 				84C1B38318BE8AA100C77138 /* YPOMAppDelegate.h */,
 				84C1B38418BE8AA100C77138 /* YPOMAppDelegate.m */,
-				847A52DA18C3DE45004EF999 /* isutf8.c */,
-				847A52DC18C3DE60004EF999 /* isutf8.h */,
 				84C1B3AF18BE8B1300C77138 /* YPOM.h */,
 				84C1B3B018BE8B1300C77138 /* YPOM.m */,
+				84CC0E9518C7584F00D5985E /* YPOM+Wire.h */,
+				84CC0E9618C7584F00D5985E /* YPOM+Wire.m */,
 				84C1B38618BE8AA100C77138 /* Main_iPhone.storyboard */,
 				84C1B38918BE8AA100C77138 /* Main_iPad.storyboard */,
 				8470C4C218C2B9DE00133A87 /* YPOMNewTVCell.h */,
@@ -423,11 +438,14 @@
 				84C1B38518BE8AA100C77138 /* YPOMAppDelegate.m in Sources */,
 				847A5A4718C4C350004EF999 /* Message.m in Sources */,
 				847A5A4418C4C34F004EF999 /* Broker.m in Sources */,
+				84CC0E8E18C7544D00D5985E /* NSString+HexToData.m in Sources */,
+				84CC0E9718C7584F00D5985E /* YPOM+Wire.m in Sources */,
 				847A52E118C3DF2E004EF999 /* tweetnacl.c in Sources */,
 				847A5A4118C4B24F004EF999 /* base32.c in Sources */,
 				842CB24918BFCCC800804D8D /* YPOM.xcdatamodeld in Sources */,
 				842CB26418BFCEAE00804D8D /* Myself+Create.m in Sources */,
 				842CB26A18BFCEDC00804D8D /* Broker+Create.m in Sources */,
+				84CC0E9418C7554D00D5985E /* NSString+stringWithData.m in Sources */,
 				842CB27B18BFEAB100804D8D /* CoreDataTVC.m in Sources */,
 				842CB26D18BFCEF300804D8D /* Message+Create.m in Sources */,
 				847A52E018C3DF2E004EF999 /* randombytes.c in Sources */,
