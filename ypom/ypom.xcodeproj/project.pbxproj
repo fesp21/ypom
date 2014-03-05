@@ -19,13 +19,12 @@
 		8470C49A18C2785600133A87 /* YPOMSettingsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C49918C2785600133A87 /* YPOMSettingsTVC.m */; };
 		8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */; };
 		847A52DB18C3DE45004EF999 /* isutf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A52DA18C3DE45004EF999 /* isutf8.c */; };
-		847A52E018C3DF2E004EF999 /* randombytes.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A52DD18C3DF2E004EF999 /* randombytes.c */; };
-		847A52E118C3DF2E004EF999 /* tweetnacl.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A52DE18C3DF2E004EF999 /* tweetnacl.c */; };
 		847A5A4118C4B24F004EF999 /* base32.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4018C4B24F004EF999 /* base32.c */; };
 		847A5A4418C4C34F004EF999 /* Broker.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4318C4C34F004EF999 /* Broker.m */; };
 		847A5A4718C4C350004EF999 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4618C4C350004EF999 /* Message.m */; };
 		847A5A4A18C4C350004EF999 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4918C4C350004EF999 /* User.m */; };
 		847A5A4D18C4C350004EF999 /* Myself.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4C18C4C350004EF999 /* Myself.m */; };
+		849D452018C78A7B00201BF3 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D451F18C78A7B00201BF3 /* libsodium.a */; };
 		84C1B37518BE8AA100C77138 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37418BE8AA100C77138 /* Foundation.framework */; };
 		84C1B37718BE8AA100C77138 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37618BE8AA100C77138 /* CoreGraphics.framework */; };
 		84C1B37918BE8AA100C77138 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37818BE8AA100C77138 /* UIKit.framework */; };
@@ -94,9 +93,6 @@
 		8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMNewTVCell.m; sourceTree = "<group>"; };
 		847A52DA18C3DE45004EF999 /* isutf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = isutf8.c; path = ypom/isutf8.c; sourceTree = "<group>"; };
 		847A52DC18C3DE60004EF999 /* isutf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = isutf8.h; path = ypom/isutf8.h; sourceTree = "<group>"; };
-		847A52DD18C3DF2E004EF999 /* randombytes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = randombytes.c; sourceTree = SOURCE_ROOT; };
-		847A52DE18C3DF2E004EF999 /* tweetnacl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tweetnacl.c; sourceTree = SOURCE_ROOT; };
-		847A52DF18C3DF2E004EF999 /* tweetnacl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tweetnacl.h; sourceTree = SOURCE_ROOT; };
 		847A5A3F18C4B24F004EF999 /* base32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = base32.h; path = ypom/base32.h; sourceTree = "<group>"; };
 		847A5A4018C4B24F004EF999 /* base32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = base32.c; path = ypom/base32.c; sourceTree = "<group>"; };
 		847A5A4218C4C34F004EF999 /* Broker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Broker.h; sourceTree = "<group>"; };
@@ -107,6 +103,7 @@
 		847A5A4918C4C350004EF999 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		847A5A4B18C4C350004EF999 /* Myself.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Myself.h; sourceTree = "<group>"; };
 		847A5A4C18C4C350004EF999 /* Myself.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Myself.m; sourceTree = "<group>"; };
+		849D451F18C78A7B00201BF3 /* libsodium.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsodium.a; path = "../../libsodium-ios/libsodium_dist/lib/libsodium.a"; sourceTree = "<group>"; };
 		84C1B37118BE8AA100C77138 /* ypom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ypom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C1B37418BE8AA100C77138 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		84C1B37618BE8AA100C77138 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -140,6 +137,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				849D452018C78A7B00201BF3 /* libsodium.a in Frameworks */,
 				842F257018C4E5E300F3BF4A /* MQTTClient.framework in Frameworks */,
 				84C1B37718BE8AA100C77138 /* CoreGraphics.framework in Frameworks */,
 				84C1B37918BE8AA100C77138 /* UIKit.framework in Frameworks */,
@@ -204,9 +202,6 @@
 				84CC0E8D18C7544D00D5985E /* NSString+HexToData.m */,
 				847A5A3F18C4B24F004EF999 /* base32.h */,
 				847A5A4018C4B24F004EF999 /* base32.c */,
-				847A52DD18C3DF2E004EF999 /* randombytes.c */,
-				847A52DE18C3DF2E004EF999 /* tweetnacl.c */,
-				847A52DF18C3DF2E004EF999 /* tweetnacl.h */,
 				847A52DA18C3DE45004EF999 /* isutf8.c */,
 				847A52DC18C3DE60004EF999 /* isutf8.h */,
 				842CB23618BFCA4800804D8D /* CoreData */,
@@ -229,6 +224,7 @@
 		84C1B37318BE8AA100C77138 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				849D451F18C78A7B00201BF3 /* libsodium.a */,
 				842CB21918BFC27900804D8D /* MQTTClient.framework */,
 				842CB20F18BFC24D00804D8D /* MQTTClient.xcodeproj */,
 				84C1B37418BE8AA100C77138 /* Foundation.framework */,
@@ -440,7 +436,6 @@
 				847A5A4418C4C34F004EF999 /* Broker.m in Sources */,
 				84CC0E8E18C7544D00D5985E /* NSString+HexToData.m in Sources */,
 				84CC0E9718C7584F00D5985E /* YPOM+Wire.m in Sources */,
-				847A52E118C3DF2E004EF999 /* tweetnacl.c in Sources */,
 				847A5A4118C4B24F004EF999 /* base32.c in Sources */,
 				842CB24918BFCCC800804D8D /* YPOM.xcdatamodeld in Sources */,
 				842CB26418BFCEAE00804D8D /* Myself+Create.m in Sources */,
@@ -448,7 +443,6 @@
 				84CC0E9418C7554D00D5985E /* NSString+stringWithData.m in Sources */,
 				842CB27B18BFEAB100804D8D /* CoreDataTVC.m in Sources */,
 				842CB26D18BFCEF300804D8D /* Message+Create.m in Sources */,
-				847A52E018C3DF2E004EF999 /* randombytes.c in Sources */,
 				847A5A4D18C4C350004EF999 /* Myself.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -600,11 +594,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/ckrey/libsodium-ios/libsodium_dist/include",
 				);
 				INFOPLIST_FILE = "ypom/ypom-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/ckrey/libsodium-ios/src/libsodium/include",
+					"/Users/ckrey/libsodium-ios/libsodium_dist/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -631,11 +626,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/ckrey/libsodium-ios/libsodium_dist/include",
 				);
 				INFOPLIST_FILE = "ypom/ypom-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/ckrey/libsodium-ios/src/libsodium/include",
+					"/Users/ckrey/libsodium-ios/libsodium_dist/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

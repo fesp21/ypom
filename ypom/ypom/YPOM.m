@@ -7,7 +7,8 @@
 //
 
 #import "YPOM.h"
-#import "tweetnacl.h"
+//#import "tweetnacl.h"
+#import "sodium.h"
 
 @interface YPOM ()
 @end
