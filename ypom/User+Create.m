@@ -8,7 +8,7 @@
 
 #import "User+Create.h"
 #include "base32.h"
-#include "tweetnacl.h"
+#include "sodium.h"
 
 @implementation User (Create)
 + (User *)userWithPk:(NSData *)pk

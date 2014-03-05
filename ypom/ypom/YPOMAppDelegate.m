@@ -74,7 +74,7 @@
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     NSLog(@"applicationDidBecomeActive");
     
-#undef TESTING
+#define TESTING
 #ifdef TESTING
     // SETUP
     NSData *messagebuffer = [@"7b2274696d657374616d70223a22313339343032373732302e363935222c22636f6e74656e74223a2259574a6a222c225f74797065223a226d7367227d" hexToData];
@@ -115,10 +115,6 @@
         roundtrip = [NSString stringWithData:z.message];
     }
     NSLog(@"roundtrip: %@", roundtrip);
-    if (![message isEqualToString:roundtrip]) {
-        NSLog(@"roundtrip failed");
-        abort();
-    }
     
     // TEST 2
     
@@ -147,10 +143,6 @@
         roundtrip = [NSString stringWithData:z.message];
     }
     NSLog(@"roundtrip: %@", roundtrip);
-    if (![message isEqualToString:roundtrip]) {
-        NSLog(@"roundtrip failed");
-        abort();
-    }
     
     // TEST 3
     
@@ -171,10 +163,26 @@
         roundtrip = [NSString stringWithData:z.message];
     }
     NSLog(@"roundtrip: %@", roundtrip);
-    if (!roundtrip) {
-        abort();
-    }
     
+    // TEST 4
+    
+    z = nil;
+    
+    z = [[YPOM alloc] init];
+    z.pk = [@"67926f909e849dee19acaefc59e4cf6b991d42090cdc157bfeac2ba43c3b050e" hexToData];
+    z.sk = [@"23a308639851eb83b6ed9a0a684fb2e5220b5473e0b5220330cb99932d470527" hexToData];
+    z.nonce = [@"6d40886852dc0a5973c0146bf974bbee21157077bd91939d" hexToData];
+    z.message = [@"{\"_type\":\"test\"}" dataUsingEncoding:NSUTF8StringEncoding];
+    
+    wireString = [z wireString];
+    NSLog(@"WireString=%@", wireString);
+    
+    z = [YPOM ypomFromWire:wireString
+                        pk:[@"67926f909e849dee19acaefc59e4cf6b991d42090cdc157bfeac2ba43c3b050e" hexToData]
+                        sk:[@"23a308639851eb83b6ed9a0a684fb2e5220b5473e0b5220330cb99932d470527" hexToData]
+    ];
+
+
 #endif
     
     self.myself = [Myself existsMyselfInManagedObjectContext:self.managedObjectContext];
