@@ -594,12 +594,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"/Users/ckrey/libsodium-ios/libsodium_dist/include",
+					"~/libsodium-ios/libsodium_dist/include",
 				);
 				INFOPLIST_FILE = "ypom/ypom-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/ckrey/libsodium-ios/libsodium_dist/lib",
+					"~/libsodium-ios/libsodium_dist/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -626,12 +626,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"/Users/ckrey/libsodium-ios/libsodium_dist/include",
+					"~/libsodium-ios/libsodium_dist/include",
 				);
 				INFOPLIST_FILE = "ypom/ypom-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/ckrey/libsodium-ios/libsodium_dist/lib",
+					"~/libsodium-ios/libsodium_dist/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
