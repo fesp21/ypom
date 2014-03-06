@@ -4,7 +4,7 @@ ypom
 Your Place Or Mine - Decentral Secure Messaging
 
 ## Features
-* Messaging App using MQTT and TweetNaCl (libsodium to come)
+* Messaging App using MQTT (https://github.com/ckrey/MQTT-Client-Framework.git) and NaCL (https://github.com/drewcrawford/libsodium-ios.git)
 * Cross Platform IOS, Android, Python, ...
 * Asymmetric encryption
 
