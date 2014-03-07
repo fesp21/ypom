@@ -10,6 +10,7 @@
 #import <MQTTClient/MQTTClient.h>
 #import "Myself+Create.h"
 #import "Broker+Create.h"
+#import "User+Create.h"
 
 @interface YPOMAppDelegate : UIResponder <UIApplicationDelegate, MQTTSessionDelegate>
 
@@ -24,7 +25,8 @@
 @property (strong, nonatomic) Broker *broker;
 
 - (void)connect:(id)object;
-- (void)unsubscribe:(id)object;
+- (void)unsubscribe:(User *)user;
+- (void)subscribe:(User *)user;
 - (void)disconnect:(id)object;
 
 - (void)saveContext;

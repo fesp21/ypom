@@ -101,21 +101,6 @@
                       inManagedObjectContext:self.managedObjectContext];
     }
 
-    self.session = [[MQTTSession alloc] initWithClientId:self.myself.myUser.name
-                                                userName:[self.broker.auth boolValue] ? self.broker.user : nil
-                                                password:[self.broker.auth boolValue] ? self.broker.passwd : nil
-                                               keepAlive:60
-                                            cleanSession:NO
-                                                    will:NO
-                                               willTopic:nil
-                                                 willMsg:nil
-                                                 willQoS:0
-                                          willRetainFlag:NO
-                                           protocolLevel:3
-                                                 runLoop:[NSRunLoop currentRunLoop]
-                                                 forMode:NSRunLoopCommonModes];
-    self.session.delegate = self;
-    
     [self connect:nil];
 }
 
@@ -280,32 +265,8 @@
     
     switch (eventCode) {
         case MQTTSessionEventConnected:
-        {
-            [self.session subscribeToTopic:@"ypom/+"
-                                   atLevel:2];
-            [self.session subscribeToTopic:[NSString stringWithFormat:@"ypom/%@/+",
-                                            [self.myself.myUser base32EncodedPk]]
-                                   atLevel:2];
-
-            NSError *error;
-            NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-            jsonObject[@"_type"] = @"usr";
-            jsonObject[@"name"] = self.myself.myUser.name;
-            jsonObject[@"pk"] = [self.myself.myUser.pk base64EncodedStringWithOptions:0];
-            if (self.deviceToken) {
-                jsonObject[@"dev"] = [self.deviceToken base64EncodedStringWithOptions:0];
-            }
-            
-            NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-
-            [self.session publishData:data
-                              onTopic:[NSString stringWithFormat:@"ypom/%@",
-                                       [self.myself.myUser base32EncodedPk]]
-                               retain:YES
-                                  qos:2];
-            
+            [self subscribe:self.myself.myUser];
             break;
-        }
         default:
             break;
     }
@@ -324,13 +285,15 @@
     NSArray *components = [topic pathComponents];
     
     if ([components count] == 2) {
+        User *user = [User existsUserWithBase32EncodedPk:components[1]
+                                  inManagedObjectContext:self.managedObjectContext];
+
+        if (data.length) {
         
         NSError *error;
         NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
         if (dictionary) {
             if ([dictionary[@"_type"] isEqualToString:@"usr"]) {
-                User *user = [User existsUserWithBase32EncodedPk:components[1]
-                                          inManagedObjectContext:self.managedObjectContext];
                 if (user) {
                     user.name = dictionary[@"name"];
                 } else {
@@ -351,7 +314,11 @@
         } else {
             NSLog(@"illegal json:%@", error);
         }
-        
+        } else {
+            if (user) {
+                [self.managedObjectContext deleteObject:user];
+            }
+        }
     }
     
     if ([components count] == 3) {
@@ -433,15 +400,61 @@
 
 - (void)connect:(id)object
 {
+    self.session = [[MQTTSession alloc] initWithClientId:self.myself.myUser.name
+                                                userName:[self.broker.auth boolValue] ? self.broker.user : nil
+                                                password:[self.broker.auth boolValue] ? self.broker.passwd : nil
+                                               keepAlive:60
+                                            cleanSession:NO
+                                                    will:NO
+                                               willTopic:nil
+                                                 willMsg:nil
+                                                 willQoS:0
+                                          willRetainFlag:NO
+                                           protocolLevel:3
+                                                 runLoop:[NSRunLoop currentRunLoop]
+                                                 forMode:NSRunLoopCommonModes];
+    self.session.delegate = self;
+    
     [self.session connectToHost:self.broker.host
                            port:[self.broker.port unsignedIntValue]
                        usingSSL:[self.broker.tls boolValue]];
 }
 
-- (void)unsubscribe:(id)object
+- (void)subscribe:(User *)user
 {
-    [self.session unsubscribeTopic:@"ypom/+"];
-    [self.session unsubscribeTopic:[NSString stringWithFormat:@"ypom/%@/+", self.myself.myUser.name]];
+    [self.session subscribeToTopic:@"ypom/+"
+                           atLevel:2];
+    [self.session subscribeToTopic:[NSString stringWithFormat:@"ypom/%@/+",
+                                    [self.myself.myUser base32EncodedPk]]
+                           atLevel:2];
+    
+    NSError *error;
+    NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+    jsonObject[@"_type"] = @"usr";
+    jsonObject[@"name"] = self.myself.myUser.name;
+    jsonObject[@"pk"] = [self.myself.myUser.pk base64EncodedStringWithOptions:0];
+    if (self.deviceToken) {
+        jsonObject[@"dev"] = [self.deviceToken base64EncodedStringWithOptions:0];
+    }
+    
+    NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+    
+    [self.session publishData:data
+                      onTopic:[NSString stringWithFormat:@"ypom/%@",
+                               [self.myself.myUser base32EncodedPk]]
+                       retain:YES
+                          qos:2];
+    
+}
+
+- (void)unsubscribe:(User *)user
+{
+    [self.session publishData:[[NSData alloc] init]
+                      onTopic:[NSString stringWithFormat:@"ypom/%@",
+                               [user base32EncodedPk]]
+                       retain:YES
+                          qos:1];
+    [self.session unsubscribeTopic:[NSString stringWithFormat:@"ypom/%@/+", [user base32EncodedPk]]];
 }
 
 - (void)disconnect:(id)object

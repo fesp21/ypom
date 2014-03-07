@@ -15,7 +15,6 @@
 		842CB27B18BFEAB100804D8D /* CoreDataTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB27818BFEAB100804D8D /* CoreDataTVC.m */; };
 		842CB27C18BFEAB100804D8D /* YPOMUsersTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB27A18BFEAB100804D8D /* YPOMUsersTVC.m */; };
 		842CB28518BFFD7500804D8D /* YPOMMessagesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB28418BFFD7500804D8D /* YPOMMessagesTVC.m */; };
-		842F257018C4E5E300F3BF4A /* MQTTClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 842CB21918BFC27900804D8D /* MQTTClient.framework */; };
 		8470C49A18C2785600133A87 /* YPOMSettingsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C49918C2785600133A87 /* YPOMSettingsTVC.m */; };
 		8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */; };
 		847A52DB18C3DE45004EF999 /* isutf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A52DA18C3DE45004EF999 /* isutf8.c */; };
@@ -24,7 +23,8 @@
 		847A5A4718C4C350004EF999 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4618C4C350004EF999 /* Message.m */; };
 		847A5A4A18C4C350004EF999 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4918C4C350004EF999 /* User.m */; };
 		847A5A4D18C4C350004EF999 /* Myself.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4C18C4C350004EF999 /* Myself.m */; };
-		849D455F18C9097000201BF3 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D455D18C908A900201BF3 /* libsodium.a */; };
+		849D456618C9AC3700201BF3 /* MQTTClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D456518C9AC3700201BF3 /* MQTTClient.framework */; };
+		849D456718C9D68F00201BF3 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D455D18C908A900201BF3 /* libsodium.a */; };
 		84C1B37518BE8AA100C77138 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37418BE8AA100C77138 /* Foundation.framework */; };
 		84C1B37718BE8AA100C77138 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37618BE8AA100C77138 /* CoreGraphics.framework */; };
 		84C1B37918BE8AA100C77138 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37818BE8AA100C77138 /* UIKit.framework */; };
@@ -71,7 +71,6 @@
 
 /* Begin PBXFileReference section */
 		842CB20F18BFC24D00804D8D /* MQTTClient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MQTTClient.xcodeproj; path = "../../MQTT-Client-Framework/MQTTClient/MQTTClient.xcodeproj"; sourceTree = "<group>"; };
-		842CB21918BFC27900804D8D /* MQTTClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MQTTClient.framework; path = "../../MQTT-Client-Framework/MQTTClient/dist/MQTTClient.framework"; sourceTree = "<group>"; };
 		842CB24818BFCCC800804D8D /* YPOM.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = YPOM.xcdatamodel; sourceTree = "<group>"; };
 		842CB26218BFCEAE00804D8D /* Myself+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Myself+Create.h"; sourceTree = "<group>"; };
 		842CB26318BFCEAE00804D8D /* Myself+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Myself+Create.m"; sourceTree = "<group>"; };
@@ -156,6 +155,7 @@
 		849D455718C9088000201BF3 /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 		849D455818C9088000201BF3 /* sodium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sodium.h; sourceTree = "<group>"; };
 		849D455D18C908A900201BF3 /* libsodium.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsodium.a; sourceTree = "<group>"; };
+		849D456518C9AC3700201BF3 /* MQTTClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MQTTClient.framework; path = "../../MQTT-Client-Framework/MQTTClient/dist/MQTTClient.framework"; sourceTree = "<group>"; };
 		84C1B37118BE8AA100C77138 /* ypom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ypom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C1B37418BE8AA100C77138 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		84C1B37618BE8AA100C77138 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -189,8 +189,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				849D455F18C9097000201BF3 /* libsodium.a in Frameworks */,
-				842F257018C4E5E300F3BF4A /* MQTTClient.framework in Frameworks */,
+				849D456718C9D68F00201BF3 /* libsodium.a in Frameworks */,
+				849D456618C9AC3700201BF3 /* MQTTClient.framework in Frameworks */,
 				84C1B37718BE8AA100C77138 /* CoreGraphics.framework in Frameworks */,
 				84C1B37918BE8AA100C77138 /* UIKit.framework in Frameworks */,
 				84C1B37518BE8AA100C77138 /* Foundation.framework in Frameworks */,
@@ -345,7 +345,7 @@
 		84C1B37318BE8AA100C77138 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				842CB21918BFC27900804D8D /* MQTTClient.framework */,
+				849D456518C9AC3700201BF3 /* MQTTClient.framework */,
 				842CB20F18BFC24D00804D8D /* MQTTClient.xcodeproj */,
 				84C1B37418BE8AA100C77138 /* Foundation.framework */,
 				84C1B37618BE8AA100C77138 /* CoreGraphics.framework */,
