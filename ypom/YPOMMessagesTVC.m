@@ -19,9 +19,10 @@
 #include "isutf8.h"
 
 @interface YPOMMessagesTVC ()
+@property (weak, nonatomic) YPOMNewTVCell *selectedCellForImage;
 @end
 
-@implementation YPOMMessagesTVC
+@implementation YPOMMessagesTVC 
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -91,7 +92,12 @@
     Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
     if ([cell.reuseIdentifier isEqualToString:@"Message"]) {
-        cell.textLabel.text = [NSString stringWithFormat:@"%@", [NSString stringWithData:message.content]];
+        if (!message.contenttype || [message.contenttype isEqualToString:@"text/plain"]) {
+            cell.textLabel.text = [NSString stringWithFormat:@"%@", [NSString stringWithData:message.content]];
+        } else {
+            cell.textLabel.text = [NSString stringWithFormat:@"content-type: %@", message.contenttype];
+        
+        }
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",
                                      [NSDateFormatter localizedStringFromDate:message.timestamp
                                                                     dateStyle:NSDateFormatterShortStyle
@@ -127,6 +133,85 @@
     @"no users selected or no messages available";
 }
 
+- (IBAction)image:(UIButton *)sender {
+    UIView *view = (UIView *)sender.superview;
+    UIView *view2 = view.superview;
+    self.selectedCellForImage = (YPOMNewTVCell *)view2.superview;
+
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+    imagePicker.delegate = self;
+    
+    [self presentViewController:imagePicker animated:YES completion:^(void){
+        // returned
+    }];
+
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    NSLog(@"info: %@", info);
+
+    UIImage *image = info[UIImagePickerControllerOriginalImage];
+    UIImage *imageToSend;
+    if (image.CGImage) {
+        imageToSend = [UIImage imageWithCGImage:image.CGImage scale:0.1 orientation:UIImageOrientationUp];
+    } else if (image.CIImage) {
+        imageToSend = [UIImage imageWithCIImage:image.CIImage scale:0.1 orientation:UIImageOrientationUp];
+    } else {
+        imageToSend = image;
+    }
+    
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    YPOM *ypom = [[YPOM alloc] init];
+    ypom.pk = self.selectedCellForImage.message.belongsTo.pk;
+    ypom.sk = delegate.myself.myUser.sk;
+    
+    NSError *error;
+    NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+    NSDate *timestamp = [NSDate date];
+    jsonObject[@"_type"] = @"msg";
+    jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
+    jsonObject[@"content"] = [UIImagePNGRepresentation(imageToSend) base64EncodedStringWithOptions:0];
+    jsonObject[@"content-type"] = @"image/png";
+    
+    ypom.message = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+    
+    UInt16 msgId = [delegate.session publishData:[ypom wireData]
+                                         onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
+                                                  [self.selectedCellForImage.message.belongsTo base32EncodedPk],
+                                                  [delegate.myself.myUser base32EncodedPk]]
+                                          retain:NO
+                                             qos:2];
+    
+    Message *message = [Message messageWithContent:[[NSData alloc]
+                                                    initWithBase64EncodedString:jsonObject[@"content"]
+                                                    options:0]
+                                       contentType:jsonObject[@"content-type"]
+                                         timestamp:[NSDate dateWithTimeIntervalSince1970:
+                                                    [jsonObject[@"timestamp"] doubleValue]]
+                                          outgoing:YES
+                                         belongsTo:self.selectedCellForImage.message.belongsTo
+                            inManagedObjectContext:delegate.managedObjectContext];
+    
+    message.msgid = @(msgId);
+    if (msgId) {
+        message.delivered = @(FALSE);
+    } else {
+        message.delivered = @(TRUE);
+    }
+    
+    [delegate saveContext];
+    [self dismissViewControllerAnimated:YES completion:^(void){
+       //
+    }];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [self dismissViewControllerAnimated:YES completion:^(void){
+        //
+    }];
+}
 
 
 - (IBAction)send:(UIButton *)sender {
@@ -151,7 +236,7 @@
     
     ypom.message = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
     
-    UInt16 msgId = [delegate.session publishData:[[ypom wireString] dataUsingEncoding:NSUTF8StringEncoding]
+    UInt16 msgId = [delegate.session publishData:[ypom wireData]
                                          onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
                                                   [newTVCell.message.belongsTo base32EncodedPk],
                                                   [delegate.myself.myUser base32EncodedPk]]

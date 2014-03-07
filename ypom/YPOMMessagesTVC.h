@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "CoreDataTVC.h"
 
-@interface YPOMMessagesTVC : CoreDataTVC
+@interface YPOMMessagesTVC : CoreDataTVC <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 
 @end

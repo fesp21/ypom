@@ -13,7 +13,13 @@
 @interface YPOM ()
 @end
 
-#define LEN 512
+#define LEN 1024*1024*64
+static unsigned char m[LEN];
+static unsigned char c[LEN];
+static unsigned char p[crypto_box_PUBLICKEYBYTES];
+static unsigned char s[crypto_box_SECRETKEYBYTES];
+static unsigned char n[crypto_box_NONCEBYTES];
+
 void randombytes(unsigned char *ptr, unsigned long long length);
 
 @implementation YPOM
@@ -49,16 +55,11 @@ void randombytes(unsigned char *ptr, unsigned long long length);
 
 - (NSData *)boxOpen:(NSData *)cipher
 {
-    unsigned char m[LEN];
-    unsigned char c[LEN];
-    unsigned char p[crypto_box_PUBLICKEYBYTES];
-    unsigned char s[crypto_box_SECRETKEYBYTES];
-    unsigned char n[crypto_box_NONCEBYTES];
     
     NSLog(@"ypom.pk:%@", self.pk);
     NSLog(@"ypom.sk:%@", self.sk);
     NSLog(@"ypom.nonce:%@", self.nonce);
-    NSLog(@"ypom.cipher:%@", cipher);
+    NSLog(@"ypom.cipher:%@...", [cipher subdataWithRange:NSMakeRange(0, MIN(16, cipher.length))]);
     
     for (unsigned long long i = 0; i < crypto_box_BOXZEROBYTES; i++) {
         c[i] = 0;
@@ -74,24 +75,18 @@ void randombytes(unsigned char *ptr, unsigned long long length);
     } else {
         self.message = [NSData dataWithBytes:m + crypto_box_ZEROBYTES
                                          length:cipher.length + crypto_box_BOXZEROBYTES - crypto_box_ZEROBYTES];
-        NSLog(@"ypom.message:%@", self.message);
+        NSLog(@"ypom.message:%@...", [self.message subdataWithRange:NSMakeRange(0, MIN(16, self.message.length))]);
     }
     return self.message;
 }
 
 - (NSData *)cipher
-{
-    unsigned char m[LEN];
-    unsigned char c[LEN];
-    unsigned char p[crypto_box_PUBLICKEYBYTES];
-    unsigned char s[crypto_box_SECRETKEYBYTES];
-    unsigned char n[crypto_box_NONCEBYTES];
-    
-    NSLog(@"ypom.p:%@", self.pk);
-    NSLog(@"ypom.s:%@", self.sk);
+{    
+    NSLog(@"ypom.pk:%@", self.pk);
+    NSLog(@"ypom.sk:%@", self.sk);
     NSLog(@"ypom.nonce:%@", self.nonce);
-    NSLog(@"ypom.message:%@", self.message);
-    
+    NSLog(@"ypom.message:%@...", [self.message subdataWithRange:NSMakeRange(0, MIN(16, self.message.length))]);
+
     for (unsigned long long i = 0; i < crypto_box_ZEROBYTES; i++) {
         m[i] = 0;
     }
@@ -104,7 +99,7 @@ void randombytes(unsigned char *ptr, unsigned long long length);
     
     NSData *cipher = [NSData dataWithBytes:c + crypto_box_BOXZEROBYTES
                                     length:self.message.length + crypto_box_ZEROBYTES - crypto_box_BOXZEROBYTES];
-    NSLog(@"ypom.cipher:%@", cipher);
+    NSLog(@"ypom.cipher:%@...", [cipher subdataWithRange:NSMakeRange(0, MIN(16, cipher.length))]);
     
     return cipher;
 }

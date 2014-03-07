@@ -9,6 +9,6 @@
 #import "YPOM.h"
 
 @interface YPOM (Wire)
-+ (YPOM *)ypomFromWire:(NSString *)wireString pk:(NSData *)pk sk:(NSData *)sk;
-- (NSString *)wireString;
++ (YPOM *)ypomFromWire:(NSData *)wireData pk:(NSData *)pk sk:(NSData *)sk;
+- (NSData *)wireData;
 @end

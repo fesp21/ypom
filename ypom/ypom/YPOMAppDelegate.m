@@ -328,7 +328,7 @@
         User *sender = [User existsUserWithBase32EncodedPk:components[2]
                                     inManagedObjectContext:self.managedObjectContext];
         
-        YPOM *ypom = [YPOM ypomFromWire:[NSString stringWithData:data] pk:sender.pk sk:receiver.sk];
+        YPOM *ypom = [YPOM ypomFromWire:data pk:sender.pk sk:receiver.sk];
         
         if (ypom.message) {
             NSError *error;
@@ -357,7 +357,7 @@
                     
                     ypom.message = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
                     
-                    [self.session publishData:[[ypom wireString] dataUsingEncoding:NSUTF8StringEncoding]
+                    [self.session publishData:[ypom wireData]
                                       onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
                                                [sender base32EncodedPk],
                                                [receiver base32EncodedPk]]
