@@ -108,7 +108,7 @@
                         free(cp);
                     } else {
                         cell.textLabel.text = [NSString stringWithFormat:@"UTF-8 can't malloc %lu",
-                                               message.content.length + 1];
+                                               (unsigned long)message.content.length + 1];
                     }
                 } else {
                     cell.textLabel.text = [NSString stringWithData:message.content];
@@ -129,8 +129,12 @@
             } else {
                 cell.backgroundColor = [UIColor colorWithRed:0.75 green:0.75 blue:0.75 alpha:1.0];
             }
+            cell.indentationLevel = 5;
+            cell.indentationWidth = 10;
         } else {
             cell.backgroundColor = [UIColor colorWithRed:0.75 green:1.0 blue:0.75 alpha:1.0];
+            cell.indentationLevel = 0;
+            cell.indentationWidth = 10;
         }
         
         cell.accessoryType = [message.acknowledged boolValue] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
