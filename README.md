@@ -7,6 +7,7 @@ Your Place Or Mine - Decentral Secure Messaging
 * Messaging App using MQTT (https://github.com/ckrey/MQTT-Client-Framework.git) and NaCL (https://github.com/drewcrawford/libsodium-ios.git)
 * Cross Platform IOS, Android, Python, ...
 * Asymmetric encryption
+* Secure key import/export
 
 ## Messages
 
@@ -28,6 +29,7 @@ json: {"_type":"msg","timestamp":"<timestamp>","content":"<content-in-base64>",[
 
 timestamp: seconds since 1.1.1970 w/ milliseconds as decimals e.g. "12345678.123"
 ```
+Uses `crypto_box` and `crypto_box_open`.
 Messages are sent to the broker without the retained-flag. QOS 2 is used to ensure the broker stores the messages while the receiver is not connected.
 
 ### acknowledgement message returned from user2 to user1
@@ -36,8 +38,17 @@ topic: ypom/<user1-pk-in-base32>/<user2-pk-in-base32>
 message: <nonce-in-base64>:<json-encrypted-in-base64>
 json:{"_type":"ack","timestamp":"<timestamp>"}
 ```
-
+Uses `crypto_box` and `crypto_box_open`.
 This is sent immediately after reception of the original message.
+
+## Key import/export format
+```
+keys:<nonce-in-base64>:<json-encrypted-in-base64>
+json:{"username":"<name>","pk":"<pk-in-base64>","sk":"<sk-in-base64>"}
+```
+
+Use `crypto_stream_xor` with a user-provide passphrase to encrypt/decrypt json.
+Client provides mechanism to copy/past keys to/from email, addressbook, files...
 
 ## To be designed
 * User Setup
