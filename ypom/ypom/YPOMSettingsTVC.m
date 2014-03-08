@@ -113,27 +113,27 @@
         for (long long i = 0; i < crypto_stream_KEYBYTES; i++) {
             k[i] = (unsigned char)[self.keyprotect.text characterAtIndex:i % self.keyprotect.text.length];
         }
-        // now put the two keys in one string (already base64)
-        NSString *string = [NSString stringWithFormat:@"%@:%@",
-                            self.pk.text,
-                            self.sk.text
-                            ];
-        NSLog(@"string: %@", string);
         
-        NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+        NSError *error;
+        NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+        jsonObject[@"username"] = delegate.myself.myUser.name;
+        jsonObject[@"pk"] = [delegate.myself.myUser.pk base64EncodedStringWithOptions:0];
+        jsonObject[@"sk"] = [delegate.myself.myUser.sk base64EncodedStringWithOptions:0];
         
-        NSLog(@"data: %@", data);
+        NSData *json = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+        
+        NSLog(@"json: %@", json);
         
         unsigned char m[LEN];
         unsigned char c[LEN];
         
-        memcpy(m, data.bytes, data.length);
+        memcpy(m, json.bytes, json.length);
         
-        crypto_stream_xor(c, m, data.length, n, k);
+        crypto_stream_xor(c, m, json.length, n, k);
         
         self.importexport.text = [NSString stringWithFormat:@"%@:%@",
                                   [[NSData dataWithBytes:n length:crypto_stream_NONCEBYTES] base64EncodedStringWithOptions:0],
-                                  [[NSData dataWithBytes:c length:data.length] base64EncodedStringWithOptions:0]
+                                  [[NSData dataWithBytes:c length:json.length] base64EncodedStringWithOptions:0]
                                   ];
         NSLog(@"export: %@", self.importexport.text); } else {
             self.importexport.text = @"error: no keyprotection entered";
@@ -155,56 +155,65 @@
         // get the nonce used
         unsigned char n[crypto_stream_NONCEBYTES];
         NSData *nonce = [[NSData alloc] initWithBase64EncodedString:components[0] options:0];
-        memcpy(n, nonce.bytes, crypto_stream_NONCEBYTES);
-        // build the key as in encryption
-        unsigned char k[crypto_stream_KEYBYTES];
-        for (long long i = 0; i < crypto_stream_KEYBYTES; i++) {
-            k[i] = self.keyprotect.text.length ? (unsigned char)[self.keyprotect.text characterAtIndex:i % self.keyprotect.text.length] : 'x';
-        }
-        unsigned char m[LEN];
-        unsigned char c1[LEN];
-        unsigned char c2[LEN];
-        
-        NSData *cipher = [[NSData alloc] initWithBase64EncodedString:components[1] options:0];
-        NSLog(@"cipher: %@", cipher);
-        
-        if (cipher) {
-            memcpy(m, cipher.bytes, cipher.length);
+        if (nonce && nonce.length == crypto_stream_NONCEBYTES) {
+            memcpy(n, nonce.bytes, crypto_stream_NONCEBYTES);
+            // build the key as in encryption
+            unsigned char k[crypto_stream_KEYBYTES];
+            for (long long i = 0; i < crypto_stream_KEYBYTES; i++) {
+                k[i] = self.keyprotect.text.length ? (unsigned char)[self.keyprotect.text characterAtIndex:i % self.keyprotect.text.length] : 'x';
+            }
+            unsigned char m[LEN];
+            unsigned char c1[LEN];
+            unsigned char c2[LEN];
             
-            crypto_stream(c1, cipher.length, n, k);
-            crypto_stream_xor(c2, m, cipher.length, n, k);
+            NSData *cipher = [[NSData alloc] initWithBase64EncodedString:components[1] options:0];
+            NSLog(@"cipher: %@", cipher);
             
-            NSData *decrypted = [NSData dataWithBytes:c2 length:cipher.length];
-            NSLog(@"decrypted: %@", decrypted);
-            
-            NSString *keystring = [NSString stringWithData:decrypted];
-            NSLog(@"keystring: %@", keystring);
-            
-            NSArray *keys = [keystring componentsSeparatedByString:@":"];
-            NSLog(@"keys: %@", keys);
-            
-            if ([keys count] == 2) {
+            if (cipher) {
+                memcpy(m, cipher.bytes, cipher.length);
                 
-                YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-                NSData *pk = [[NSData alloc] initWithBase64EncodedString:keys[0] options:0];
-                NSData *sk = [[NSData alloc] initWithBase64EncodedString:keys[1] options:0];
-                if (pk && sk && [pk length] == crypto_box_PUBLICKEYBYTES && [sk length] == crypto_box_SECRETKEYBYTES) {
-                    delegate.myself.myUser.pk = [[NSData alloc] initWithBase64EncodedString:keys[0] options:0];
-                    delegate.myself.myUser.sk = [[NSData alloc] initWithBase64EncodedString:keys[1] options:0];
+                crypto_stream(c1, cipher.length, n, k);
+                crypto_stream_xor(c2, m, cipher.length, n, k);
+                
+                NSData *decrypted = [NSData dataWithBytes:c2 length:cipher.length];
+                NSLog(@"decrypted: %@", decrypted);
+                
+                NSError *error;
+                NSDictionary *jsonObject = [NSJSONSerialization JSONObjectWithData:decrypted options:0 error:&error];
+                
+                if (decrypted) {
+                    if (jsonObject) {
+                        NSString *username = jsonObject[@"username"];
+                        NSData *pk = [[NSData alloc] initWithBase64EncodedString:jsonObject[@"pk"] options:0];
+                        NSData *sk = [[NSData alloc] initWithBase64EncodedString:jsonObject[@"sk"] options:0];
+                        
+                        YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+                        if (pk && sk && pk.length == crypto_box_PUBLICKEYBYTES && sk.length == crypto_box_SECRETKEYBYTES) {
+                            delegate.myself.myUser.name = username;
+                            delegate.myself.myUser.pk = pk;
+                            delegate.myself.myUser.sk = sk;
+                        } else {
+                            self.importexport.text = @"error: invalid keys";
+                            return;
+                        }
+                    } else {
+                        self.importexport.text = @"error: invalid json";
+                        return;
+                    }
                 } else {
-                    self.importexport.text = @"error: invalid keys";
+                    self.importexport.text = @"error: invalid import/export";
                     return;
                 }
             } else {
-                self.importexport.text = @"error: no pk and sk found";
+                self.importexport.text = @"error: cipher not base64";
                 return;
             }
         } else {
-            self.importexport.text = @"error: invalid cipher";
+            self.importexport.text = @"error: invalid nonce";
             return;
         }
     } else {
-        self.importexport.text = @"error: invalid import/export";
+        self.importexport.text = @"error: no nonce:cipher";
         return;
     }
     
@@ -214,8 +223,6 @@
 - (IBAction)keypairPressed:(UIButton *)sender {
     YPOM *ypom = [[YPOM alloc] init];
     [ypom createKeyPair];
-    NSLog(@"ypom p:%@", ypom.pk);
-    NSLog(@"ypom s:%@", ypom.sk);
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
