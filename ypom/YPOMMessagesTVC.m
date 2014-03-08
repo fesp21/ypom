@@ -90,14 +90,35 @@
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    NSLog(@"received message: %@", message);
     
     if ([cell.reuseIdentifier isEqualToString:@"Message"]) {
-        if (!message.contenttype || [message.contenttype isEqualToString:@"text/plain"]) {
-            cell.textLabel.text = [NSString stringWithFormat:@"%@", [NSString stringWithData:message.content]];
+        if (!message.contenttype) {
+            cell.textLabel.text = [NSString stringWithData:message.content];
         } else {
-            cell.textLabel.text = [NSString stringWithFormat:@"content-type: %@", message.contenttype];
-        
+            NSRange range = [message.contenttype rangeOfString:@"text/plain" options:NSCaseInsensitiveSearch];
+            if (range.location != NSNotFound) {
+                NSRange range = [message.contenttype rangeOfString:@"charset:\"utf-8\"" options:NSCaseInsensitiveSearch];
+                if (range.location != NSNotFound) {
+                    char *cp = malloc(message.content.length + 1);
+                    if (cp) {
+                        [message.content getBytes:cp length:message.content.length];
+                        cp[message.content.length] = 0;
+                        cell.textLabel.text = [NSString stringWithUTF8String:cp];
+                        free(cp);
+                    } else {
+                        cell.textLabel.text = [NSString stringWithFormat:@"UTF-8 can't malloc %lu",
+                                               message.content.length + 1];
+                    }
+                } else {
+                    cell.textLabel.text = [NSString stringWithData:message.content];
+                }
+            } else {
+                cell.textLabel.text = [NSString stringWithFormat:@"content-type: %@",
+                                       message.contenttype];
+            }
         }
+        
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",
                                      [NSDateFormatter localizedStringFromDate:message.timestamp
                                                                     dateStyle:NSDateFormatterShortStyle
@@ -183,9 +204,7 @@
                                           retain:NO
                                              qos:2];
     
-    Message *message = [Message messageWithContent:[[NSData alloc]
-                                                    initWithBase64EncodedString:jsonObject[@"content"]
-                                                    options:0]
+    Message *message = [Message messageWithContent:UIImagePNGRepresentation(imageToSend)
                                        contentType:jsonObject[@"content-type"]
                                          timestamp:[NSDate dateWithTimeIntervalSince1970:
                                                     [jsonObject[@"timestamp"] doubleValue]]
@@ -233,6 +252,7 @@
     jsonObject[@"_type"] = @"msg";
     jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
     jsonObject[@"content"] = [[text.text dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
+    jsonObject[@"content-type"] = @"text/plain; charset:\"utf-8\"";
     
     ypom.message = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
     
@@ -243,22 +263,20 @@
                                           retain:NO
                                              qos:2];
     
-    Message *message = [Message messageWithContent:[[NSData alloc]
-                                                    initWithBase64EncodedString:jsonObject[@"content"]
-                                                    options:0]
-                                       contentType:nil
+    Message *message = [Message messageWithContent:[text.text dataUsingEncoding:NSUTF8StringEncoding]
+                                       contentType:jsonObject[@"content-type"]
                                          timestamp:[NSDate dateWithTimeIntervalSince1970:
                                                     [jsonObject[@"timestamp"] doubleValue]]
                                           outgoing:YES
                                          belongsTo:newTVCell.message.belongsTo
                             inManagedObjectContext:delegate.managedObjectContext];
-    
     message.msgid = @(msgId);
     if (msgId) {
         message.delivered = @(FALSE);
     } else {
         message.delivered = @(TRUE);
     }
+    NSLog(@"sent message:%@", message);
     
     [delegate saveContext];
 }
