@@ -47,4 +47,6 @@ This is sent immediately after reception of the original message.
 * Web / Backend
 * Android App
 * Video/Photo/Audio
-* Move IOS to libsodium
+
+## Killer Features
+* Group Poll
