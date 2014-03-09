@@ -15,6 +15,7 @@
 #import "YPOM.h"
 #import "YPOM+Wire.h"
 #import "NSString+stringWithData.h"
+#import "YPOMImageVC.h"
 
 #include "isutf8.h"
 
@@ -342,5 +343,23 @@
     [sender resignFirstResponder];
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([sender isKindOfClass:[UITableViewCell class]]) {
+        UITableViewCell *cell = (UITableViewCell *)sender;
+        NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+        if (indexPath) {
+            Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
+
+            if ([segue.identifier isEqualToString:@"setImageData:"]) {
+                if ([segue.destinationViewController respondsToSelector:@selector(setImageData:)]) {
+                    [segue.destinationViewController performSelector:@selector(setImageData:)
+                                                          withObject:message.content];
+                }
+            }
+        }
+    }
+
+}
 
 @end

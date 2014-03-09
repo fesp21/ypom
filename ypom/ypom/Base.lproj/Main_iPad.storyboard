@@ -412,19 +412,22 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ImageMessage" rowHeight="119" id="jgu-b1-Zvv">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ImageMessage" rowHeight="119" id="jgu-b1-Zvv">
                                 <rect key="frame" x="0.0" y="130" width="768" height="119"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="jgu-b1-Zvv" id="Pyu-gn-Tui">
-                                    <rect key="frame" x="0.0" y="0.0" width="768" height="118"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="735" height="118"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" tag="1" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oBg-I9-MLP">
-                                            <rect key="frame" x="20" y="0.0" width="728" height="118"/>
+                                            <rect key="frame" x="20" y="0.0" width="695" height="118"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         </imageView>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="Kds-TN-d2S" kind="push" identifier="setImageData:" id="QEw-OW-fza"/>
+                                </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="NewMessage" rowHeight="44" id="FXJ-sC-GhG" customClass="YPOMNewTVCell">
                                 <rect key="frame" x="0.0" y="249" width="768" height="44"/>
@@ -476,6 +479,34 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0P8-2Y-H9f" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4392" y="1935"/>
+        </scene>
+        <!--ImageVC-->
+        <scene sceneID="mts-0W-Ef1">
+            <objects>
+                <viewController id="Kds-TN-d2S" customClass="YPOMImageVC" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="4ny-rf-OBj"/>
+                        <viewControllerLayoutGuide type="bottom" id="Ljj-bm-Bax"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="mlW-ph-cYh">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ic7-cY-UaQ">
+                                <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="5PL-Ed-3b4"/>
+                    <connections>
+                        <outlet property="scrollView" destination="Ic7-cY-UaQ" id="w0Y-VK-XIt"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkS-Wk-8lb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5629" y="1423"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="GKz-nG-rgW">

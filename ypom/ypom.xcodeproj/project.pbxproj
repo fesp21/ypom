@@ -26,6 +26,7 @@
 		849D456618C9AC3700201BF3 /* MQTTClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D456518C9AC3700201BF3 /* MQTTClient.framework */; };
 		849D456718C9D68F00201BF3 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D455D18C908A900201BF3 /* libsodium.a */; };
 		849D457018CCDA2600201BF3 /* NSString+hexStringWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 849D456F18CCDA2600201BF3 /* NSString+hexStringWithData.m */; };
+		849D457718CCE6EA00201BF3 /* YPOMImageVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 849D457618CCE6EA00201BF3 /* YPOMImageVC.m */; };
 		84C1B37518BE8AA100C77138 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37418BE8AA100C77138 /* Foundation.framework */; };
 		84C1B37718BE8AA100C77138 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37618BE8AA100C77138 /* CoreGraphics.framework */; };
 		84C1B37918BE8AA100C77138 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37818BE8AA100C77138 /* UIKit.framework */; };
@@ -159,6 +160,8 @@
 		849D456518C9AC3700201BF3 /* MQTTClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MQTTClient.framework; path = "../../MQTT-Client-Framework/MQTTClient/dist/MQTTClient.framework"; sourceTree = "<group>"; };
 		849D456E18CCDA2600201BF3 /* NSString+hexStringWithData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+hexStringWithData.h"; sourceTree = "<group>"; };
 		849D456F18CCDA2600201BF3 /* NSString+hexStringWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+hexStringWithData.m"; sourceTree = "<group>"; };
+		849D457518CCE6EA00201BF3 /* YPOMImageVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMImageVC.h; sourceTree = "<group>"; };
+		849D457618CCE6EA00201BF3 /* YPOMImageVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMImageVC.m; sourceTree = "<group>"; };
 		84C1B37118BE8AA100C77138 /* ypom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ypom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C1B37418BE8AA100C77138 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		84C1B37618BE8AA100C77138 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -371,6 +374,8 @@
 				84CC0E9618C7584F00D5985E /* YPOM+Wire.m */,
 				84C1B38618BE8AA100C77138 /* Main_iPhone.storyboard */,
 				84C1B38918BE8AA100C77138 /* Main_iPad.storyboard */,
+				849D457518CCE6EA00201BF3 /* YPOMImageVC.h */,
+				849D457618CCE6EA00201BF3 /* YPOMImageVC.m */,
 				8470C4C218C2B9DE00133A87 /* YPOMNewTVCell.h */,
 				8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */,
 				8470C49818C2785600133A87 /* YPOMSettingsTVC.h */,
@@ -565,6 +570,7 @@
 				847A5A4118C4B24F004EF999 /* base32.c in Sources */,
 				842CB24918BFCCC800804D8D /* YPOM.xcdatamodeld in Sources */,
 				842CB26418BFCEAE00804D8D /* Myself+Create.m in Sources */,
+				849D457718CCE6EA00201BF3 /* YPOMImageVC.m in Sources */,
 				842CB26A18BFCEDC00804D8D /* Broker+Create.m in Sources */,
 				84CC0E9418C7554D00D5985E /* NSString+stringWithData.m in Sources */,
 				842CB27B18BFEAB100804D8D /* CoreDataTVC.m in Sources */,
