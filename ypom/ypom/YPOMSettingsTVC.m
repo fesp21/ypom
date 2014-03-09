@@ -14,7 +14,9 @@
 #import "YPOM.h"
 #include "sodium.h"
 #import "NSString+stringWithData.h"
-#define LEN 256
+#import "NSString+HexToData.h"
+#import "NSString+hexStringWithData.h"
+#define LEN 512
 
 
 @interface YPOMSettingsTVC ()
@@ -102,18 +104,7 @@
     self.user.text = delegate.broker.user;
     self.password.text = delegate.broker.passwd;
     
-    // encrypt keys
-    // setup encryption nonce from random
-    unsigned char n[crypto_stream_NONCEBYTES];
-    randombytes(n, crypto_stream_NONCEBYTES);
-    // setup key by repeating key entry
-    unsigned char k[crypto_stream_KEYBYTES];
-    
     if (self.keyprotect.text.length) {
-        for (long long i = 0; i < crypto_stream_KEYBYTES; i++) {
-            k[i] = (unsigned char)[self.keyprotect.text characterAtIndex:i % self.keyprotect.text.length];
-        }
-        
         NSError *error;
         NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
         jsonObject[@"username"] = delegate.myself.myUser.name;
@@ -127,17 +118,29 @@
         unsigned char m[LEN];
         unsigned char c[LEN];
         
-        memcpy(m, json.bytes, json.length);
+        memset(m, 0, crypto_secretbox_ZEROBYTES);
+        memcpy(m + crypto_secretbox_ZEROBYTES, json.bytes, json.length);
         
-        crypto_stream_xor(c, m, json.length, n, k);
+        unsigned char h[crypto_hash_BYTES];
+        NSData *key = [self.keyprotect.text dataUsingEncoding:NSUTF8StringEncoding];
         
-        self.importexport.text = [NSString stringWithFormat:@"%@:%@",
-                                  [[NSData dataWithBytes:n length:crypto_stream_NONCEBYTES] base64EncodedStringWithOptions:0],
-                                  [[NSData dataWithBytes:c length:json.length] base64EncodedStringWithOptions:0]
-                                  ];
-        NSLog(@"export: %@", self.importexport.text); } else {
-            self.importexport.text = @"error: no keyprotection entered";
-        }
+        crypto_hash_sha256(h, key.bytes, key.length);
+        
+        unsigned char k[crypto_secretbox_KEYBYTES];
+        memset(k, 0, crypto_secretbox_KEYBYTES);
+        memcpy(k, h, MIN(crypto_secretbox_KEYBYTES,crypto_hash_BYTES));
+        
+        unsigned char n[crypto_secretbox_NONCEBYTES];
+        randombytes(n, crypto_secretbox_NONCEBYTES);
+        
+        crypto_secretbox(c, m, crypto_secretbox_ZEROBYTES + json.length, n, k);
+        
+        NSString *nonceString = [NSString hexStringWithData:[NSData dataWithBytes:n length:crypto_secretbox_NONCEBYTES]];
+        NSString *jsonString =  [NSString hexStringWithData:[NSData dataWithBytes:c + crypto_secretbox_BOXZEROBYTES length:json.length + crypto_secretbox_ZEROBYTES - crypto_secretbox_BOXZEROBYTES]];
+        self.importexport.text = [NSString stringWithFormat:@"%@%@", nonceString, jsonString];
+    } else {
+        self.importexport.text = @"error: no keyprotection entered";
+    }
 }
 
 - (IBAction)nameChanged:(UITextField *)sender {
@@ -148,40 +151,33 @@
 
 - (IBAction)loadPressed:(UIButton *)sender {
     
-    NSArray *components = [self.importexport.text componentsSeparatedByString:@":"];
-    if ([components count] == 2) {
-        
-        // setup decryption environment
-        // get the nonce used
-        unsigned char n[crypto_stream_NONCEBYTES];
-        NSData *nonce = [[NSData alloc] initWithBase64EncodedString:components[0] options:0];
-        if (nonce && nonce.length == crypto_stream_NONCEBYTES) {
-            memcpy(n, nonce.bytes, crypto_stream_NONCEBYTES);
-            // build the key as in encryption
-            unsigned char k[crypto_stream_KEYBYTES];
-            for (long long i = 0; i < crypto_stream_KEYBYTES; i++) {
-                k[i] = self.keyprotect.text.length ? (unsigned char)[self.keyprotect.text characterAtIndex:i % self.keyprotect.text.length] : 'x';
-            }
+    unsigned char h[crypto_hash_BYTES];
+    NSData *key = [self.keyprotect.text dataUsingEncoding:NSUTF8StringEncoding];
+    crypto_hash_sha256(h, key.bytes, key.length);
+
+    unsigned char k[crypto_secretbox_KEYBYTES];
+    memset(k, 0, crypto_secretbox_KEYBYTES);
+    memcpy(k, h, MIN(crypto_secretbox_KEYBYTES,crypto_hash_BYTES));
+    
+    NSData *data = [self.importexport.text hexToData];
+    if (data) {
+        if (data.length > crypto_secretbox_NONCEBYTES) {
+            unsigned char n[crypto_secretbox_NONCEBYTES];
+            memcpy(n, data.bytes, crypto_secretbox_NONCEBYTES);
+            
             unsigned char m[LEN];
-            unsigned char c1[LEN];
-            unsigned char c2[LEN];
+            unsigned char c[LEN];
             
-            NSData *cipher = [[NSData alloc] initWithBase64EncodedString:components[1] options:0];
-            NSLog(@"cipher: %@", cipher);
+            memset(c, 0, crypto_secretbox_BOXZEROBYTES);
+            memcpy(c + crypto_secretbox_BOXZEROBYTES, data.bytes + crypto_secretbox_NONCEBYTES, data.length - crypto_secretbox_NONCEBYTES);
             
-            if (cipher) {
-                memcpy(m, cipher.bytes, cipher.length);
-                
-                crypto_stream(c1, cipher.length, n, k);
-                crypto_stream_xor(c2, m, cipher.length, n, k);
-                
-                NSData *decrypted = [NSData dataWithBytes:c2 length:cipher.length];
-                NSLog(@"decrypted: %@", decrypted);
-                
-                NSError *error;
-                NSDictionary *jsonObject = [NSJSONSerialization JSONObjectWithData:decrypted options:0 error:&error];
+            if (!crypto_secretbox_open(m, c, crypto_secretbox_BOXZEROBYTES + data.length - crypto_secretbox_NONCEBYTES, n, k)) {
+                NSData *decrypted = [NSData dataWithBytes:m + crypto_secretbox_ZEROBYTES length:data.length - crypto_secretbox_BOXZEROBYTES - crypto_secretbox_NONCEBYTES];
                 
                 if (decrypted) {
+                    NSError *error;
+                    NSDictionary *jsonObject = [NSJSONSerialization JSONObjectWithData:decrypted options:0 error:&error];
+                    
                     if (jsonObject) {
                         NSString *username = jsonObject[@"username"];
                         NSData *pk = [[NSData alloc] initWithBase64EncodedString:jsonObject[@"pk"] options:0];
@@ -201,11 +197,11 @@
                         return;
                     }
                 } else {
-                    self.importexport.text = @"error: invalid import/export";
+                    self.importexport.text = @"error: not decrypted";
                     return;
                 }
             } else {
-                self.importexport.text = @"error: cipher not base64";
+                self.importexport.text = @"error: secretbox_open failed";
                 return;
             }
         } else {
@@ -213,7 +209,7 @@
             return;
         }
     } else {
-        self.importexport.text = @"error: no nonce:cipher";
+        self.importexport.text = @"error: not base 64";
         return;
     }
     

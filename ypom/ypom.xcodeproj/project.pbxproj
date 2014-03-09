@@ -25,6 +25,7 @@
 		847A5A4D18C4C350004EF999 /* Myself.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4C18C4C350004EF999 /* Myself.m */; };
 		849D456618C9AC3700201BF3 /* MQTTClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D456518C9AC3700201BF3 /* MQTTClient.framework */; };
 		849D456718C9D68F00201BF3 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D455D18C908A900201BF3 /* libsodium.a */; };
+		849D457018CCDA2600201BF3 /* NSString+hexStringWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 849D456F18CCDA2600201BF3 /* NSString+hexStringWithData.m */; };
 		84C1B37518BE8AA100C77138 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37418BE8AA100C77138 /* Foundation.framework */; };
 		84C1B37718BE8AA100C77138 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37618BE8AA100C77138 /* CoreGraphics.framework */; };
 		84C1B37918BE8AA100C77138 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37818BE8AA100C77138 /* UIKit.framework */; };
@@ -156,6 +157,8 @@
 		849D455818C9088000201BF3 /* sodium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sodium.h; sourceTree = "<group>"; };
 		849D455D18C908A900201BF3 /* libsodium.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsodium.a; sourceTree = "<group>"; };
 		849D456518C9AC3700201BF3 /* MQTTClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MQTTClient.framework; path = "../../MQTT-Client-Framework/MQTTClient/dist/MQTTClient.framework"; sourceTree = "<group>"; };
+		849D456E18CCDA2600201BF3 /* NSString+hexStringWithData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+hexStringWithData.h"; sourceTree = "<group>"; };
+		849D456F18CCDA2600201BF3 /* NSString+hexStringWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+hexStringWithData.m"; sourceTree = "<group>"; };
 		84C1B37118BE8AA100C77138 /* ypom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ypom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C1B37418BE8AA100C77138 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		84C1B37618BE8AA100C77138 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -321,6 +324,8 @@
 				84CC0E9318C7554D00D5985E /* NSString+stringWithData.m */,
 				84CC0E8C18C7544D00D5985E /* NSString+HexToData.h */,
 				84CC0E8D18C7544D00D5985E /* NSString+HexToData.m */,
+				849D456E18CCDA2600201BF3 /* NSString+hexStringWithData.h */,
+				849D456F18CCDA2600201BF3 /* NSString+hexStringWithData.m */,
 				847A5A3F18C4B24F004EF999 /* base32.h */,
 				847A5A4018C4B24F004EF999 /* base32.c */,
 				847A52DA18C3DE45004EF999 /* isutf8.c */,
@@ -554,6 +559,7 @@
 				84C1B38518BE8AA100C77138 /* YPOMAppDelegate.m in Sources */,
 				847A5A4718C4C350004EF999 /* Message.m in Sources */,
 				847A5A4418C4C34F004EF999 /* Broker.m in Sources */,
+				849D457018CCDA2600201BF3 /* NSString+hexStringWithData.m in Sources */,
 				84CC0E8E18C7544D00D5985E /* NSString+HexToData.m in Sources */,
 				84CC0E9718C7584F00D5985E /* YPOM+Wire.m in Sources */,
 				847A5A4118C4B24F004EF999 /* base32.c in Sources */,
