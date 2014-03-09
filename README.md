@@ -8,6 +8,7 @@ Your Place Or Mine - Decentral Secure Messaging
 * Cross Platform IOS, Android, Python, ...
 * Asymmetric encryption
 * Secure key import/export
+* Image send/receive/view
 
 ## Messages
 
@@ -57,7 +58,10 @@ Client provides mechanism to copy/past keys to/from email, addressbook, files...
 ## Todo
 * Web / Backend
 * Android App
-* Video/Photo/Audio
+* Video/Audio
 
 ## Killer Features
-* Group Poll
+* Group Poll 
+* Show online state of friends / group members
+* search and send images directly from the web? (telegram)
+* background image
