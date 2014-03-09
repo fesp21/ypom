@@ -30,6 +30,15 @@
     [self.tableView reloadData];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    
+    self.title = [NSString stringWithFormat:@"YPOM - %@", delegate.myself.myUser.name];
+}
+
 #pragma mark - Fetched results controller
 
 - (NSFetchedResultsController *)setupFRC
@@ -81,7 +90,12 @@
     if ([message.timestamp timeIntervalSince1970] == FUTURE) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"NewMessage" forIndexPath:indexPath];
     } else {
-        cell = [tableView dequeueReusableCellWithIdentifier:@"Message" forIndexPath:indexPath];
+        NSRange range = [message.contenttype rangeOfString:@"image" options:NSCaseInsensitiveSearch];
+        if (range.location != NSNotFound) {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"ImageMessage" forIndexPath:indexPath];
+        } else {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"Message" forIndexPath:indexPath];
+        }
     }
     [self configureCell:cell atIndexPath:indexPath];
     return cell;
@@ -89,63 +103,102 @@
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    NSLog(@"received message: %@", message);
-    
-    if ([cell.reuseIdentifier isEqualToString:@"Message"]) {
-        if (!message.contenttype) {
-            cell.textLabel.text = [NSString stringWithData:message.content];
+    if ([cell.reuseIdentifier isEqualToString:@"NewMessage"]) {
+        [self configureNewMessageCell:cell atIndexPath:indexPath];
+    } else {
+        if ([cell.reuseIdentifier isEqualToString:@"ImageMessage"]) {
+            [self configureImageCell:cell atIndexPath:indexPath];
         } else {
-            NSRange range = [message.contenttype rangeOfString:@"text/plain" options:NSCaseInsensitiveSearch];
+            [self configureMessageCell:cell atIndexPath:indexPath];
+        }
+    }
+}
+
+- (void)configureMessageCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    if (!message.contenttype) {
+        cell.textLabel.text = [NSString stringWithData:message.content];
+    } else {
+        NSRange range = [message.contenttype rangeOfString:@"text/plain" options:NSCaseInsensitiveSearch];
+        if (range.location != NSNotFound) {
+            NSRange range = [message.contenttype rangeOfString:@"charset:\"utf-8\"" options:NSCaseInsensitiveSearch];
             if (range.location != NSNotFound) {
-                NSRange range = [message.contenttype rangeOfString:@"charset:\"utf-8\"" options:NSCaseInsensitiveSearch];
-                if (range.location != NSNotFound) {
-                    char *cp = malloc(message.content.length + 1);
-                    if (cp) {
-                        [message.content getBytes:cp length:message.content.length];
-                        cp[message.content.length] = 0;
-                        cell.textLabel.text = [NSString stringWithUTF8String:cp];
-                        free(cp);
-                    } else {
-                        cell.textLabel.text = [NSString stringWithFormat:@"UTF-8 can't malloc %lu",
-                                               (unsigned long)message.content.length + 1];
-                    }
+                char *cp = malloc(message.content.length + 1);
+                if (cp) {
+                    [message.content getBytes:cp length:message.content.length];
+                    cp[message.content.length] = 0;
+                    cell.textLabel.text = [NSString stringWithUTF8String:cp];
+                    free(cp);
                 } else {
-                    cell.textLabel.text = [NSString stringWithData:message.content];
+                    cell.textLabel.text = [NSString stringWithFormat:@"UTF-8 can't malloc %lu",
+                                           (unsigned long)message.content.length + 1];
                 }
             } else {
-                cell.textLabel.text = [NSString stringWithFormat:@"content-type: %@",
-                                       message.contenttype];
+                cell.textLabel.text = [NSString stringWithData:message.content];
             }
-        }
-        
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",
-                                     [NSDateFormatter localizedStringFromDate:message.timestamp
-                                                                    dateStyle:NSDateFormatterShortStyle
-                                                                    timeStyle:NSDateFormatterMediumStyle]];
-        if ([message.outgoing boolValue]) {
-            if ([message.delivered boolValue]) {
-                cell.backgroundColor = [UIColor colorWithRed:0.75 green:0.75 blue:1.0 alpha:1.0];
-            } else {
-                cell.backgroundColor = [UIColor colorWithRed:0.75 green:0.75 blue:0.75 alpha:1.0];
-            }
-            cell.indentationLevel = 5;
-            cell.indentationWidth = 10;
         } else {
-            cell.backgroundColor = [UIColor colorWithRed:0.75 green:1.0 blue:0.75 alpha:1.0];
-            cell.indentationLevel = 0;
-            cell.indentationWidth = 10;
+            cell.textLabel.text = [NSString stringWithFormat:@"content-type: %@",
+                                   message.contenttype];
         }
-        
-        cell.accessoryType = [message.acknowledged boolValue] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    }
+    
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",
+                                 [NSDateFormatter localizedStringFromDate:message.timestamp
+                                                                dateStyle:NSDateFormatterShortStyle
+                                                                timeStyle:NSDateFormatterMediumStyle]];
+    [self colorCell:cell outgoing:[message.outgoing boolValue] acknowledged:[message.acknowledged boolValue] delivered:[message.delivered boolValue]];
+}
+
+- (void)configureImageCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    UIImageView *imageView = (UIImageView *)[cell viewWithTag:1];
+    UIImage *image = [UIImage imageWithData:message.content];
+    
+    double viewWidth = imageView.frame.size.width;
+    double imageWidth = image.size.width;
+    double widthScale = viewWidth / imageWidth;
+    
+    double viewHeight = imageView.frame.size.width;
+    double imageHeight = image.size.width;
+    double heightScale = viewHeight / imageHeight;
+    
+    imageView.image = [UIImage imageWithData:message.content scale:MIN(widthScale, heightScale)];
+    [imageView sizeToFit];
+
+    [self colorCell:cell outgoing:[message.outgoing boolValue] acknowledged:[message.acknowledged boolValue] delivered:[message.delivered boolValue]];
+    [cell sizeToFit];
+}
+
+- (void)colorCell:(UITableViewCell *)cell outgoing:(BOOL)outgoing acknowledged:(BOOL)acknowledged delivered:(BOOL)delivered
+{
+    if (outgoing) {
+        if (delivered) {
+            cell.backgroundColor = [UIColor colorWithRed:0.75 green:0.75 blue:1.0 alpha:1.0];
+        } else {
+            cell.backgroundColor = [UIColor colorWithRed:0.75 green:0.75 blue:0.75 alpha:1.0];
+        }
     } else {
-        UITextField *text = (UITextField *)[cell viewWithTag:1];
-        text.text = @"";
-        
-        if ([cell respondsToSelector:@selector(setMessage:)]) {
-            [cell performSelector:@selector(setMessage:) withObject:message];
-        }
-     }
+        cell.backgroundColor = [UIColor colorWithRed:0.75 green:1.0 blue:0.75 alpha:1.0];
+    }
+    
+    cell.accessoryType = acknowledged ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+}
+
+
+- (void)configureNewMessageCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    UITextField *text = (UITextField *)[cell viewWithTag:1];
+    text.text = @"";
+    
+    if ([cell respondsToSelector:@selector(setMessage:)]) {
+        [cell performSelector:@selector(setMessage:) withObject:message];
+    }
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -179,9 +232,9 @@
     UIImage *image = info[UIImagePickerControllerOriginalImage];
     UIImage *imageToSend;
     if (image.CGImage) {
-        imageToSend = [UIImage imageWithCGImage:image.CGImage scale:0.1 orientation:UIImageOrientationUp];
+        imageToSend = [UIImage imageWithCGImage:image.CGImage];
     } else if (image.CIImage) {
-        imageToSend = [UIImage imageWithCIImage:image.CIImage scale:0.1 orientation:UIImageOrientationUp];
+        imageToSend = [UIImage imageWithCIImage:image.CIImage];
     } else {
         imageToSend = image;
     }

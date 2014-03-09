@@ -280,7 +280,9 @@
           retained:(BOOL)retained
                mid:(unsigned int)mid
 {
-    NSLog(@"newMessage: %@ on %@", data, topic);
+    NSLog(@"newMessage: %@... on %@",
+          [data subdataWithRange:NSMakeRange(0, MIN(16, data.length))],
+          topic);
     
     NSArray *components = [topic pathComponents];
     
