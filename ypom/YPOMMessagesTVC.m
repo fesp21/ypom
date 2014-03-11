@@ -19,7 +19,7 @@
 
 #include "isutf8.h"
 
-@interface YPOMMessagesTVC ()
+@interface YPOMMessagesTVC () <YPOMdelegate>
 @property (weak, nonatomic) YPOMNewTVCell *selectedCellForImage;
 @end
 
@@ -34,8 +34,34 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-        
-    self.title = [NSString stringWithFormat:@"YPOM - %@", self.user.name];
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    delegate.listener = self;
+    
+    self.title = self.user.name;
+    
+    [self lineState];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    delegate.listener = nil;
+}
+
+- (void)lineState
+{
+    self.navigationController.navigationBar.titleTextAttributes =
+    @{NSForegroundColorAttributeName: [UIColor grayColor]};
+    if (self.user.online) {
+        if ([self.user.online boolValue]) {
+            self.navigationController.navigationBar.titleTextAttributes =
+            @{NSForegroundColorAttributeName: [UIColor greenColor]};
+        } else {
+            self.navigationController.navigationBar.titleTextAttributes =
+            @{NSForegroundColorAttributeName: [UIColor redColor]};
+        }
+    }
 }
 
 #pragma mark - Fetched results controller
@@ -197,16 +223,6 @@
     if ([cell respondsToSelector:@selector(setMessage:)]) {
         [cell performSelector:@selector(setMessage:) withObject:message];
     }
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    id<NSFetchedResultsSectionInfo> info = [self.fetchedResultsController sections][section];
-    
-    Message *message = [[info objects] firstObject];
-    
-    return message ? [NSString stringWithFormat:@"%@ (%@)", message.belongsTo.name, [message.belongsTo base32EncodedPk]] :
-    @"no users selected or no messages available";
 }
 
 - (IBAction)image:(UIButton *)sender {

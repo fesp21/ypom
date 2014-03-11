@@ -12,7 +12,15 @@
 #import "Broker+Create.h"
 #import "User+Create.h"
 
+@protocol YPOMdelegate <NSObject>
+
+- (void)lineState;
+
+@end
+
 @interface YPOMAppDelegate : UIResponder <UIApplicationDelegate, MQTTSessionDelegate>
+
+@property (weak, nonatomic) id<YPOMdelegate> listener;
 
 @property (strong, nonatomic) UIWindow *window;
 
@@ -21,6 +29,7 @@
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
 @property (strong, nonatomic) MQTTSession *session;
+@property (nonatomic) int state;
 @property (strong, nonatomic) Myself *myself;
 @property (strong, nonatomic) Broker *broker;
 

@@ -36,7 +36,7 @@
                 self.imageView.image = image;
                 self.imageView.frame = CGRectMake(0, 0, image.size.width, image.size.height);
                 
-                self.scrollView.zoomScale = MAX(self.scrollView.bounds.size.width/
+                self.scrollView.zoomScale = MIN(self.scrollView.bounds.size.width/
                                                 self.imageView.image.size.width,
                                                 self.scrollView.bounds.size.height/
                                                 self.imageView.image.size.height);
@@ -69,7 +69,7 @@
 
 - (void)viewDidLayoutSubviews
 {
-    self.scrollView.zoomScale = MAX(self.scrollView.bounds.size.width/
+    self.scrollView.zoomScale = MIN(self.scrollView.bounds.size.width/
                                     self.imageView.image.size.width,
                                     self.scrollView.bounds.size.height/
                                     self.imageView.image.size.height);

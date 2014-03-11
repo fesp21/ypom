@@ -13,7 +13,7 @@
 #import "YPOMAppDelegate.h"
 #import "YPOM.h"
 
-@interface YPOMUsersTVC ()
+@interface YPOMUsersTVC () <YPOMdelegate>
 @end
 
 @implementation YPOMUsersTVC
@@ -23,7 +23,36 @@
     [super viewDidAppear:animated];
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    self.title = [NSString stringWithFormat:@"YPOM - %@", delegate.myself.myUser.name];
+    delegate.listener = self;
+
+    self.title = [NSString stringWithFormat:@"YPOM-%@-%@", delegate.myself.myUser.name, delegate.broker.host];
+    [self lineState];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    delegate.listener = nil;
+}
+
+- (void)lineState
+{
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    switch (delegate.state) {
+        case 1:
+            self.navigationController.navigationBar.titleTextAttributes =
+            @{NSForegroundColorAttributeName: [UIColor greenColor]};
+            break;
+        case -1:
+            self.navigationController.navigationBar.titleTextAttributes =
+            @{NSForegroundColorAttributeName: [UIColor redColor]};
+            break;
+        default:
+            self.navigationController.navigationBar.titleTextAttributes =
+            @{NSForegroundColorAttributeName: [UIColor yellowColor]};
+            break;
+    }
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

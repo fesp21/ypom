@@ -23,7 +23,7 @@
             </objects>
             <point key="canvasLocation" x="132" y="180"/>
         </scene>
-        <!--MessagesTVC - Messages-->
+        <!--MessagesTVC - User-->
         <scene sceneID="2fw-6B-c2W">
             <objects>
                 <tableViewController id="LJz-yo-Ved" customClass="YPOMMessagesTVC" sceneMemberID="viewController">
@@ -118,7 +118,7 @@
                             <outlet property="delegate" destination="LJz-yo-Ved" id="Q89-Xf-sfY"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Messages" id="Bmb-Z8-A1U"/>
+                    <navigationItem key="navigationItem" title="User" id="Bmb-Z8-A1U"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="27l-T7-9WV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -136,12 +136,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YUw-wQ-w9i">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YUw-wQ-w9i">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="YUw-wQ-w9i" firstAttribute="top" secondItem="G2j-SM-Sxn" secondAttribute="top" id="3Lo-O3-1ET"/>
+                            <constraint firstAttribute="bottom" secondItem="YUw-wQ-w9i" secondAttribute="bottom" id="DC9-Pb-2if"/>
+                            <constraint firstAttribute="trailing" secondItem="YUw-wQ-w9i" secondAttribute="trailing" id="I5U-Ie-8sz"/>
+                            <constraint firstItem="YUw-wQ-w9i" firstAttribute="leading" secondItem="G2j-SM-Sxn" secondAttribute="leading" id="cY9-sD-Hbn"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="fmn-mD-37b"/>
                     <connections>
@@ -431,7 +437,13 @@
                             <outlet property="delegate" destination="ib0-nQ-qfr" id="zxP-d5-xPw"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Settings" id="za8-jc-nTD"/>
+                    <navigationItem key="navigationItem" title="Settings" id="za8-jc-nTD">
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="IwW-L3-JFn">
+                            <connections>
+                                <action selector="refresh:" destination="ib0-nQ-qfr" id="skv-Ht-h5s"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="auth" destination="7LA-sq-a61" id="gTU-e5-fEA"/>
                         <outlet property="host" destination="OKP-q0-xvM" id="C1t-cQ-4CN"/>

@@ -266,9 +266,16 @@
     switch (eventCode) {
         case MQTTSessionEventConnected:
             [self subscribe:self.myself.myUser];
+            self.state = 1;
             break;
+        case MQTTSessionEventConnectionError:
+            self.state = -1;
         default:
+            self.state = 0;
             break;
+    }
+    if (self.listener) {
+        [self.listener lineState];
     }
 }
 
@@ -291,34 +298,35 @@
                                   inManagedObjectContext:self.managedObjectContext];
 
         if (data.length) {
-        
-        NSError *error;
-        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-        if (dictionary) {
-            if ([dictionary[@"_type"] isEqualToString:@"usr"]) {
-                if (user) {
-                    user.name = dictionary[@"name"];
+            NSError *error;
+            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+            if (dictionary) {
+                if ([dictionary[@"_type"] isEqualToString:@"usr"]) {
+                    if (user) {
+                        user.name = dictionary[@"name"];
+                    } else {
+                        user = [User userWithBase32EncodedPk:components[1]
+                                                        name:dictionary[@"name"]
+                                      inManagedObjectContext:self.managedObjectContext];
+                    }
+                    
+                    [Message messageWithContent:nil
+                                    contentType:nil
+                                      timestamp:[NSDate dateWithTimeIntervalSince1970:FUTURE]
+                                       outgoing:YES
+                                      belongsTo:user
+                         inManagedObjectContext:self.managedObjectContext];
                 } else {
-                    user = [User userWithBase32EncodedPk:components[1]
-                                                    name:dictionary[@"name"]
-                                  inManagedObjectContext:self.managedObjectContext];
+                    NSLog(@"unknown _type:%@", dictionary[@"_type"]);
                 }
-                
-                [Message messageWithContent:nil
-                                contentType:nil
-                                  timestamp:[NSDate dateWithTimeIntervalSince1970:FUTURE]
-                                   outgoing:YES
-                                  belongsTo:user
-                     inManagedObjectContext:self.managedObjectContext];
             } else {
-                NSLog(@"unknown _type:%@", dictionary[@"_type"]);
+                NSLog(@"illegal json:%@", error);
             }
         } else {
-            NSLog(@"illegal json:%@", error);
-        }
-        } else {
             if (user) {
-                [self.managedObjectContext deleteObject:user];
+                if ([user compare:self.myself.myUser] != NSOrderedSame) {
+                    [self.managedObjectContext deleteObject:user];
+                }
             }
         }
     }
@@ -397,9 +405,12 @@
                      inManagedObjectContext:self.managedObjectContext];
             }
         }
-             }
-             [self saveContext];
-             }
+    }
+    if (self.listener) {
+        [self.listener lineState];
+    }
+    [self saveContext];
+}
 
 - (void)messageDelivered:(MQTTSession *)session msgID:(UInt16)msgID
 {
@@ -407,6 +418,18 @@
     Message *message = [Message existsMessageWithMsgId:msgID inManagedObjectContext:self.managedObjectContext];
     if (message) {
         message.delivered = @(TRUE);
+    }
+}
+
+- (void)buffered:(MQTTSession *)session queued:(NSUInteger)queued flowingIn:(NSUInteger)flowingIn flowingOut:(NSUInteger)flowingOut
+{
+#ifdef DEBUG
+    NSLog(@"Connection buffered q%lu i%lu o%lu", (unsigned long)queued, (unsigned long)flowingIn, (unsigned long)flowingOut);
+#endif
+    if (queued + flowingIn + flowingOut) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = TRUE;
+    } else {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = FALSE;
     }
 }
 
@@ -421,7 +444,7 @@
                                                willTopic:[NSString stringWithFormat:@"ypom/%@/online",
                                                           [self.myself.myUser base32EncodedPk]]
                                                  willMsg:[[NSData alloc] init]
-                                                 willQoS:1
+                                                 willQoS:2
                                           willRetainFlag:YES
                                            protocolLevel:3
                                                  runLoop:[NSRunLoop currentRunLoop]
@@ -435,25 +458,16 @@
 
 - (void)subscribe:(User *)user
 {
-    [self.session subscribeToTopic:@"ypom/+"
+    [self.session subscribeToTopic:@"ypom/+" atLevel:2];
+    [self.session subscribeToTopic:@"ypom/+/online" atLevel:1];
+    [self.session subscribeToTopic:[NSString stringWithFormat:@"ypom/%@/+", [user base32EncodedPk]]
                            atLevel:2];
-    [self.session subscribeToTopic:@"ypom/+/online"
-                           atLevel:1];
-    [self.session subscribeToTopic:[NSString stringWithFormat:@"ypom/%@/+",
-                                    [self.myself.myUser base32EncodedPk]]
-                           atLevel:2];
-    
-    [self.session publishData:[@"1" dataUsingEncoding:NSUTF8StringEncoding]
-                      onTopic:[NSString stringWithFormat:@"ypom/%@/online",
-                               [self.myself.myUser base32EncodedPk]]
-                       retain:YES
-                          qos:1];
     
     NSError *error;
     NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
     jsonObject[@"_type"] = @"usr";
-    jsonObject[@"name"] = self.myself.myUser.name;
-    jsonObject[@"pk"] = [self.myself.myUser.pk base64EncodedStringWithOptions:0];
+    jsonObject[@"name"] = user.name;
+    jsonObject[@"pk"] = [user.pk base64EncodedStringWithOptions:0];
     if (self.deviceToken) {
         jsonObject[@"dev"] = [self.deviceToken base64EncodedStringWithOptions:0];
     }
@@ -461,8 +475,12 @@
     NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
     
     [self.session publishData:data
-                      onTopic:[NSString stringWithFormat:@"ypom/%@",
-                               [self.myself.myUser base32EncodedPk]]
+                      onTopic:[NSString stringWithFormat:@"ypom/%@", [user base32EncodedPk]]
+                       retain:YES
+                          qos:2];
+    
+    [self.session publishData:[@"1" dataUsingEncoding:NSUTF8StringEncoding]
+                      onTopic:[NSString stringWithFormat:@"ypom/%@/online", [user base32EncodedPk]]
                        retain:YES
                           qos:2];
     
@@ -471,10 +489,13 @@
 - (void)unsubscribe:(User *)user
 {
     [self.session publishData:[[NSData alloc] init]
-                      onTopic:[NSString stringWithFormat:@"ypom/%@",
-                               [user base32EncodedPk]]
+                      onTopic:[NSString stringWithFormat:@"ypom/%@", [user base32EncodedPk]]
                        retain:YES
                           qos:1];
+    [self.session publishData:[[NSData alloc] init]
+                      onTopic:[NSString stringWithFormat:@"ypom/%@/online", [user base32EncodedPk]]
+                       retain:YES
+                          qos:2];
     [self.session unsubscribeTopic:[NSString stringWithFormat:@"ypom/%@/+", [user base32EncodedPk]]];
 }
 

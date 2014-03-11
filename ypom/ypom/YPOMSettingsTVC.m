@@ -19,7 +19,7 @@
 #define LEN 512
 
 
-@interface YPOMSettingsTVC ()
+@interface YPOMSettingsTVC () <YPOMdelegate>
 @property (weak, nonatomic) IBOutlet UITextField *name;
 @property (weak, nonatomic) IBOutlet UITextField *pk;
 @property (weak, nonatomic) IBOutlet UITextField *sk;
@@ -52,8 +52,16 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
+    [self saveOld];
+    
+    [self changed];
+}
+
+- (void)saveOld
+{
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+
     self.oldUser = delegate.myself.myUser;
     self.oldHost = delegate.broker.host;
     self.oldPort = [delegate.broker.port integerValue];
@@ -61,13 +69,24 @@
     self.oldPasswd = delegate.broker.passwd;
     self.oldTls = [delegate.broker.tls boolValue];
     self.oldAuth = [delegate.broker.auth boolValue];
-    
-    [self changed];
 }
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    delegate.listener = self;
+    
+    [self lineState];
+}
+
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    delegate.listener = nil;
+
     if ([self.oldUser compare:delegate.myself.myUser] != NSOrderedSame) {
         [delegate unsubscribe:self.oldUser];
     }
@@ -85,6 +104,36 @@
     }
     
     [delegate saveContext];
+}
+
+- (void)lineState
+{
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    self.title = [NSString stringWithFormat:@"Settings-%@-%@", delegate.myself.myUser.name, delegate.broker.host];
+    switch (delegate.state) {
+        case 1:
+            self.navigationController.navigationBar.titleTextAttributes =
+            @{NSForegroundColorAttributeName: [UIColor greenColor]};
+            break;
+        case -1:
+            self.navigationController.navigationBar.titleTextAttributes =
+            @{NSForegroundColorAttributeName: [UIColor redColor]};
+            break;
+        default:
+            self.navigationController.navigationBar.titleTextAttributes =
+            @{NSForegroundColorAttributeName: [UIColor yellowColor]};
+            break;
+    }
+}
+
+- (IBAction)refresh:(UIBarButtonItem *)sender {
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+
+    [delegate unsubscribe:self.oldUser];
+    [delegate disconnect:nil];
+    [delegate connect:nil];
+    [delegate subscribe:delegate.myself.myUser];
+    [self saveOld];
 }
 
 - (void)changed
