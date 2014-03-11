@@ -45,7 +45,7 @@
     NSLog(@"applicationWillResignActive");
     
     [self saveContext];
-    [self.session close];
+    [self disconnect:nil];
 
 }
 
@@ -110,7 +110,7 @@
     NSLog(@"applicationWillTerminate");
     
     [self saveContext];
-    [self.session close];
+    [self disconnect:nil];
 
 }
 
@@ -327,69 +327,79 @@
         User *receiver = [User existsUserWithBase32EncodedPk:components[1]
                                       inManagedObjectContext:self.managedObjectContext];
         
-        User *sender = [User existsUserWithBase32EncodedPk:components[2]
-                                    inManagedObjectContext:self.managedObjectContext];
-        
-        YPOM *ypom = [YPOM ypomFromWire:data pk:sender.pk sk:receiver.sk];
-        
-        if (ypom.message) {
-            NSError *error;
-            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:ypom.message options:0 error:&error];
-            if (dictionary) {
-                if ([dictionary[@"_type"] isEqualToString:@"msg"]) {
-                    NSData *content = dictionary[@"content"] ? [[NSData alloc] initWithBase64EncodedString:dictionary[@"content"] options:0] : nil;
-                    NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
-                    NSString *contentType = dictionary[@"content-type"];
-                    [Message messageWithContent:content
-                                    contentType:contentType
-                                      timestamp:timestamp
-                                       outgoing:NO
-                                      belongsTo:sender
-                         inManagedObjectContext:self.managedObjectContext];
-                    
-                    YPOM *ypom = [[YPOM alloc] init];
-                    ypom.pk = sender.pk;
-                    ypom.sk = receiver.sk;
-                    
-                    NSError *error;
-                    NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-                    
-                    jsonObject[@"_type"] = @"ack";
-                    jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
-                    
-                    ypom.message = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-                    
-                    [self.session publishData:[ypom wireData]
-                                      onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
-                                               [sender base32EncodedPk],
-                                               [receiver base32EncodedPk]]
-                                       retain:NO
-                                          qos:2];
-                    
-                } else if ([dictionary[@"_type"] isEqualToString:@"ack"]) {
-                    NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
-                    Message *message = [Message existsMessageWithTimestamp:timestamp
-                                                                  outgoing:YES
-                                                                 belongsTo:sender                                                        inManagedObjectContext:self.managedObjectContext];
-                    message.acknowledged = @(TRUE);
-                } else {
-                    NSLog(@"unknown _type:%@", dictionary[@"_type"]);
-                }
+        if ([components[2] isEqualToString:@"online"]) {
+            if (data.length) {
+                NSString *string = [NSString stringWithData:data];
+                receiver.online = @([string isEqualToString:@"1"] ? YES : NO);
             } else {
-                NSLog(@"illegal json:%@", error);
+                receiver.online = nil;
             }
-            
         } else {
-            [Message messageWithContent:[@"Can't boxOpen" dataUsingEncoding:NSUTF8StringEncoding]
-                            contentType:nil
-                              timestamp:[NSDate date]
-                               outgoing:NO
-                              belongsTo:sender
-                 inManagedObjectContext:self.managedObjectContext];
+            
+            User *sender = [User existsUserWithBase32EncodedPk:components[2]
+                                        inManagedObjectContext:self.managedObjectContext];
+            
+            YPOM *ypom = [YPOM ypomFromWire:data pk:sender.pk sk:receiver.sk];
+            
+            if (ypom.message) {
+                NSError *error;
+                NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:ypom.message options:0 error:&error];
+                if (dictionary) {
+                    if ([dictionary[@"_type"] isEqualToString:@"msg"]) {
+                        NSData *content = dictionary[@"content"] ? [[NSData alloc] initWithBase64EncodedString:dictionary[@"content"] options:0] : nil;
+                        NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
+                        NSString *contentType = dictionary[@"content-type"];
+                        [Message messageWithContent:content
+                                        contentType:contentType
+                                          timestamp:timestamp
+                                           outgoing:NO
+                                          belongsTo:sender
+                             inManagedObjectContext:self.managedObjectContext];
+                        
+                        YPOM *ypom = [[YPOM alloc] init];
+                        ypom.pk = sender.pk;
+                        ypom.sk = receiver.sk;
+                        
+                        NSError *error;
+                        NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+                        
+                        jsonObject[@"_type"] = @"ack";
+                        jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
+                        
+                        ypom.message = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+                        
+                        [self.session publishData:[ypom wireData]
+                                          onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
+                                                   [sender base32EncodedPk],
+                                                   [receiver base32EncodedPk]]
+                                           retain:NO
+                                              qos:2];
+                        
+                    } else if ([dictionary[@"_type"] isEqualToString:@"ack"]) {
+                        NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
+                        Message *message = [Message existsMessageWithTimestamp:timestamp
+                                                                      outgoing:YES
+                                                                     belongsTo:sender                                                        inManagedObjectContext:self.managedObjectContext];
+                        message.acknowledged = @(TRUE);
+                    } else {
+                        NSLog(@"unknown _type:%@", dictionary[@"_type"]);
+                    }
+                } else {
+                    NSLog(@"illegal json:%@", error);
+                }
+                
+            } else {
+                [Message messageWithContent:[@"Can't boxOpen" dataUsingEncoding:NSUTF8StringEncoding]
+                                contentType:nil
+                                  timestamp:[NSDate date]
+                                   outgoing:NO
+                                  belongsTo:sender
+                     inManagedObjectContext:self.managedObjectContext];
+            }
         }
-    }
-    [self saveContext];
-}
+             }
+             [self saveContext];
+             }
 
 - (void)messageDelivered:(MQTTSession *)session msgID:(UInt16)msgID
 {
@@ -407,11 +417,12 @@
                                                 password:[self.broker.auth boolValue] ? self.broker.passwd : nil
                                                keepAlive:60
                                             cleanSession:NO
-                                                    will:NO
-                                               willTopic:nil
-                                                 willMsg:nil
-                                                 willQoS:0
-                                          willRetainFlag:NO
+                                                    will:YES
+                                               willTopic:[NSString stringWithFormat:@"ypom/%@/online",
+                                                          [self.myself.myUser base32EncodedPk]]
+                                                 willMsg:[[NSData alloc] init]
+                                                 willQoS:1
+                                          willRetainFlag:YES
                                            protocolLevel:3
                                                  runLoop:[NSRunLoop currentRunLoop]
                                                  forMode:NSRunLoopCommonModes];
@@ -426,9 +437,17 @@
 {
     [self.session subscribeToTopic:@"ypom/+"
                            atLevel:2];
+    [self.session subscribeToTopic:@"ypom/+/online"
+                           atLevel:1];
     [self.session subscribeToTopic:[NSString stringWithFormat:@"ypom/%@/+",
                                     [self.myself.myUser base32EncodedPk]]
                            atLevel:2];
+    
+    [self.session publishData:[@"1" dataUsingEncoding:NSUTF8StringEncoding]
+                      onTopic:[NSString stringWithFormat:@"ypom/%@/online",
+                               [self.myself.myUser base32EncodedPk]]
+                       retain:YES
+                          qos:1];
     
     NSError *error;
     NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
@@ -461,6 +480,12 @@
 
 - (void)disconnect:(id)object
 {
+    [self.session publishData:[@"0" dataUsingEncoding:NSUTF8StringEncoding]
+                      onTopic:[NSString stringWithFormat:@"ypom/%@/online",
+                               [self.myself.myUser base32EncodedPk]]
+                       retain:YES
+                          qos:1];
+
     [self.session close];
 }
 

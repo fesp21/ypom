@@ -18,6 +18,27 @@
 
 @implementation YPOMUsersTVC
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    self.title = [NSString stringWithFormat:@"YPOM - %@", delegate.myself.myUser.name];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
+    User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
+
+    if ([segue.identifier isEqualToString:@"setUser:"]) {
+        if ([segue.destinationViewController respondsToSelector:@selector(setUser:)]) {
+            [segue.destinationViewController performSelector:@selector(setUser:)
+                                                  withObject:user];
+        }
+    }
+}
+
 #pragma mark - Fetched results controller
 
 - (NSFetchedResultsController *)setupFRC
@@ -68,23 +89,20 @@
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    NSLog(@"usr n:%@ p:%@ s:%@ b:%@", user.name, user.pk, user.sk, user.selected);
+    NSLog(@"usr n:%@ p:%@ s:%@ o:%@", user.name, user.pk, user.sk, user.online);
     
     cell.textLabel.text = [NSString stringWithFormat:@"%@", user.name];
-    cell.accessoryType = [user.selected boolValue] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [user base32EncodedPk]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)[user.hasMessages count] - 1];
+    
+    cell.backgroundColor = [UIColor grayColor];
+    if (user.online) {
+        if ([user.online boolValue]) {
+            cell.backgroundColor = [UIColor greenColor];
+        } else {
+            cell.backgroundColor = [UIColor redColor];
+        }
+    }
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    user.selected = @(![user.selected boolValue]);
-    
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    [delegate saveContext];
-
-}
 
 @end

@@ -34,10 +34,8 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
-    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    
-    self.title = [NSString stringWithFormat:@"YPOM - %@", delegate.myself.myUser.name];
+        
+    self.title = [NSString stringWithFormat:@"YPOM - %@", self.user.name];
 }
 
 #pragma mark - Fetched results controller
@@ -50,27 +48,26 @@
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Message" inManagedObjectContext:delegate.managedObjectContext];
     [fetchRequest setEntity:entity];
 
-    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"belongsTo.selected = TRUE"];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"belongsTo = %@", self.user];
     
     // Set the batch size to a suitable number.
     [fetchRequest setFetchBatchSize:20];
     
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor1 = [[NSSortDescriptor alloc] initWithKey:@"belongsTo.name" ascending:YES];
-    NSSortDescriptor *sortDescriptor2 = [[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:NO];
-    NSSortDescriptor *sortDescriptor3 = [[NSSortDescriptor alloc] initWithKey:@"outgoing" ascending:YES];
-    NSArray *sortDescriptors = @[sortDescriptor1, sortDescriptor2, sortDescriptor3];
+    NSSortDescriptor *sortDescriptor1 = [[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:NO];
+    NSSortDescriptor *sortDescriptor2 = [[NSSortDescriptor alloc] initWithKey:@"outgoing" ascending:YES];
+    NSArray *sortDescriptors = @[sortDescriptor1, sortDescriptor2];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
     
     // Edit the section name key path and cache name if appropriate.
     // nil for section name key path means "no sections".
-    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
-                                                                                                managedObjectContext:delegate.managedObjectContext
-                                                                                                  sectionNameKeyPath:@"belongsTo.name"
-                                                                                                           cacheName:nil];
+    NSFetchedResultsController *aFetchedResultsController =
+    [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+                                        managedObjectContext:delegate.managedObjectContext
+                                          sectionNameKeyPath:nil
+                                                   cacheName:nil];
     aFetchedResultsController.delegate = self;
-    
     
 	NSError *error = nil;
 	if (![aFetchedResultsController performFetch:&error]) {

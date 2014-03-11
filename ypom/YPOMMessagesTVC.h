@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "CoreDataTVC.h"
+#import "User+Create.h"
 
 @interface YPOMMessagesTVC : CoreDataTVC <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+@property (strong, nonatomic) User *user;
 
 @end
