@@ -72,3 +72,4 @@ Client provides mechanism to copy/past keys to/from email, addressbook, files...
 * search and send images directly from the web? (telegram)
 * background image
 * themes / cost money
+* thank you for the colors, Stefanie
