@@ -4,11 +4,17 @@ ypom
 Your Place Or Mine - Decentral Secure Messaging
 
 ## Features
-* Messaging App using MQTT (https://github.com/ckrey/MQTT-Client-Framework.git) and NaCL (https://github.com/drewcrawford/libsodium-ios.git)
+* Decentralised servers
+* Messaging App using
+** MQTT (https://github.com/ckrey/MQTT-Client-Framework.git) and
+** NaCL (https://github.com/drewcrawford/libsodium-ios.git) and
+** NWPusher (https://github.com/noodlewerk/NWPusher)
 * Cross Platform IOS, Android, Python, ...
 * Asymmetric encryption
 * Secure key import/export
 * Image send/receive/view
+* User online status
+* Store and forward messaging
 
 ## Messages
 
