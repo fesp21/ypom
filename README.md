@@ -71,3 +71,4 @@ Client provides mechanism to copy/past keys to/from email, addressbook, files...
 * Show online state of friends / group members
 * search and send images directly from the web? (telegram)
 * background image
+* themes / cost money
