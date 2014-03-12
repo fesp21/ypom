@@ -11,6 +11,7 @@
 #import "Myself+Create.h"
 #import "Broker+Create.h"
 #import "User+Create.h"
+#import "YPOMTheme.h"
 
 @protocol YPOMdelegate <NSObject>
 
@@ -32,6 +33,7 @@
 @property (nonatomic) int state;
 @property (strong, nonatomic) Myself *myself;
 @property (strong, nonatomic) Broker *broker;
+@property (strong, nonatomic) YPOMTheme *theme;
 
 - (void)connect:(id)object;
 - (void)unsubscribe:(User *)user;

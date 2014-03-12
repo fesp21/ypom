@@ -78,6 +78,9 @@
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.listener = self;
     
+    self.view.backgroundColor = delegate.theme.backgroundColor;
+    self.navigationController.navigationBar.barTintColor = delegate.theme.barColor;
+    
     [self lineState];
 }
 
@@ -113,15 +116,15 @@
     switch (delegate.state) {
         case 1:
             self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: [UIColor greenColor]};
+            @{NSForegroundColorAttributeName: delegate.theme.onlineColor};
             break;
         case -1:
             self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: [UIColor redColor]};
+            @{NSForegroundColorAttributeName: delegate.theme.offlineColor};
             break;
         default:
             self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: [UIColor yellowColor]};
+            @{NSForegroundColorAttributeName: delegate.theme.unknownColor};
             break;
     }
 }

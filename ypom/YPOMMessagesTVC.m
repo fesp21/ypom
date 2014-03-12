@@ -35,6 +35,7 @@
 {
     [super viewDidAppear:animated];
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    self.view.backgroundColor = delegate.theme.backgroundColor;
     delegate.listener = self;
     
     self.title = self.user.name;
@@ -51,16 +52,21 @@
 
 - (void)lineState
 {
-    self.navigationController.navigationBar.titleTextAttributes =
-    @{NSForegroundColorAttributeName: [UIColor grayColor]};
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    self.navigationController.navigationBar.barTintColor = delegate.theme.barColor;
+
     if (self.user.online) {
         if ([self.user.online boolValue]) {
             self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: [UIColor greenColor]};
+            @{NSForegroundColorAttributeName: delegate.theme.onlineColor};
         } else {
             self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: [UIColor redColor]};
+            @{NSForegroundColorAttributeName: delegate.theme.offlineColor};
         }
+    } else {
+        self.navigationController.navigationBar.titleTextAttributes =
+        @{NSForegroundColorAttributeName: delegate.theme.unknownColor};
+
     }
 }
 
@@ -141,37 +147,25 @@
 - (void)configureMessageCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    UILabel *timestamp = (UILabel *)[cell.contentView viewWithTag:2];
+    timestamp.text = [NSString stringWithFormat:@"%@",
+                      [NSDateFormatter localizedStringFromDate:message.timestamp
+                                                     dateStyle:NSDateFormatterShortStyle
+                                                     timeStyle:NSDateFormatterMediumStyle]];
     
-    if (!message.contenttype) {
-        cell.textLabel.text = [NSString stringWithData:message.content];
-    } else {
-        NSRange range = [message.contenttype rangeOfString:@"text/plain" options:NSCaseInsensitiveSearch];
-        if (range.location != NSNotFound) {
-            NSRange range = [message.contenttype rangeOfString:@"charset:\"utf-8\"" options:NSCaseInsensitiveSearch];
-            if (range.location != NSNotFound) {
-                char *cp = malloc(message.content.length + 1);
-                if (cp) {
-                    [message.content getBytes:cp length:message.content.length];
-                    cp[message.content.length] = 0;
-                    cell.textLabel.text = [NSString stringWithUTF8String:cp];
-                    free(cp);
-                } else {
-                    cell.textLabel.text = [NSString stringWithFormat:@"UTF-8 can't malloc %lu",
-                                           (unsigned long)message.content.length + 1];
-                }
-            } else {
-                cell.textLabel.text = [NSString stringWithData:message.content];
-            }
-        } else {
-            cell.textLabel.text = [NSString stringWithFormat:@"content-type: %@",
-                                   message.contenttype];
-        }
-    }
+
+    UILabel *text = (UILabel *)[cell.contentView viewWithTag:1];
+    text.lineBreakMode = NSLineBreakByWordWrapping;
+    text.numberOfLines = 0;
+    text.preferredMaxLayoutWidth = cell.frame.size.width * 0.8;
     
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",
-                                 [NSDateFormatter localizedStringFromDate:message.timestamp
-                                                                dateStyle:NSDateFormatterShortStyle
-                                                                timeStyle:NSDateFormatterMediumStyle]];
+    text.text = [self textOfMessage:message];
+    
+    [text sizeToFit];
+    [timestamp sizeToFit];
+    [cell.contentView sizeToFit];
+    [cell sizeToFit];
+    
     [self colorCell:cell outgoing:[message.outgoing boolValue] acknowledged:[message.acknowledged boolValue] delivered:[message.delivered boolValue]];
 }
 
@@ -179,34 +173,47 @@
 {
     Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
+    UILabel *timestamp = (UILabel *)[cell.contentView viewWithTag:2];
+    timestamp.text = [NSString stringWithFormat:@"%@",
+                      [NSDateFormatter localizedStringFromDate:message.timestamp
+                                                     dateStyle:NSDateFormatterShortStyle
+                                                     timeStyle:NSDateFormatterMediumStyle]];
+    
+
+    
     UIImageView *imageView = (UIImageView *)[cell viewWithTag:1];
     UIImage *image = [UIImage imageWithData:message.content];
     
     double viewWidth = imageView.frame.size.width;
     double imageWidth = image.size.width;
-    double widthScale = viewWidth / imageWidth;
+    double widthScale = imageWidth / viewWidth;
     
-    double viewHeight = imageView.frame.size.width;
+    double viewHeight = imageView.frame.size.height;
     double imageHeight = image.size.width;
-    double heightScale = viewHeight / imageHeight;
-    
-    imageView.image = [UIImage imageWithData:message.content scale:MIN(widthScale, heightScale)];
+    double heightScale = imageHeight / viewHeight;
+
+    imageView.image = [UIImage imageWithData:message.content scale:MAX(widthScale, heightScale)];
     [imageView sizeToFit];
 
-    [self colorCell:cell outgoing:[message.outgoing boolValue] acknowledged:[message.acknowledged boolValue] delivered:[message.delivered boolValue]];
+    [timestamp sizeToFit];
+    [cell.contentView sizeToFit];
     [cell sizeToFit];
+    [self colorCell:cell outgoing:[message.outgoing boolValue] acknowledged:[message.acknowledged boolValue] delivered:[message.delivered boolValue]];
+    
 }
 
 - (void)colorCell:(UITableViewCell *)cell outgoing:(BOOL)outgoing acknowledged:(BOOL)acknowledged delivered:(BOOL)delivered
 {
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+
     if (outgoing) {
         if (delivered) {
-            cell.backgroundColor = [UIColor colorWithRed:0.75 green:0.75 blue:1.0 alpha:1.0];
+            cell.backgroundColor = delegate.theme.myColor;
         } else {
-            cell.backgroundColor = [UIColor colorWithRed:0.75 green:0.75 blue:0.75 alpha:1.0];
+            cell.backgroundColor = delegate.theme.unknownColor;
         }
     } else {
-        cell.backgroundColor = [UIColor colorWithRed:0.75 green:1.0 blue:0.75 alpha:1.0];
+        cell.backgroundColor = delegate.theme.yourColor;
     }
     
     cell.accessoryType = acknowledged ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
@@ -215,6 +222,7 @@
 
 - (void)configureNewMessageCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
     UITextField *text = (UITextField *)[cell viewWithTag:1];
@@ -223,6 +231,7 @@
     if ([cell respondsToSelector:@selector(setMessage:)]) {
         [cell performSelector:@selector(setMessage:) withObject:message];
     }
+    cell.backgroundColor = delegate.theme.myColor;
 }
 
 - (IBAction)image:(UIButton *)sender {
@@ -237,6 +246,64 @@
         // returned
     }];
 
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    if ([message.timestamp timeIntervalSince1970] == FUTURE) {
+        return 44;
+    } else {
+        NSRange range = [message.contenttype rangeOfString:@"image" options:NSCaseInsensitiveSearch];
+        if (range.location != NSNotFound) {
+            return 160;
+        } else {
+            NSString *text = [self textOfMessage:message];
+            NSStringDrawingContext *sdc = [[NSStringDrawingContext alloc] init];
+            sdc.minimumScaleFactor = 1.0;
+            
+            UILabel *textLabel = [[UILabel alloc] init];
+            textLabel.lineBreakMode = NSLineBreakByWordWrapping;
+            textLabel.text = text;
+            CGRect rect = [textLabel textRectForBounds:
+                           CGRectMake(0, 0, tableView.frame.size.width * 0.8, tableView.frame.size.height)
+                                limitedToNumberOfLines:0];
+            
+            return 20 + ceil(rect.size.height) + 8 + 12 + 20;
+        }
+    }
+}
+
+- (NSString *)textOfMessage:(Message *)message
+{
+    NSString *text;
+    if (!message.contenttype) {
+        text = [NSString stringWithData:message.content];
+    } else {
+        NSRange range = [message.contenttype rangeOfString:@"text/plain" options:NSCaseInsensitiveSearch];
+        if (range.location != NSNotFound) {
+            NSRange range = [message.contenttype rangeOfString:@"charset:\"utf-8\"" options:NSCaseInsensitiveSearch];
+            if (range.location != NSNotFound) {
+                char *cp = malloc(message.content.length + 1);
+                if (cp) {
+                    [message.content getBytes:cp length:message.content.length];
+                    cp[message.content.length] = 0;
+                    text = [NSString stringWithUTF8String:cp];
+                    free(cp);
+                } else {
+                    text = [NSString stringWithFormat:@"UTF-8 can't malloc %lu",
+                                 (unsigned long)message.content.length + 1];
+                }
+            } else {
+                text = [NSString stringWithData:message.content];
+            }
+        } else {
+            text = [NSString stringWithFormat:@"content-type: %@",
+                         message.contenttype];
+        }
+    }
+    return text;
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -308,6 +375,7 @@
 - (IBAction)send:(UIButton *)sender {
     UIView *view = (UIView *)sender.superview;
     UITextView *text = (UITextView *)[view viewWithTag:1];
+    [text resignFirstResponder];
     
     UIView *view2 = view.superview;
     YPOMNewTVCell *newTVCell = (YPOMNewTVCell *)view2.superview;

@@ -24,6 +24,7 @@
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.listener = self;
+    self.view.backgroundColor = delegate.theme.backgroundColor;
 
     self.title = [NSString stringWithFormat:@"YPOM-%@-%@", delegate.myself.myUser.name, delegate.broker.host];
     [self lineState];
@@ -39,18 +40,19 @@
 - (void)lineState
 {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    self.navigationController.navigationBar.barTintColor = delegate.theme.barColor;
     switch (delegate.state) {
         case 1:
             self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: [UIColor greenColor]};
+            @{NSForegroundColorAttributeName: delegate.theme.onlineColor};
             break;
         case -1:
             self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: [UIColor redColor]};
+            @{NSForegroundColorAttributeName: delegate.theme.offlineColor};
             break;
         default:
             self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: [UIColor yellowColor]};
+            @{NSForegroundColorAttributeName: delegate.theme.unknownColor};
             break;
     }
 }
@@ -118,18 +120,25 @@
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    NSLog(@"usr n:%@ p:%@ s:%@ o:%@", user.name, user.pk, user.sk, user.online);
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
     cell.textLabel.text = [NSString stringWithFormat:@"%@", user.name];
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)[user.hasMessages count] - 1];
     
-    cell.backgroundColor = [UIColor grayColor];
     if (user.online) {
         if ([user.online boolValue]) {
-            cell.backgroundColor = [UIColor greenColor];
+            cell.textLabel.textColor = delegate.theme.onlineColor;
         } else {
-            cell.backgroundColor = [UIColor redColor];
+            cell.textLabel.textColor = delegate.theme.offlineColor ;
         }
+    } else {
+        cell.textLabel.textColor = delegate.theme.unknownColor;
+    }
+
+    if ([user compare:delegate.myself.myUser] == NSOrderedSame) {
+        cell.backgroundColor = delegate.theme.myColor;
+    } else {
+        cell.backgroundColor = delegate.theme.yourColor;
     }
 }
 

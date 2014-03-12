@@ -10,8 +10,6 @@
 #import "YPOM.h"
 #import "YPOM+Wire.h"
 #import <CoreData/CoreData.h>
-#import "User+Create.h"
-#import "Broker+Create.h"
 #import "Message+Create.h"
 #import "isutf8.h"
 #import "NSString+HexToData.h"
@@ -38,7 +36,7 @@
     NSLog(@"didFinishLaunchingWithOptions");
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeNewsstandContentAvailability)];
-
+    
     return YES;
 }
 
@@ -77,6 +75,10 @@
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     NSLog(@"applicationDidBecomeActive");
+    
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+    
+    self.theme = [[YPOMTheme alloc] init];
         
     self.myself = [Myself existsMyselfInManagedObjectContext:self.managedObjectContext];
     if (!self.myself) {
@@ -367,13 +369,21 @@
                         NSData *content = dictionary[@"content"] ? [[NSData alloc] initWithBase64EncodedString:dictionary[@"content"] options:0] : nil;
                         NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
                         NSString *contentType = dictionary[@"content-type"];
-                        [Message messageWithContent:content
-                                        contentType:contentType
-                                          timestamp:timestamp
-                                           outgoing:NO
-                                          belongsTo:sender
-                             inManagedObjectContext:self.managedObjectContext];
+                        Message *message = [Message messageWithContent:content
+                                                           contentType:contentType
+                                                             timestamp:timestamp
+                                                              outgoing:NO
+                                                             belongsTo:sender
+                                                inManagedObjectContext:self.managedObjectContext];
+                        // send notification
+                        UILocalNotification *notification = [[UILocalNotification alloc] init];
+                        notification.alertBody = [NSString stringWithFormat:@"Message from %@: %@",
+                                                  sender.name,
+                                                  message.contenttype];
+                        notification.applicationIconBadgeNumber = 1;
+                        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
                         
+                        // send ACK
                         YPOM *ypom = [[YPOM alloc] init];
                         ypom.pk = sender.pk;
                         ypom.sk = receiver.sk;
@@ -392,6 +402,7 @@
                                                    [receiver base32EncodedPk]]
                                            retain:NO
                                               qos:2];
+                        
                         
                     } else if ([dictionary[@"_type"] isEqualToString:@"ack"]) {
                         NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
@@ -573,7 +584,6 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
         }
         if (connected) {
             NSString *payload = @"{\"aps\":{\"content-available\":\"1\"}}";
-            //NSString *token = @"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
             NSString *token = [NSString hexStringWithData:user.dev];
             NWPusherResult pushed = [pusher pushPayload:payload token:token identifier:rand()];
             if (pushed == kNWPusherResultSuccess) {
@@ -594,5 +604,12 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
         }
     }
 }
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
+{
+    NSLog(@"App didReceiveLocalNotification %@", notification);
+    // nix tun
+}
+
 @end
 
