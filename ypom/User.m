@@ -2,7 +2,7 @@
 //  User.m
 //  ypom
 //
-//  Created by Christoph Krey on 11.03.14.
+//  Created by Christoph Krey on 12.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
@@ -15,9 +15,10 @@
 
 @dynamic group;
 @dynamic name;
-@dynamic pk;
 @dynamic online;
+@dynamic pk;
 @dynamic sk;
+@dynamic dev;
 @dynamic hasMessages;
 @dynamic me;
 

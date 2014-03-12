@@ -13,15 +13,18 @@
 #import "User+Create.h"
 #import "Broker+Create.h"
 #import "Message+Create.h"
-#include "isutf8.h"
-#include "NSString+HexToData.h"
-#include "NSString+stringWithData.h"
+#import "isutf8.h"
+#import "NSString+HexToData.h"
+#import "NSString+stringWithData.h"
+#import "NSString+hexStringWithData.h"
+#import "NWPusher.h"
 
 @interface YPOMAppDelegate ()
 @property (nonatomic) UIBackgroundTaskIdentifier bgTask;
 @property (strong, nonatomic) NSError *lastError;
 @property (nonatomic) NSInteger errorCount;
 @property (strong, nonatomic) NSData *deviceToken;
+@property (nonatomic) BOOL background;
 @end
 
 @implementation YPOMAppDelegate
@@ -33,7 +36,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     NSLog(@"didFinishLaunchingWithOptions");
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeAlert];
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+     (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeNewsstandContentAvailability)];
 
     return YES;
 }
@@ -309,6 +313,12 @@
                                                         name:dictionary[@"name"]
                                       inManagedObjectContext:self.managedObjectContext];
                     }
+                    NSData *dev = nil;
+                    NSString *devInB64 = dictionary[@"dev"];
+                    if (devInB64) {
+                        dev = [[NSData alloc] initWithBase64EncodedString:devInB64 options:0];
+                    }
+                    user.dev = dev;
                     
                     [Message messageWithContent:nil
                                     contentType:nil
@@ -526,9 +536,20 @@
     NSLog(@"App didReceiveRemoteNotification %@", userInfo);
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+- (void)application:(UIApplication *)application
+didReceiveRemoteNotification:(NSDictionary *)userInfo
+fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
     NSLog(@"App didReceiveRemoteNotification fetchCompletionHandler %@", userInfo);
+    if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
+        if (!self.background) {
+            self.background = TRUE;
+            [self connect:nil];
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:20]];
+            [self disconnect:nil];
+            self.background = FALSE;
+        }
+    }
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
@@ -538,5 +559,40 @@
     self.deviceToken = deviceToken;
 }
 
+- (void)sendPush:(User *)user
+{
+    if (user.dev) {
+        NSURL *url = [NSBundle.mainBundle URLForResource:@"ypom-dev.p12" withExtension:nil];
+        NSData *pkcs12 = [NSData dataWithContentsOfURL:url];
+        NWPusher *pusher = [[NWPusher alloc] init];
+        NWPusherResult connected = [pusher connectWithPKCS12Data:pkcs12 password:@"pa$$word"];
+        if (connected == kNWPusherResultSuccess) {
+            NSLog(@"Connected to APN");
+        } else {
+            NSLog(@"Unable to connect: %@", [NWPusher stringFromResult:connected]);
+        }
+        if (connected) {
+            NSString *payload = @"{\"aps\":{\"content-available\":\"1\"}}";
+            //NSString *token = @"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
+            NSString *token = [NSString hexStringWithData:user.dev];
+            NWPusherResult pushed = [pusher pushPayload:payload token:token identifier:rand()];
+            if (pushed == kNWPusherResultSuccess) {
+                NSLog(@"Notification sending");
+            } else {
+                NSLog(@"Unable to sent: %@", [NWPusher stringFromResult:pushed]);
+            }
+            if (pushed) {
+                NSUInteger identifier = 0;
+                NWPusherResult accepted = [pusher fetchFailedIdentifier:&identifier];
+                if (accepted == kNWPusherResultSuccess) {
+                    NSLog(@"Notification sent successfully");
+                } else {
+                    NSLog(@"Notification with identifier %i rejected: %@", (int)identifier, [NWPusher stringFromResult:accepted]);
+                }
+            }
+            [pusher disconnect];
+        }
+    }
+}
 @end
 

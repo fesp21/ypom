@@ -22,6 +22,7 @@
         <relationship name="myUser" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="me" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="User" representedClassName="User" syncable="YES">
+        <attribute name="dev" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="group" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="online" optional="YES" attributeType="Boolean" syncable="YES"/>
@@ -34,6 +35,6 @@
         <element name="Broker" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Message" positionX="0" positionY="0" width="128" height="165"/>
         <element name="Myself" positionX="0" positionY="0" width="128" height="60"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="148"/>
+        <element name="User" positionX="0" positionY="0" width="128" height="163"/>
     </elements>
 </model>

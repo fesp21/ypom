@@ -15,7 +15,18 @@
 		842CB27B18BFEAB100804D8D /* CoreDataTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB27818BFEAB100804D8D /* CoreDataTVC.m */; };
 		842CB27C18BFEAB100804D8D /* YPOMUsersTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB27A18BFEAB100804D8D /* YPOMUsersTVC.m */; };
 		842CB28518BFFD7500804D8D /* YPOMMessagesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB28418BFFD7500804D8D /* YPOMMessagesTVC.m */; };
-		842ECF4618CF967C00AF6268 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF4518CF967C00AF6268 /* User.m */; };
+		842ECF4D18CFC31C00AF6268 /* ypom.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 842ECF4C18CFC31C00AF6268 /* ypom.entitlements */; };
+		842ECF5F18CFD40D00AF6268 /* ioSock.c in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5118CFD40D00AF6268 /* ioSock.c */; };
+		842ECF6018CFD40D00AF6268 /* NWHub.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5418CFD40D00AF6268 /* NWHub.m */; };
+		842ECF6118CFD40D00AF6268 /* NWNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5618CFD40D00AF6268 /* NWNotification.m */; };
+		842ECF6218CFD40D00AF6268 /* NWPusher.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5818CFD40D00AF6268 /* NWPusher.m */; };
+		842ECF6318CFD40D00AF6268 /* NWPushFeedback.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5A18CFD40D00AF6268 /* NWPushFeedback.m */; };
+		842ECF6418CFD40D00AF6268 /* NWSecTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5C18CFD40D00AF6268 /* NWSecTools.m */; };
+		842ECF6518CFD40D00AF6268 /* NWSSLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5E18CFD40D00AF6268 /* NWSSLConnection.m */; };
+		842ECF6818CFD42F00AF6268 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 842ECF6718CFD42F00AF6268 /* CFNetwork.framework */; };
+		842ECF6A18CFD43B00AF6268 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 842ECF6918CFD43B00AF6268 /* Security.framework */; };
+		842ECF6E18CFD60200AF6268 /* ypom-dev.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 842ECF6D18CFD60200AF6268 /* ypom-dev.p12 */; };
+		842ECF7518CFD81000AF6268 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF7418CFD81000AF6268 /* User.m */; };
 		8470C49A18C2785600133A87 /* YPOMSettingsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C49918C2785600133A87 /* YPOMSettingsTVC.m */; };
 		8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */; };
 		847A52DB18C3DE45004EF999 /* isutf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A52DA18C3DE45004EF999 /* isutf8.c */; };
@@ -87,8 +98,27 @@
 		842CB27A18BFEAB100804D8D /* YPOMUsersTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YPOMUsersTVC.m; path = ../YPOMUsersTVC.m; sourceTree = "<group>"; };
 		842CB28318BFFD7500804D8D /* YPOMMessagesTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YPOMMessagesTVC.h; path = ../YPOMMessagesTVC.h; sourceTree = "<group>"; };
 		842CB28418BFFD7500804D8D /* YPOMMessagesTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YPOMMessagesTVC.m; path = ../YPOMMessagesTVC.m; sourceTree = "<group>"; };
-		842ECF4418CF967C00AF6268 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
-		842ECF4518CF967C00AF6268 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		842ECF4818CFC2E900AF6268 /* YPOM_Dev.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = YPOM_Dev.mobileprovision; sourceTree = "<group>"; };
+		842ECF4C18CFC31C00AF6268 /* ypom.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ypom.entitlements; sourceTree = "<group>"; };
+		842ECF5118CFD40D00AF6268 /* ioSock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioSock.c; sourceTree = "<group>"; };
+		842ECF5218CFD40D00AF6268 /* ioSock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioSock.h; sourceTree = "<group>"; };
+		842ECF5318CFD40D00AF6268 /* NWHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWHub.h; sourceTree = "<group>"; };
+		842ECF5418CFD40D00AF6268 /* NWHub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWHub.m; sourceTree = "<group>"; };
+		842ECF5518CFD40D00AF6268 /* NWNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWNotification.h; sourceTree = "<group>"; };
+		842ECF5618CFD40D00AF6268 /* NWNotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWNotification.m; sourceTree = "<group>"; };
+		842ECF5718CFD40D00AF6268 /* NWPusher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWPusher.h; sourceTree = "<group>"; };
+		842ECF5818CFD40D00AF6268 /* NWPusher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWPusher.m; sourceTree = "<group>"; };
+		842ECF5918CFD40D00AF6268 /* NWPushFeedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWPushFeedback.h; sourceTree = "<group>"; };
+		842ECF5A18CFD40D00AF6268 /* NWPushFeedback.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWPushFeedback.m; sourceTree = "<group>"; };
+		842ECF5B18CFD40D00AF6268 /* NWSecTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWSecTools.h; sourceTree = "<group>"; };
+		842ECF5C18CFD40D00AF6268 /* NWSecTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWSecTools.m; sourceTree = "<group>"; };
+		842ECF5D18CFD40D00AF6268 /* NWSSLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWSSLConnection.h; sourceTree = "<group>"; };
+		842ECF5E18CFD40D00AF6268 /* NWSSLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWSSLConnection.m; sourceTree = "<group>"; };
+		842ECF6718CFD42F00AF6268 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		842ECF6918CFD43B00AF6268 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		842ECF6D18CFD60200AF6268 /* ypom-dev.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ypom-dev.p12"; sourceTree = "<group>"; };
+		842ECF7318CFD81000AF6268 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		842ECF7418CFD81000AF6268 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		8470C49818C2785600133A87 /* YPOMSettingsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMSettingsTVC.h; sourceTree = "<group>"; };
 		8470C49918C2785600133A87 /* YPOMSettingsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMSettingsTVC.m; sourceTree = "<group>"; };
 		8470C4C218C2B9DE00133A87 /* YPOMNewTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMNewTVCell.h; sourceTree = "<group>"; };
@@ -193,6 +223,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				842ECF6A18CFD43B00AF6268 /* Security.framework in Frameworks */,
+				842ECF6818CFD42F00AF6268 /* CFNetwork.framework in Frameworks */,
 				849D456718C9D68F00201BF3 /* libsodium.a in Frameworks */,
 				849D456618C9AC3700201BF3 /* MQTTClient.framework in Frameworks */,
 				84C1B37718BE8AA100C77138 /* CoreGraphics.framework in Frameworks */,
@@ -226,9 +258,9 @@
 		842CB23618BFCA4800804D8D /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
+				842ECF7318CFD81000AF6268 /* User.h */,
+				842ECF7418CFD81000AF6268 /* User.m */,
 				842CB24718BFCCC800804D8D /* YPOM.xcdatamodeld */,
-				842ECF4418CF967C00AF6268 /* User.h */,
-				842ECF4518CF967C00AF6268 /* User.m */,
 				847A5A4B18C4C350004EF999 /* Myself.h */,
 				847A5A4C18C4C350004EF999 /* Myself.m */,
 				847A5A4518C4C350004EF999 /* Message.h */,
@@ -247,6 +279,27 @@
 				842CB26C18BFCEF300804D8D /* Message+Create.m */,
 			);
 			name = CoreData;
+			sourceTree = "<group>";
+		};
+		842ECF6618CFD41600AF6268 /* NWPusher */ = {
+			isa = PBXGroup;
+			children = (
+				842ECF5118CFD40D00AF6268 /* ioSock.c */,
+				842ECF5218CFD40D00AF6268 /* ioSock.h */,
+				842ECF5318CFD40D00AF6268 /* NWHub.h */,
+				842ECF5418CFD40D00AF6268 /* NWHub.m */,
+				842ECF5518CFD40D00AF6268 /* NWNotification.h */,
+				842ECF5618CFD40D00AF6268 /* NWNotification.m */,
+				842ECF5718CFD40D00AF6268 /* NWPusher.h */,
+				842ECF5818CFD40D00AF6268 /* NWPusher.m */,
+				842ECF5918CFD40D00AF6268 /* NWPushFeedback.h */,
+				842ECF5A18CFD40D00AF6268 /* NWPushFeedback.m */,
+				842ECF5B18CFD40D00AF6268 /* NWSecTools.h */,
+				842ECF5C18CFD40D00AF6268 /* NWSecTools.m */,
+				842ECF5D18CFD40D00AF6268 /* NWSSLConnection.h */,
+				842ECF5E18CFD40D00AF6268 /* NWSSLConnection.m */,
+			);
+			name = NWPusher;
 			sourceTree = "<group>";
 		};
 		849D452418C9088000201BF3 /* sodium */ = {
@@ -318,6 +371,9 @@
 		84C1B36818BE8AA100C77138 = {
 			isa = PBXGroup;
 			children = (
+				842ECF6D18CFD60200AF6268 /* ypom-dev.p12 */,
+				842ECF6618CFD41600AF6268 /* NWPusher */,
+				842ECF4818CFC2E900AF6268 /* YPOM_Dev.mobileprovision */,
 				849D455C18C908A900201BF3 /* lib */,
 				849D452418C9088000201BF3 /* sodium */,
 				849D455818C9088000201BF3 /* sodium.h */,
@@ -351,6 +407,8 @@
 		84C1B37318BE8AA100C77138 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				842ECF6918CFD43B00AF6268 /* Security.framework */,
+				842ECF6718CFD42F00AF6268 /* CFNetwork.framework */,
 				849D456518C9AC3700201BF3 /* MQTTClient.framework */,
 				842CB20F18BFC24D00804D8D /* MQTTClient.xcodeproj */,
 				84C1B37418BE8AA100C77138 /* Foundation.framework */,
@@ -394,6 +452,7 @@
 				84C1B37D18BE8AA100C77138 /* InfoPlist.strings */,
 				84C1B38018BE8AA100C77138 /* main.m */,
 				84C1B38218BE8AA100C77138 /* ypom-Prefix.pch */,
+				842ECF4C18CFC31C00AF6268 /* ypom.entitlements */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -527,6 +586,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				842ECF4D18CFC31C00AF6268 /* ypom.entitlements in Resources */,
+				842ECF6E18CFD60200AF6268 /* ypom-dev.p12 in Resources */,
 				84C1B39318BE8AA100C77138 /* Images.xcassets in Resources */,
 				84C1B38818BE8AA100C77138 /* Main_iPhone.storyboard in Resources */,
 				84C1B37F18BE8AA100C77138 /* InfoPlist.strings in Resources */,
@@ -548,16 +609,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				842ECF6418CFD40D00AF6268 /* NWSecTools.m in Sources */,
+				842ECF5F18CFD40D00AF6268 /* ioSock.c in Sources */,
 				842CB27C18BFEAB100804D8D /* YPOMUsersTVC.m in Sources */,
 				847A52DB18C3DE45004EF999 /* isutf8.c in Sources */,
+				842ECF6318CFD40D00AF6268 /* NWPushFeedback.m in Sources */,
 				84C1B3B118BE8B1300C77138 /* YPOM.m in Sources */,
 				8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */,
 				842CB28518BFFD7500804D8D /* YPOMMessagesTVC.m in Sources */,
 				84C1B38118BE8AA100C77138 /* main.m in Sources */,
 				8470C49A18C2785600133A87 /* YPOMSettingsTVC.m in Sources */,
 				842CB26718BFCEC900804D8D /* User+Create.m in Sources */,
-				842ECF4618CF967C00AF6268 /* User.m in Sources */,
+				842ECF7518CFD81000AF6268 /* User.m in Sources */,
+				842ECF6018CFD40D00AF6268 /* NWHub.m in Sources */,
 				84C1B38518BE8AA100C77138 /* YPOMAppDelegate.m in Sources */,
+				842ECF6518CFD40D00AF6268 /* NWSSLConnection.m in Sources */,
 				847A5A4718C4C350004EF999 /* Message.m in Sources */,
 				847A5A4418C4C34F004EF999 /* Broker.m in Sources */,
 				849D457018CCDA2600201BF3 /* NSString+hexStringWithData.m in Sources */,
@@ -565,7 +631,9 @@
 				84CC0E9718C7584F00D5985E /* YPOM+Wire.m in Sources */,
 				847A5A4118C4B24F004EF999 /* base32.c in Sources */,
 				842CB24918BFCCC800804D8D /* YPOM.xcdatamodeld in Sources */,
+				842ECF6118CFD40D00AF6268 /* NWNotification.m in Sources */,
 				842CB26418BFCEAE00804D8D /* Myself+Create.m in Sources */,
+				842ECF6218CFD40D00AF6268 /* NWPusher.m in Sources */,
 				849D457718CCE6EA00201BF3 /* YPOMImageVC.m in Sources */,
 				842CB26A18BFCEDC00804D8D /* Broker+Create.m in Sources */,
 				84CC0E9418C7554D00D5985E /* NSString+stringWithData.m in Sources */,
@@ -698,8 +766,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = ypom/ypom.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Christoph Krey (6MKVDT4YE6)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/ckrey/MQTT-Client-Framework/MQTTClient/dist/MQTTClient.framework/Headers",
@@ -731,8 +800,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = ypom/ypom.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Christoph Krey (C652JFWU23)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/ckrey/MQTT-Client-Framework/MQTTClient/dist/MQTTClient.framework/Headers",

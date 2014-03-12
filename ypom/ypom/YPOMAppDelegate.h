@@ -38,8 +38,11 @@
 - (void)subscribe:(User *)user;
 - (void)disconnect:(id)object;
 
+- (void)sendPush:(User *)user;
+
 - (void)saveContext;
 - (void)connectionClosed;
 - (NSURL *)applicationDocumentsDirectory;
+
 
 @end

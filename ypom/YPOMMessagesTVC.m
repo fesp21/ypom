@@ -289,7 +289,8 @@
     } else {
         message.delivered = @(TRUE);
     }
-    
+    [delegate sendPush:self.selectedCellForImage.message.belongsTo];
+
     [delegate saveContext];
     [self dismissViewControllerAnimated:YES completion:^(void){
        //
@@ -347,7 +348,7 @@
     } else {
         message.delivered = @(TRUE);
     }
-    NSLog(@"sent message:%@", message);
+    [delegate sendPush:newTVCell.message.belongsTo];
     
     [delegate saveContext];
 }

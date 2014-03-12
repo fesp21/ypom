@@ -2,7 +2,7 @@
 //  User.h
 //  ypom
 //
-//  Created by Christoph Krey on 11.03.14.
+//  Created by Christoph Krey on 12.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
@@ -15,9 +15,10 @@
 
 @property (nonatomic, retain) NSNumber * group;
 @property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSData * pk;
 @property (nonatomic, retain) NSNumber * online;
+@property (nonatomic, retain) NSData * pk;
 @property (nonatomic, retain) NSData * sk;
+@property (nonatomic, retain) NSData * dev;
 @property (nonatomic, retain) NSSet *hasMessages;
 @property (nonatomic, retain) Myself *me;
 @end
