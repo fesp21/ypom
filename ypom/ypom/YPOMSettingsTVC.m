@@ -23,14 +23,14 @@
 @property (weak, nonatomic) IBOutlet UITextField *name;
 @property (weak, nonatomic) IBOutlet UITextField *pk;
 @property (weak, nonatomic) IBOutlet UITextField *sk;
-@property (weak, nonatomic) IBOutlet UITextField *keyprotect;
-@property (weak, nonatomic) IBOutlet UITextView *importexport;
+@property (weak, nonatomic) IBOutlet UITextField *secret;
 @property (weak, nonatomic) IBOutlet UITextField *host;
 @property (weak, nonatomic) IBOutlet UITextField *port;
 @property (weak, nonatomic) IBOutlet UITextField *user;
 @property (weak, nonatomic) IBOutlet UITextField *password;
 @property (weak, nonatomic) IBOutlet UISwitch *tls;
 @property (weak, nonatomic) IBOutlet UISwitch *auth;
+@property (weak, nonatomic) IBOutlet UITextField *email;
 
 @property (strong, nonatomic) User *oldUser;
 @property (strong, nonatomic) NSString *oldHost;
@@ -40,6 +40,7 @@
 @property (nonatomic) BOOL oldTls;
 @property (nonatomic) BOOL oldAuth;
 
+@property (strong, nonatomic)  UIDocumentInteractionController *dic;
 @end
 
 @implementation YPOMSettingsTVC
@@ -154,43 +155,6 @@
     self.user.text = delegate.broker.user;
     self.password.text = delegate.broker.passwd;
     
-    if (self.keyprotect.text.length) {
-        NSError *error;
-        NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-        jsonObject[@"username"] = delegate.myself.myUser.name;
-        jsonObject[@"pk"] = [delegate.myself.myUser.pk base64EncodedStringWithOptions:0];
-        jsonObject[@"sk"] = [delegate.myself.myUser.sk base64EncodedStringWithOptions:0];
-        
-        NSData *json = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-        
-        NSLog(@"json: %@", json);
-        
-        unsigned char m[LEN];
-        unsigned char c[LEN];
-        
-        memset(m, 0, crypto_secretbox_ZEROBYTES);
-        memcpy(m + crypto_secretbox_ZEROBYTES, json.bytes, json.length);
-        
-        unsigned char h[crypto_hash_BYTES];
-        NSData *key = [self.keyprotect.text dataUsingEncoding:NSUTF8StringEncoding];
-        
-        crypto_hash_sha256(h, key.bytes, key.length);
-        
-        unsigned char k[crypto_secretbox_KEYBYTES];
-        memset(k, 0, crypto_secretbox_KEYBYTES);
-        memcpy(k, h, MIN(crypto_secretbox_KEYBYTES,crypto_hash_BYTES));
-        
-        unsigned char n[crypto_secretbox_NONCEBYTES];
-        randombytes(n, crypto_secretbox_NONCEBYTES);
-        
-        crypto_secretbox(c, m, crypto_secretbox_ZEROBYTES + json.length, n, k);
-        
-        NSString *nonceString = [NSString hexStringWithData:[NSData dataWithBytes:n length:crypto_secretbox_NONCEBYTES]];
-        NSString *jsonString =  [NSString hexStringWithData:[NSData dataWithBytes:c + crypto_secretbox_BOXZEROBYTES length:json.length + crypto_secretbox_ZEROBYTES - crypto_secretbox_BOXZEROBYTES]];
-        self.importexport.text = [NSString stringWithFormat:@"%@%@", nonceString, jsonString];
-    } else {
-        self.importexport.text = @"error: no keyprotection entered";
-    }
 }
 
 - (IBAction)nameChanged:(UITextField *)sender {
@@ -199,6 +163,11 @@
     [self changed];
 }
 
+/*
+ *
+ * LEAVE IN HERE FOR FUTURE IMPORT OF BACKUP
+ *
+ *
 - (IBAction)loadPressed:(UIButton *)sender {
     
     unsigned char h[crypto_hash_BYTES];
@@ -266,6 +235,8 @@
     [self changed];
 }
 
+ */
+
 - (IBAction)keypairPressed:(UIButton *)sender {
     YPOM *ypom = [[YPOM alloc] init];
     [ypom createKeyPair];
@@ -279,8 +250,7 @@
 
     [self changed];
 }
-- (IBAction)keyprotectionChanged:(UITextField *)sender {
-    [self changed];
+- (IBAction)secretChanged:(UITextField *)sender {
 }
 - (IBAction)hostChanged:(UITextField *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
@@ -324,6 +294,102 @@
     delegate.broker.passwd = sender.text;
     
     [self changed];
+}
+- (IBAction)emailChanged:(UITextField *)sender {
+    [self changed];
+}
+
+- (IBAction)backupPressed:(UIButton *)sender {
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    if (self.secret.text.length) {
+        NSError *error;
+        NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+        jsonObject[@"username"] = delegate.myself.myUser.name;
+        jsonObject[@"pk"] = [delegate.myself.myUser.pk base64EncodedStringWithOptions:0];
+        jsonObject[@"sk"] = [delegate.myself.myUser.sk base64EncodedStringWithOptions:0];
+        
+        NSData *json = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+        
+        unsigned char m[LEN];
+        unsigned char c[LEN];
+        
+        memset(m, 0, crypto_secretbox_ZEROBYTES);
+        memcpy(m + crypto_secretbox_ZEROBYTES, json.bytes, json.length);
+        
+        unsigned char h[crypto_hash_BYTES];
+        NSData *key = [self.secret.text dataUsingEncoding:NSUTF8StringEncoding];
+        
+        crypto_hash_sha256(h, key.bytes, key.length);
+        
+        unsigned char k[crypto_secretbox_KEYBYTES];
+        memset(k, 0, crypto_secretbox_KEYBYTES);
+        memcpy(k, h, MIN(crypto_secretbox_KEYBYTES,crypto_hash_BYTES));
+        
+        unsigned char n[crypto_secretbox_NONCEBYTES];
+        randombytes(n, crypto_secretbox_NONCEBYTES);
+        
+        crypto_secretbox(c, m, crypto_secretbox_ZEROBYTES + json.length, n, k);
+        
+        NSString *nonceString = [NSString hexStringWithData:[NSData dataWithBytes:n length:crypto_secretbox_NONCEBYTES]];
+        NSString *jsonString =  [NSString hexStringWithData:[NSData dataWithBytes:c + crypto_secretbox_BOXZEROBYTES length:json.length + crypto_secretbox_ZEROBYTES - crypto_secretbox_BOXZEROBYTES]];
+        NSData *data = [[NSString stringWithFormat:@"%@%@", nonceString, jsonString] dataUsingEncoding:NSUTF8StringEncoding];
+        
+        NSURL *directoryURL = [[NSFileManager defaultManager] URLForDirectory:NSDocumentDirectory
+                                                                     inDomain:NSUserDomainMask
+                                                            appropriateForURL:nil
+                                                                       create:YES
+                                                                        error:&error];
+        NSString *fileName = [NSString stringWithFormat:@"backup.txt"];
+        NSURL *fileURL = [directoryURL URLByAppendingPathComponent:fileName];
+        
+        [[NSFileManager defaultManager] createFileAtPath:[fileURL path]
+                                                contents:data
+                                              attributes:nil];
+        
+        self.dic = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
+        self.dic.delegate = self;
+        [self.dic presentOptionsMenuFromRect:self.view.bounds inView:self.view animated:YES];
+        
+
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Backup Settings"
+                                                        message:@"Please specify secret"
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
+
+}
+
+- (IBAction)applyPressed:(UIButton *)sender {
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    
+    MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
+    picker.mailComposeDelegate = self;
+    
+    [picker setToRecipients:@[@"robot@broker.tld"]];
+    [picker setCcRecipients:@[self.email.text]];
+    [picker setSubject:[NSString stringWithFormat:@"YPOM Apply for UserID"]];
+    NSString *emailBody = [NSString stringWithFormat:@"%@:%@:%@",
+                           delegate.myself.myUser.name,
+                           self.email.text,
+                           [delegate.myself.myUser base32EncodedPk]
+                           ];
+    [picker setMessageBody:emailBody isHTML:NO];
+    
+    [self presentViewController:picker animated:YES completion:^{
+        // done
+    }];
+}
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller
+          didFinishWithResult:(MFMailComposeResult)result
+                        error:(NSError *)error
+{
+    [controller dismissViewControllerAnimated:YES completion:^{
+        // done
+    }];
 }
 
 -(IBAction)textFieldReturn:(id)sender

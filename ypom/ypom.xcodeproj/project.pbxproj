@@ -442,7 +442,6 @@
 				84C1B3B018BE8B1300C77138 /* YPOM.m */,
 				84CC0E9518C7584F00D5985E /* YPOM+Wire.h */,
 				84CC0E9618C7584F00D5985E /* YPOM+Wire.m */,
-				84C1B38618BE8AA100C77138 /* Main_iPhone.storyboard */,
 				841F41C518D21D0700D1586D /* YPOMThemesTVC.h */,
 				841F41C618D21D0700D1586D /* YPOMThemesTVC.m */,
 				841F41C818D2213900D1586D /* YPOMUserExperienceTVC.h */,
@@ -466,6 +465,7 @@
 		84C1B37B18BE8AA100C77138 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				84C1B38618BE8AA100C77138 /* Main_iPhone.storyboard */,
 				84C1B37C18BE8AA100C77138 /* ypom-Info.plist */,
 				84C1B37D18BE8AA100C77138 /* InfoPlist.strings */,
 				84C1B38018BE8AA100C77138 /* main.m */,

@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 
-@interface YPOMSettingsTVC : UITableViewController <UITextFieldDelegate>
+@interface YPOMSettingsTVC : UITableViewController <UITextFieldDelegate, UIDocumentInteractionControllerDelegate, MFMailComposeViewControllerDelegate>
 
 @end
