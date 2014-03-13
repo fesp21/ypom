@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		841F41C118D20F5700D1586D /* YPOMThemes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 841F41C018D20F5700D1586D /* YPOMThemes.plist */; };
+		841F41C718D21D0700D1586D /* YPOMThemesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 841F41C618D21D0700D1586D /* YPOMThemesTVC.m */; };
+		841F41CA18D2213900D1586D /* YPOMUserExperienceTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 841F41C918D2213900D1586D /* YPOMUserExperienceTVC.m */; };
 		842CB24918BFCCC800804D8D /* YPOM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 842CB24718BFCCC800804D8D /* YPOM.xcdatamodeld */; };
 		842CB26418BFCEAE00804D8D /* Myself+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB26318BFCEAE00804D8D /* Myself+Create.m */; };
 		842CB26718BFCEC900804D8D /* User+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB26618BFCEC900804D8D /* User+Create.m */; };
@@ -83,6 +86,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		841F41C018D20F5700D1586D /* YPOMThemes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = YPOMThemes.plist; sourceTree = "<group>"; };
+		841F41C518D21D0700D1586D /* YPOMThemesTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMThemesTVC.h; sourceTree = "<group>"; };
+		841F41C618D21D0700D1586D /* YPOMThemesTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMThemesTVC.m; sourceTree = "<group>"; };
+		841F41C818D2213900D1586D /* YPOMUserExperienceTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMUserExperienceTVC.h; sourceTree = "<group>"; };
+		841F41C918D2213900D1586D /* YPOMUserExperienceTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMUserExperienceTVC.m; sourceTree = "<group>"; };
 		842CB20F18BFC24D00804D8D /* MQTTClient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MQTTClient.xcodeproj; path = "../../MQTT-Client-Framework/MQTTClient/MQTTClient.xcodeproj"; sourceTree = "<group>"; };
 		842CB24818BFCCC800804D8D /* YPOM.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = YPOM.xcdatamodel; sourceTree = "<group>"; };
 		842CB26218BFCEAE00804D8D /* Myself+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Myself+Create.h"; sourceTree = "<group>"; };
@@ -429,11 +437,16 @@
 				84C1B38418BE8AA100C77138 /* YPOMAppDelegate.m */,
 				842ECF7718D0BE5F00AF6268 /* YPOMTheme.h */,
 				842ECF7818D0BE5F00AF6268 /* YPOMTheme.m */,
+				841F41C018D20F5700D1586D /* YPOMThemes.plist */,
 				84C1B3AF18BE8B1300C77138 /* YPOM.h */,
 				84C1B3B018BE8B1300C77138 /* YPOM.m */,
 				84CC0E9518C7584F00D5985E /* YPOM+Wire.h */,
 				84CC0E9618C7584F00D5985E /* YPOM+Wire.m */,
 				84C1B38618BE8AA100C77138 /* Main_iPhone.storyboard */,
+				841F41C518D21D0700D1586D /* YPOMThemesTVC.h */,
+				841F41C618D21D0700D1586D /* YPOMThemesTVC.m */,
+				841F41C818D2213900D1586D /* YPOMUserExperienceTVC.h */,
+				841F41C918D2213900D1586D /* YPOMUserExperienceTVC.m */,
 				849D457518CCE6EA00201BF3 /* YPOMImageVC.h */,
 				849D457618CCE6EA00201BF3 /* YPOMImageVC.m */,
 				8470C4C218C2B9DE00133A87 /* YPOMNewTVCell.h */,
@@ -593,6 +606,7 @@
 			files = (
 				842ECF4D18CFC31C00AF6268 /* ypom.entitlements in Resources */,
 				842ECF6E18CFD60200AF6268 /* ypom-dev.p12 in Resources */,
+				841F41C118D20F5700D1586D /* YPOMThemes.plist in Resources */,
 				84C1B39318BE8AA100C77138 /* Images.xcassets in Resources */,
 				84C1B38818BE8AA100C77138 /* Main_iPhone.storyboard in Resources */,
 				84C1B37F18BE8AA100C77138 /* InfoPlist.strings in Resources */,
@@ -630,6 +644,7 @@
 				84C1B38518BE8AA100C77138 /* YPOMAppDelegate.m in Sources */,
 				842ECF6518CFD40D00AF6268 /* NWSSLConnection.m in Sources */,
 				847A5A4718C4C350004EF999 /* Message.m in Sources */,
+				841F41C718D21D0700D1586D /* YPOMThemesTVC.m in Sources */,
 				847A5A4418C4C34F004EF999 /* Broker.m in Sources */,
 				849D457018CCDA2600201BF3 /* NSString+hexStringWithData.m in Sources */,
 				84CC0E8E18C7544D00D5985E /* NSString+HexToData.m in Sources */,
@@ -638,6 +653,7 @@
 				842CB24918BFCCC800804D8D /* YPOM.xcdatamodeld in Sources */,
 				842ECF6118CFD40D00AF6268 /* NWNotification.m in Sources */,
 				842CB26418BFCEAE00804D8D /* Myself+Create.m in Sources */,
+				841F41CA18D2213900D1586D /* YPOMUserExperienceTVC.m in Sources */,
 				842ECF6218CFD40D00AF6268 /* NWPusher.m in Sources */,
 				849D457718CCE6EA00201BF3 /* YPOMImageVC.m in Sources */,
 				842CB26A18BFCEDC00804D8D /* Broker+Create.m in Sources */,

@@ -7,6 +7,10 @@
 //
 
 #import "YPOMTheme.h"
+@interface YPOMTheme ()
+@property (strong, nonatomic) NSDictionary *root;
+
+@end
 
 @implementation YPOMTheme
 
@@ -14,20 +18,69 @@
 {
     self = [super init];
     if (self) {
-        _backgroundColor = [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0];
-        _barColor = [UIColor colorWithRed:240/255.0 green:240/255.0 blue:240/255.0 alpha:1.0];
-        _textColor = [UIColor colorWithRed:148/255.0 green:150/255.0 blue:148/255.0 alpha:1.0];
+        _backgroundColor = [UIColor whiteColor];
+        _barColor = [UIColor whiteColor];
+        _textColor = [UIColor blackColor];
         
-        _onlineColor = [UIColor colorWithRed:57/255.0 green:235/255.0 blue:173/255.0 alpha:1.0];
-        _offlineColor = [UIColor colorWithRed:255/255.0 green:73/255.0 blue:74/255.0 alpha:1.0];
-        _unknownColor = [UIColor colorWithRed:165/255.0 green:142/255.0 blue:140/255.0 alpha:1.0];
+        _onlineColor = [UIColor greenColor];
+        _offlineColor = [UIColor redColor];
+        _unknownColor = [UIColor blackColor];
         
-        _myColor = [UIColor colorWithRed:255/255.0 green:203/255.0 blue:173/255.0 alpha:1.0];
-        _yourColor = [UIColor colorWithRed:181/255.0 green:231/255.0 blue:247/255.0 alpha:1.0];
+        _myColor = [UIColor purpleColor];
+        _yourColor = [UIColor blueColor];
         
         _messageTextAttributes = @{};
+
+        NSURL *url = [NSBundle.mainBundle URLForResource:@"YPOMThemes"
+                                           withExtension:@"plist"];
+        _root = [NSDictionary dictionaryWithContentsOfFile:url.path];
+        NSString *fileDefaultName = _root[@"defaultTheme"];
+        self.selected = fileDefaultName;
     }
     return self;
+}
+
+- (void)setSelected:(NSString *)selected
+{
+    NSDictionary *fileThemes = self.root[@"themes"];
+    if (fileThemes && [fileThemes isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *fileTheme = fileThemes[selected];
+        if (fileTheme && [fileTheme isKindOfClass:[NSDictionary class]]) {
+            _backgroundColor = [self colorFromDictionary:fileTheme[@"backgroundColor"]];
+            _barColor = [self colorFromDictionary:fileTheme[@"barColor"]];
+            _textColor = [self colorFromDictionary:fileTheme[@"textColor"]];
+            _onlineColor = [self colorFromDictionary:fileTheme[@"onlineColor"]];
+            _offlineColor = [self colorFromDictionary:fileTheme[@"offlineColor"]];
+            _unknownColor = [self colorFromDictionary:fileTheme[@"unknownColor"]];
+            _myColor = [self colorFromDictionary:fileTheme[@"myColor"]];
+            _yourColor = [self colorFromDictionary:fileTheme[@"yourColor"]];
+            _messageTextAttributes = fileTheme[@"messageTextAttributes"];
+            
+            _selected = selected;
+        }
+    }
+}
+
+- (UIColor *)colorFromDictionary:(NSDictionary *)color
+{
+    CGFloat red = [color[@"red"] intValue] / 255.0;
+    CGFloat green = [color[@"green"] intValue] / 255.0;
+    CGFloat blue = [color[@"blue"] intValue] / 255.0;
+    CGFloat alpha = [color[@"alpha"] doubleValue];
+    
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+}
+
+- (NSUInteger)numberOfThemes
+{
+    return [self.root[@"themes"] count];
+}
+
+- (NSString *)nameOfThemeNumber:(NSUInteger)n
+{
+    NSDictionary *themes = self.root[@"themes"];
+    NSArray *array = [[themes allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    return array[n];
 }
 
 @end

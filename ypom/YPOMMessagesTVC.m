@@ -29,11 +29,13 @@
 {
     self.fetchedResultsController = nil;
     [self.tableView reloadData];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     self.view.backgroundColor = delegate.theme.backgroundColor;
     delegate.listener = self;
@@ -41,6 +43,7 @@
     self.title = self.user.name;
     
     [self lineState];
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -53,19 +56,14 @@
 - (void)lineState
 {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    self.navigationController.navigationBar.barTintColor = delegate.theme.barColor;
-
     if (self.user.online) {
         if ([self.user.online boolValue]) {
-            self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: delegate.theme.onlineColor};
+            self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
         } else {
-            self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: delegate.theme.offlineColor};
+            self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
         }
     } else {
-        self.navigationController.navigationBar.titleTextAttributes =
-        @{NSForegroundColorAttributeName: delegate.theme.unknownColor};
+        self.navigationController.navigationBar.barTintColor = delegate.theme.unknownColor;
 
     }
 }

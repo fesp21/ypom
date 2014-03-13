@@ -376,12 +376,19 @@
                                                              belongsTo:sender
                                                 inManagedObjectContext:self.managedObjectContext];
                         // send notification
-                        UILocalNotification *notification = [[UILocalNotification alloc] init];
-                        notification.alertBody = [NSString stringWithFormat:@"Message from %@: %@",
-                                                  sender.name,
-                                                  message.contenttype];
-                        notification.applicationIconBadgeNumber = 1;
-                        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+                        
+                        if (self.notificationLevel) {
+                            UILocalNotification *notification = [[UILocalNotification alloc] init];
+                            notification.alertBody = @"Message received";
+                            if (self.notificationLevel > 1) {
+                                [notification.alertBody stringByAppendingFormat:@" from %@", sender.name];
+                                if (self.notificationLevel > 2) {
+                                    [notification.alertBody stringByAppendingFormat:@": %@", message.contenttype];
+                                }
+                            }
+                            notification.applicationIconBadgeNumber = 1;
+                            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+                        }
                         
                         // send ACK
                         YPOM *ypom = [[YPOM alloc] init];

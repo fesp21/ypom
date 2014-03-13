@@ -18,6 +18,15 @@
 
 @implementation YPOMUsersTVC
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.fetchedResultsController = nil;
+    [self.tableView reloadData];
+    
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -25,7 +34,7 @@
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.listener = self;
     self.view.backgroundColor = delegate.theme.backgroundColor;
-
+    
     self.title = [NSString stringWithFormat:@"YPOM-%@-%@", delegate.myself.myUser.name, delegate.broker.host];
     [self lineState];
 }
@@ -40,19 +49,15 @@
 - (void)lineState
 {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    self.navigationController.navigationBar.barTintColor = delegate.theme.barColor;
     switch (delegate.state) {
         case 1:
-            self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: delegate.theme.onlineColor};
+            self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
             break;
         case -1:
-            self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: delegate.theme.offlineColor};
+            self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
             break;
         default:
-            self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: delegate.theme.unknownColor};
+            self.navigationController.navigationBar.barTintColor = delegate.theme.unknownColor;
             break;
     }
 }

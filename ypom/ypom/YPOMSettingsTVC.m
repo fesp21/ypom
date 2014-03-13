@@ -113,18 +113,16 @@
 {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     self.title = [NSString stringWithFormat:@"Settings-%@-%@", delegate.myself.myUser.name, delegate.broker.host];
+
     switch (delegate.state) {
         case 1:
-            self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: delegate.theme.onlineColor};
+            self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
             break;
         case -1:
-            self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: delegate.theme.offlineColor};
+            self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
             break;
         default:
-            self.navigationController.navigationBar.titleTextAttributes =
-            @{NSForegroundColorAttributeName: delegate.theme.unknownColor};
+            self.navigationController.navigationBar.barTintColor = delegate.theme.unknownColor;
             break;
     }
 }

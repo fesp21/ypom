@@ -34,6 +34,7 @@
 @property (strong, nonatomic) Myself *myself;
 @property (strong, nonatomic) Broker *broker;
 @property (strong, nonatomic) YPOMTheme *theme;
+@property (nonatomic) NSUInteger notificationLevel;
 
 - (void)connect:(id)object;
 - (void)unsubscribe:(User *)user;
