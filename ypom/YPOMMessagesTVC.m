@@ -16,6 +16,8 @@
 #import "YPOM+Wire.h"
 #import "NSString+stringWithData.h"
 #import "YPOMImageVC.h"
+#import "OSodiumSign.h"
+#import "OSodiumBox.h"
 
 #include "isutf8.h"
 
@@ -25,11 +27,28 @@
 
 @implementation YPOMMessagesTVC 
 
+- (void)setUser:(User *)user
+{
+    _user = user;
+    
+    if (![Message existsMessageWithTimestamp:[NSDate dateWithTimeIntervalSince1970:FUTURE]
+                                    outgoing:YES
+                                   belongsTo:user
+                      inManagedObjectContext:user.managedObjectContext]) {
+        [Message messageWithContent:nil
+                        contentType:nil
+                          timestamp:[NSDate dateWithTimeIntervalSince1970:FUTURE]
+                           outgoing:YES
+                          belongsTo:user
+             inManagedObjectContext:user.managedObjectContext];
+    }
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     self.fetchedResultsController = nil;
+    self.title = self.user.identifier;
     [self.tableView reloadData];
-    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -40,7 +59,6 @@
     self.view.backgroundColor = delegate.theme.backgroundColor;
     delegate.listener = self;
     
-    self.title = self.user.name;
     
     [self lineState];
 
@@ -55,7 +73,9 @@
 
 - (void)lineState
 {
+    /*
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    
     if (self.user.online) {
         if ([self.user.online boolValue]) {
             self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
@@ -66,6 +86,7 @@
         self.navigationController.navigationBar.barTintColor = delegate.theme.unknownColor;
 
     }
+     */
 }
 
 #pragma mark - Fetched results controller
@@ -146,7 +167,10 @@
 {
     Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
     UILabel *timestamp = (UILabel *)[cell.contentView viewWithTag:2];
-    timestamp.text = [NSString stringWithFormat:@"%@",
+    timestamp.text = [NSString stringWithFormat:@"%@%@%@ %@",
+                      [message.delivered boolValue] ? @"✔︎": @"",
+                      [message.acknowledged boolValue] ? @"✔︎": @"",
+                      [message.seen boolValue] ? @"✔︎": @"",
                       [NSDateFormatter localizedStringFromDate:message.timestamp
                                                      dateStyle:NSDateFormatterShortStyle
                                                      timeStyle:NSDateFormatterMediumStyle]];
@@ -172,30 +196,33 @@
     Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
     UILabel *timestamp = (UILabel *)[cell.contentView viewWithTag:2];
-    timestamp.text = [NSString stringWithFormat:@"%@",
+    timestamp.text = [NSString stringWithFormat:@"%@%@%@ %@",
+                      [message.delivered boolValue] ? @"✔︎": @"",
+                      [message.acknowledged boolValue] ? @"✔︎": @"",
+                      [message.seen boolValue] ? @"✔︎": @"",
                       [NSDateFormatter localizedStringFromDate:message.timestamp
                                                      dateStyle:NSDateFormatterShortStyle
                                                      timeStyle:NSDateFormatterMediumStyle]];
     
-
-    
     UIImageView *imageView = (UIImageView *)[cell viewWithTag:1];
+    
     UIImage *image = [UIImage imageWithData:message.content];
     
-    double viewWidth = imageView.frame.size.width;
+    double viewWidth = imageView.bounds.size.width - 20 - 20;
     double imageWidth = image.size.width;
     double widthScale = imageWidth / viewWidth;
     
-    double viewHeight = imageView.frame.size.height;
-    double imageHeight = image.size.width;
+    double viewHeight = imageView.bounds.size.height -7 - 8*2 - 12 - 7;
+    double imageHeight = image.size.height;
     double heightScale = imageHeight / viewHeight;
 
     imageView.image = [UIImage imageWithData:message.content scale:MAX(widthScale, heightScale)];
+    
     [imageView sizeToFit];
-
     [timestamp sizeToFit];
     [cell.contentView sizeToFit];
     [cell sizeToFit];
+    
     [self colorCell:cell outgoing:[message.outgoing boolValue] acknowledged:[message.acknowledged boolValue] delivered:[message.delivered boolValue]];
     
 }
@@ -213,8 +240,6 @@
     } else {
         cell.backgroundColor = delegate.theme.yourColor;
     }
-    
-    cell.accessoryType = acknowledged ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
 }
 
 
@@ -255,7 +280,7 @@
     } else {
         NSRange range = [message.contenttype rangeOfString:@"image" options:NSCaseInsensitiveSearch];
         if (range.location != NSNotFound) {
-            return 160;
+            return 7 + 100 + 8 + 12 + 7;
         } else {
             NSString *text = [self textOfMessage:message];
             NSStringDrawingContext *sdc = [[NSStringDrawingContext alloc] init];
@@ -268,7 +293,7 @@
                            CGRectMake(0, 0, tableView.frame.size.width * 0.8, tableView.frame.size.height)
                                 limitedToNumberOfLines:0];
             
-            return 20 + ceil(rect.size.height) + 8 + 12 + 20;
+            return 7 + ceil(rect.size.height) + 8 + 12 + 7;
         }
     }
 }
@@ -306,8 +331,6 @@
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    NSLog(@"info: %@", info);
-
     UIImage *image = info[UIImagePickerControllerOriginalImage];
     UIImage *imageToSend;
     if (image.CGImage) {
@@ -318,12 +341,6 @@
         imageToSend = image;
     }
     
-    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    YPOM *ypom = [[YPOM alloc] init];
-    ypom.pk = self.selectedCellForImage.message.belongsTo.pk;
-    ypom.sk = delegate.myself.myUser.sk;
-    
-    NSError *error;
     NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
     NSDate *timestamp = [NSDate date];
     jsonObject[@"_type"] = @"msg";
@@ -331,32 +348,9 @@
     jsonObject[@"content"] = [UIImagePNGRepresentation(imageToSend) base64EncodedStringWithOptions:0];
     jsonObject[@"content-type"] = @"image/png";
     
-    ypom.message = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-    
-    UInt16 msgId = [delegate.session publishData:[ypom wireData]
-                                         onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
-                                                  [self.selectedCellForImage.message.belongsTo base32EncodedPk],
-                                                  [delegate.myself.myUser base32EncodedPk]]
-                                          retain:NO
-                                             qos:2];
-    
-    Message *message = [Message messageWithContent:UIImagePNGRepresentation(imageToSend)
-                                       contentType:jsonObject[@"content-type"]
-                                         timestamp:[NSDate dateWithTimeIntervalSince1970:
-                                                    [jsonObject[@"timestamp"] doubleValue]]
-                                          outgoing:YES
-                                         belongsTo:self.selectedCellForImage.message.belongsTo
-                            inManagedObjectContext:delegate.managedObjectContext];
-    
-    message.msgid = @(msgId);
-    if (msgId) {
-        message.delivered = @(FALSE);
-    } else {
-        message.delivered = @(TRUE);
-    }
-    [delegate sendPush:self.selectedCellForImage.message.belongsTo];
-
-    [delegate saveContext];
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    [self sendAny:jsonObject to:self.selectedCellForImage.message.belongsTo from:delegate.myself.myUser];
+ 
     [self dismissViewControllerAnimated:YES completion:^(void){
        //
     }];
@@ -378,13 +372,6 @@
     UIView *view2 = view.superview;
     YPOMNewTVCell *newTVCell = (YPOMNewTVCell *)view2.superview;
     
-    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    
-    YPOM *ypom = [[YPOM alloc] init];
-    ypom.pk = newTVCell.message.belongsTo.pk;
-    ypom.sk = delegate.myself.myUser.sk;
-    
-    NSError *error;
     NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
     NSDate *timestamp = [NSDate date];
     jsonObject[@"_type"] = @"msg";
@@ -392,29 +379,49 @@
     jsonObject[@"content"] = [[text.text dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
     jsonObject[@"content-type"] = @"text/plain; charset:\"utf-8\"";
     
-    ypom.message = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    [self sendAny:jsonObject to:newTVCell.message.belongsTo from:delegate.myself.myUser];
+}
+
+- (void)sendAny:(NSDictionary *)jsonObject to:(User *)to from:(User *)from
+{
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    UInt16 msgId = [delegate.session publishData:[ypom wireData]
+    OSodiumBox *box = [[OSodiumBox alloc] init];
+    box.pubkey = to.pubkey;
+    box.seckey = from.seckey;
+    
+    NSError *error;
+    box.secret = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+    
+    OSodiumSign *sign = [[OSodiumSign alloc] init];
+    sign.verkey = from.verkey;
+    sign.sigkey = from.sigkey;
+    sign.secret = [box boxOnWire];
+    
+    UInt16 msgId = [delegate.session publishData:[[sign signOnWire] base64EncodedDataWithOptions:0]
                                          onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
-                                                  [newTVCell.message.belongsTo base32EncodedPk],
-                                                  [delegate.myself.myUser base32EncodedPk]]
+                                                  to.identifier,
+                                                  from.identifier]
                                           retain:NO
                                              qos:2];
     
-    Message *message = [Message messageWithContent:[text.text dataUsingEncoding:NSUTF8StringEncoding]
+    Message *message = [Message messageWithContent:[[NSData alloc] initWithBase64EncodedData:jsonObject[@"content"]
+                                                                                     options:0]
                                        contentType:jsonObject[@"content-type"]
                                          timestamp:[NSDate dateWithTimeIntervalSince1970:
                                                     [jsonObject[@"timestamp"] doubleValue]]
                                           outgoing:YES
-                                         belongsTo:newTVCell.message.belongsTo
-                            inManagedObjectContext:delegate.managedObjectContext];
+                                         belongsTo:to
+                            inManagedObjectContext:to.managedObjectContext];
+    
     message.msgid = @(msgId);
     if (msgId) {
         message.delivered = @(FALSE);
     } else {
         message.delivered = @(TRUE);
     }
-    [delegate sendPush:newTVCell.message.belongsTo];
+    [delegate sendPush:to];
     
     [delegate saveContext];
 }
@@ -441,5 +448,6 @@
     }
 
 }
+
 
 @end

@@ -9,43 +9,47 @@
 #import "User+Create.h"
 #include "base32.h"
 #include "sodium.h"
+#include "OSodiumBox.h"
+#include "OSodiumSign.h"
+
+#define IDENTIFIER_LEN 5
 
 @implementation User (Create)
-+ (User *)userWithPk:(NSData *)pk
-                    name:(NSString *)name
-inManagedObjectContext:(NSManagedObjectContext *)context
+
++ (User *)newUserInManageObjectContext:(NSManagedObjectContext *)context
 {
-    User *user = [User existsUserWithPk:pk inManagedObjectContext:context];
+    OSodiumBox *box = [[OSodiumBox alloc] init];
+    [box createKeyPair];
     
-    if (!user) {
-        
-        user = [NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:context];
-        
-        user.pk = pk;
-        user.name = name;
-    }
+    unsigned char h[crypto_hash_sha256_BYTES];
+    crypto_hash_sha256(h, box.pubkey.bytes, box.pubkey.length);
+    
+    unsigned char pk32[BASE32_LEN(IDENTIFIER_LEN) + 1];
+    base32_encode(h, BASE32_LEN(IDENTIFIER_LEN), pk32);
+    pk32[BASE32_LEN(IDENTIFIER_LEN)] = 0;
+    
+    NSString *identifier = [NSString stringWithUTF8String:(char *)pk32];
+
+    User *user = [User userWithIdentifier:identifier inManagedObjectContext:context];
+    
+    user.pubkey = box.pubkey;
+    user.seckey = box.seckey;
+    
+    OSodiumSign *sign = [[OSodiumSign alloc] init];
+    [sign createKeyPair];
+    
+    user.verkey = sign.verkey;
+    user.sigkey = sign.sigkey;
     
     return user;
 }
 
-+ (User *)userWithBase32EncodedPk:(NSString *)pk32
-                             name:(NSString *)name
-           inManagedObjectContext:(NSManagedObjectContext *)context
-{
-    unsigned char pk[UNBASE32_LEN(BASE32_LEN(crypto_box_PUBLICKEYBYTES))];
-    base32_decode((unsigned char *)[pk32 UTF8String], pk);
-    
-    return [User userWithPk:[[NSData alloc] initWithBytes:pk length:crypto_box_PUBLICKEYBYTES]
-                       name:name inManagedObjectContext:context];
-}
-
-+ (User *)existsUserWithPk:(NSData *)pk
-    inManagedObjectContext:(NSManagedObjectContext *)context
++ (User *)existsUserWithIdentifier:(NSString *)identifier inManagedObjectContext:(NSManagedObjectContext *)context
 {
     User *user = nil;
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"User"];
-    request.predicate = [NSPredicate predicateWithFormat:@"pk = %@", pk];
+    request.predicate = [NSPredicate predicateWithFormat:@"identifier = %@", identifier];
     
     NSError *error = nil;
     
@@ -62,28 +66,19 @@ inManagedObjectContext:(NSManagedObjectContext *)context
     return user;
 }
 
-+ (User *)existsUserWithBase32EncodedPk:(NSString *)pk32
-                 inManagedObjectContext:(NSManagedObjectContext *)context
++ (User *)userWithIdentifier:(NSString *)identifier inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    unsigned char pk[UNBASE32_LEN(BASE32_LEN(crypto_box_PUBLICKEYBYTES))];
-    base32_decode((unsigned char *)[pk32 UTF8String], pk);
+    User *user = [User existsUserWithIdentifier:identifier inManagedObjectContext:context];
     
-    return [User existsUserWithPk:[[NSData alloc] initWithBytes:pk length:crypto_box_PUBLICKEYBYTES]
-           inManagedObjectContext:context];
+    if (!user) {
+        
+        user = [NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:context];
+        
+        user.identifier = identifier;
+    }
+    
+    return user;
 }
 
-- (NSComparisonResult)compare:(User *)user
-{
-    return [[self base32EncodedPk] compare:[user base32EncodedPk]];
-}
-
-- (NSString *)base32EncodedPk
-{
-    unsigned char pk32[BASE32_LEN(crypto_box_PUBLICKEYBYTES) + 1];
-    base32_encode(self.pk.bytes, crypto_box_PUBLICKEYBYTES, pk32);
-    pk32[sizeof(pk32) - 1] = 0;
-    
-    return [NSString stringWithUTF8String:(char *)pk32];
-}
 
 @end

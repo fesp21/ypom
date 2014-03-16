@@ -1,17 +1,20 @@
 //
-//  Myself.m
+//  Device.m
 //  ypom
 //
 //  Created by Christoph Krey on 15.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
-#import "Myself.h"
+#import "Device.h"
 #import "User.h"
 
 
-@implementation Myself
+@implementation Device
 
-@dynamic myUser;
+@dynamic deviceToken;
+@dynamic identifier;
+@dynamic online;
+@dynamic belongsTo;
 
 @end

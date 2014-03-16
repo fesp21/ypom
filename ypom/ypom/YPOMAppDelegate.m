@@ -11,11 +11,14 @@
 #import "YPOM+Wire.h"
 #import <CoreData/CoreData.h>
 #import "Message+Create.h"
+#import "Device+Create.h"
 #import "isutf8.h"
 #import "NSString+HexToData.h"
 #import "NSString+stringWithData.h"
 #import "NSString+hexStringWithData.h"
 #import "NWPusher.h"
+#import "OSodiumSign.h"
+#import "OSodiumBox.h"
 
 @interface YPOMAppDelegate ()
 @property (nonatomic) UIBackgroundTaskIdentifier bgTask;
@@ -34,6 +37,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     NSLog(@"didFinishLaunchingWithOptions");
+    
+    [OSodium theOSodium];
+    
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeNewsstandContentAvailability)];
     
@@ -82,15 +88,7 @@
         
     self.myself = [Myself existsMyselfInManagedObjectContext:self.managedObjectContext];
     if (!self.myself) {
-        YPOM *ypom = [[YPOM alloc] init];
-        [ypom createKeyPair];
-        
-        User *user = [User userWithPk:ypom.pk
-                                 name:[NSString stringWithFormat:@"%@",
-                                         [[UIDevice currentDevice].name stringByReplacingOccurrencesOfString:@" " withString:@"_"]]
-                 inManagedObjectContext:self.managedObjectContext];
-        
-        user.sk = ypom.sk;
+        User *user = [User newUserInManageObjectContext:self.managedObjectContext];
         
         self.myself = [Myself myselfWithUser:user
                       inManagedObjectContext:self.managedObjectContext];
@@ -299,71 +297,70 @@
     
     NSArray *components = [topic pathComponents];
     
-    if ([components count] == 2) {
-        User *user = [User existsUserWithBase32EncodedPk:components[1]
-                                  inManagedObjectContext:self.managedObjectContext];
-
-        if (data.length) {
-            NSError *error;
-            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-            if (dictionary) {
-                if ([dictionary[@"_type"] isEqualToString:@"usr"]) {
-                    if (user) {
-                        user.name = dictionary[@"name"];
-                    } else {
-                        user = [User userWithBase32EncodedPk:components[1]
-                                                        name:dictionary[@"name"]
-                                      inManagedObjectContext:self.managedObjectContext];
-                    }
-                    NSData *dev = nil;
-                    NSString *devInB64 = dictionary[@"dev"];
-                    if (devInB64) {
-                        dev = [[NSData alloc] initWithBase64EncodedString:devInB64 options:0];
-                    }
-                    user.dev = dev;
-                    
-                    [Message messageWithContent:nil
-                                    contentType:nil
-                                      timestamp:[NSDate dateWithTimeIntervalSince1970:FUTURE]
-                                       outgoing:YES
-                                      belongsTo:user
-                         inManagedObjectContext:self.managedObjectContext];
-                } else {
-                    NSLog(@"unknown _type:%@", dictionary[@"_type"]);
-                }
-            } else {
-                NSLog(@"illegal json:%@", error);
-            }
-        } else {
-            if (user) {
-                if ([user compare:self.myself.myUser] != NSOrderedSame) {
-                    [self.managedObjectContext deleteObject:user];
-                }
-            }
-        }
-    }
+    /*
+     if ([components count] == 2) {
+     User *user = [User existsUserWithBase32EncodedPk:components[1]
+     inManagedObjectContext:self.managedObjectContext];
+     
+     if (data.length) {
+     NSError *error;
+     NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+     if (dictionary) {
+     if ([dictionary[@"_type"] isEqualToString:@"usr"]) {
+     if (user) {
+     user.name = dictionary[@"name"];
+     } else {
+     user = [User userWithBase32EncodedPk:components[1]
+     name:dictionary[@"name"]
+     inManagedObjectContext:self.managedObjectContext];
+     }
+     NSData *dev = nil;
+     NSString *devInB64 = dictionary[@"dev"];
+     if (devInB64) {
+     dev = [[NSData alloc] initWithBase64EncodedString:devInB64 options:0];
+     }
+     user.dev = dev;
+     
+     [Message messageWithContent:nil
+     contentType:nil
+     timestamp:[NSDate dateWithTimeIntervalSince1970:FUTURE]
+     outgoing:YES
+     belongsTo:user
+     inManagedObjectContext:self.managedObjectContext];
+     } else {
+     NSLog(@"unknown _type:%@", dictionary[@"_type"]);
+     }
+     } else {
+     NSLog(@"illegal json:%@", error);
+     }
+     } else {
+     if (user) {
+     if ([user compare:self.myself.myUser] != NSOrderedSame) {
+     [self.managedObjectContext deleteObject:user];
+     }
+     }
+     }
+     }
+     */
     
     if ([components count] == 3) {
-        User *receiver = [User existsUserWithBase32EncodedPk:components[1]
-                                      inManagedObjectContext:self.managedObjectContext];
+        User *receiver = [User existsUserWithIdentifier:components[1]
+                                 inManagedObjectContext:self.managedObjectContext];
         
-        if ([components[2] isEqualToString:@"online"]) {
-            if (data.length) {
-                NSString *string = [NSString stringWithData:data];
-                receiver.online = @([string isEqualToString:@"1"] ? YES : NO);
-            } else {
-                receiver.online = nil;
-            }
-        } else {
-            
-            User *sender = [User existsUserWithBase32EncodedPk:components[2]
-                                        inManagedObjectContext:self.managedObjectContext];
-            
-            YPOM *ypom = [YPOM ypomFromWire:data pk:sender.pk sk:receiver.sk];
-            
-            if (ypom.message) {
+        User *sender = [User existsUserWithIdentifier:components[2]
+                               inManagedObjectContext:self.managedObjectContext];
+        
+        NSData *binData = [[NSData alloc] initWithBase64EncodedData:data options:0];
+        
+        OSodiumSign *sign = [OSodiumSign signFromData:binData
+                                               verkey:sender.verkey];
+        if (sign) {
+            OSodiumBox *box = [OSodiumBox boxFromData:sign.secret
+                                               pubkey:sender.pubkey
+                                               seckey:receiver.seckey];
+            if (box) {
                 NSError *error;
-                NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:ypom.message options:0 error:&error];
+                NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:box.secret options:0 error:&error];
                 if (dictionary) {
                     if ([dictionary[@"_type"] isEqualToString:@"msg"]) {
                         NSData *content = dictionary[@"content"] ? [[NSData alloc] initWithBase64EncodedString:dictionary[@"content"] options:0] : nil;
@@ -381,7 +378,7 @@
                             UILocalNotification *notification = [[UILocalNotification alloc] init];
                             notification.alertBody = @"Message received";
                             if (self.notificationLevel > 1) {
-                                [notification.alertBody stringByAppendingFormat:@" from %@", sender.name];
+                                [notification.alertBody stringByAppendingFormat:@" from %@", sender.identifier];
                                 if (self.notificationLevel > 2) {
                                     [notification.alertBody stringByAppendingFormat:@": %@", message.contenttype];
                                 }
@@ -391,25 +388,28 @@
                         }
                         
                         // send ACK
-                        YPOM *ypom = [[YPOM alloc] init];
-                        ypom.pk = sender.pk;
-                        ypom.sk = receiver.sk;
+                        OSodiumBox *box = [[OSodiumBox alloc] init];
+                        box.pubkey = sender.pubkey;
+                        box.seckey = receiver.seckey;
                         
                         NSError *error;
                         NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-                        
                         jsonObject[@"_type"] = @"ack";
                         jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
                         
-                        ypom.message = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+                        box.secret = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
                         
-                        [self.session publishData:[ypom wireData]
+                        OSodiumSign *sign = [[OSodiumSign alloc] init];
+                        sign.verkey = receiver.verkey;
+                        sign.sigkey = receiver.sigkey;
+                        sign.secret = [box boxOnWire];
+                        
+                        [self.session publishData:[[sign signOnWire] base64EncodedDataWithOptions:0]
                                           onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
-                                                   [sender base32EncodedPk],
-                                                   [receiver base32EncodedPk]]
+                                                   sender.identifier,
+                                                   receiver.identifier]
                                            retain:NO
                                               qos:2];
-                        
                         
                     } else if ([dictionary[@"_type"] isEqualToString:@"ack"]) {
                         NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
@@ -424,16 +424,25 @@
                     NSLog(@"illegal json:%@", error);
                 }
                 
+                
             } else {
                 [Message messageWithContent:[@"Can't boxOpen" dataUsingEncoding:NSUTF8StringEncoding]
-                                contentType:nil
+                                contentType:@"text/plain; charset:\"utf-8\""
                                   timestamp:[NSDate date]
                                    outgoing:NO
                                   belongsTo:sender
                      inManagedObjectContext:self.managedObjectContext];
             }
+        } else {
+            [Message messageWithContent:[@"Can't signOpen" dataUsingEncoding:NSUTF8StringEncoding]
+                            contentType:@"text/plain; charset:\"utf-8\""
+                              timestamp:[NSDate date]
+                               outgoing:NO
+                              belongsTo:sender
+                 inManagedObjectContext:self.managedObjectContext];
         }
     }
+    
     if (self.listener) {
         [self.listener lineState];
     }
@@ -463,17 +472,16 @@
 
 - (void)connect:(id)object
 {
-    self.session = [[MQTTSession alloc] initWithClientId:self.myself.myUser.name
+    self.session = [[MQTTSession alloc] initWithClientId:self.myself.myUser.identifier
                                                 userName:[self.broker.auth boolValue] ? self.broker.user : nil
                                                 password:[self.broker.auth boolValue] ? self.broker.passwd : nil
                                                keepAlive:60
                                             cleanSession:NO
-                                                    will:YES
-                                               willTopic:[NSString stringWithFormat:@"ypom/%@/online",
-                                                          [self.myself.myUser base32EncodedPk]]
-                                                 willMsg:[[NSData alloc] init]
-                                                 willQoS:2
-                                          willRetainFlag:YES
+                                                    will:NO
+                                               willTopic:nil
+                                                 willMsg:nil
+                                                 willQoS:0
+                                          willRetainFlag:NO
                                            protocolLevel:3
                                                  runLoop:[NSRunLoop currentRunLoop]
                                                  forMode:NSRunLoopCommonModes];
@@ -486,55 +494,17 @@
 
 - (void)subscribe:(User *)user
 {
-    [self.session subscribeToTopic:@"ypom/+" atLevel:2];
-    [self.session subscribeToTopic:@"ypom/+/online" atLevel:1];
-    [self.session subscribeToTopic:[NSString stringWithFormat:@"ypom/%@/+", [user base32EncodedPk]]
+    [self.session subscribeToTopic:[NSString stringWithFormat:@"ypom/%@/+", user.identifier]
                            atLevel:2];
-    
-    NSError *error;
-    NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-    jsonObject[@"_type"] = @"usr";
-    jsonObject[@"name"] = user.name;
-    jsonObject[@"pk"] = [user.pk base64EncodedStringWithOptions:0];
-    if (self.deviceToken) {
-        jsonObject[@"dev"] = [self.deviceToken base64EncodedStringWithOptions:0];
-    }
-    
-    NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-    
-    [self.session publishData:data
-                      onTopic:[NSString stringWithFormat:@"ypom/%@", [user base32EncodedPk]]
-                       retain:YES
-                          qos:2];
-    
-    [self.session publishData:[@"1" dataUsingEncoding:NSUTF8StringEncoding]
-                      onTopic:[NSString stringWithFormat:@"ypom/%@/online", [user base32EncodedPk]]
-                       retain:YES
-                          qos:2];
-    
 }
 
 - (void)unsubscribe:(User *)user
 {
-    [self.session publishData:[[NSData alloc] init]
-                      onTopic:[NSString stringWithFormat:@"ypom/%@", [user base32EncodedPk]]
-                       retain:YES
-                          qos:1];
-    [self.session publishData:[[NSData alloc] init]
-                      onTopic:[NSString stringWithFormat:@"ypom/%@/online", [user base32EncodedPk]]
-                       retain:YES
-                          qos:2];
-    [self.session unsubscribeTopic:[NSString stringWithFormat:@"ypom/%@/+", [user base32EncodedPk]]];
+    [self.session unsubscribeTopic:[NSString stringWithFormat:@"ypom/%@/+", user.identifier]];
 }
 
 - (void)disconnect:(id)object
 {
-    [self.session publishData:[@"0" dataUsingEncoding:NSUTF8StringEncoding]
-                      onTopic:[NSString stringWithFormat:@"ypom/%@/online",
-                               [self.myself.myUser base32EncodedPk]]
-                       retain:YES
-                          qos:1];
-
     [self.session close];
 }
 
@@ -579,7 +549,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 
 - (void)sendPush:(User *)user
 {
-    if (user.dev) {
+    if ([user.hasDevices count]) {
         NSURL *url = [NSBundle.mainBundle URLForResource:@"ypom-dev.p12" withExtension:nil];
         NSData *pkcs12 = [NSData dataWithContentsOfURL:url];
         NWPusher *pusher = [[NWPusher alloc] init];
@@ -589,22 +559,25 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
         } else {
             NSLog(@"Unable to connect: %@", [NWPusher stringFromResult:connected]);
         }
+        
         if (connected) {
-            NSString *payload = @"{\"aps\":{\"content-available\":\"1\"}}";
-            NSString *token = [NSString hexStringWithData:user.dev];
-            NWPusherResult pushed = [pusher pushPayload:payload token:token identifier:rand()];
-            if (pushed == kNWPusherResultSuccess) {
-                NSLog(@"Notification sending");
-            } else {
-                NSLog(@"Unable to sent: %@", [NWPusher stringFromResult:pushed]);
-            }
-            if (pushed) {
-                NSUInteger identifier = 0;
-                NWPusherResult accepted = [pusher fetchFailedIdentifier:&identifier];
-                if (accepted == kNWPusherResultSuccess) {
-                    NSLog(@"Notification sent successfully");
+            for (Device *dev in user.hasDevices) {
+                NSString *payload = @"{\"aps\":{\"content-available\":\"1\"}}";
+                NSString *token = [NSString hexStringWithData:dev.deviceToken];
+                NWPusherResult pushed = [pusher pushPayload:payload token:token identifier:rand()];
+                if (pushed == kNWPusherResultSuccess) {
+                    NSLog(@"Notification sending");
                 } else {
-                    NSLog(@"Notification with identifier %i rejected: %@", (int)identifier, [NWPusher stringFromResult:accepted]);
+                    NSLog(@"Unable to sent: %@", [NWPusher stringFromResult:pushed]);
+                }
+                if (pushed) {
+                    NSUInteger identifier = 0;
+                    NWPusherResult accepted = [pusher fetchFailedIdentifier:&identifier];
+                    if (accepted == kNWPusherResultSuccess) {
+                        NSLog(@"Notification sent successfully");
+                    } else {
+                        NSLog(@"Notification with identifier %i rejected: %@", (int)identifier, [NWPusher stringFromResult:accepted]);
+                    }
                 }
             }
             [pusher disconnect];
@@ -617,6 +590,54 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
     NSLog(@"App didReceiveLocalNotification %@", notification);
     // nix tun
 }
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    NSLog(@"openURL:%@ sourceApplication:%@ annotation:%@", url, sourceApplication, annotation);
+    
+    if (url) {
+        NSError *error;
+        NSInputStream *input = [NSInputStream inputStreamWithURL:url];
+        if ([input streamError]) {
+            NSLog(@"Error inputStreamWithURL %@ %@", [input streamError], url);
+            return FALSE;
+        }
+        [input open];
+        if ([input streamError]) {
+            NSLog(@"Error open %@ %@", [input streamError], url);
+            return FALSE;
+        }
+        
+        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithStream:input options:0 error:&error];
+        if (dictionary) {
+            for (NSString *key in [dictionary allKeys]) {
+                NSLog(@"json %@:%@", key, dictionary[key]);
+            }
+            
+            NSString *identifier = dictionary[@"id"];
+            NSData *pubkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"pubkey"] options:0];
+            NSData *verkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"verkey"] options:0];
+            
+            if (identifier && pubkey && verkey) {
+                User *user = [User userWithIdentifier:identifier inManagedObjectContext:self.managedObjectContext];
+                user.pubkey = pubkey;
+                user.verkey = verkey;
+            } else {
+                NSLog(@"Error invalid ypom file");
+                return FALSE;
+            }
+        } else {
+            NSLog(@"Error illegal json in init file %@)", error);
+            return FALSE;
+        }
+        
+        NSLog(@"Init file %@ successfully processed)", [url lastPathComponent]);
+        
+    }
+    [self saveContext];
+    return TRUE;
+}
+
 
 @end
 

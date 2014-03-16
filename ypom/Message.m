@@ -2,7 +2,7 @@
 //  Message.m
 //  ypom
 //
-//  Created by Christoph Krey on 03.03.14.
+//  Created by Christoph Krey on 15.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
@@ -14,11 +14,12 @@
 
 @dynamic acknowledged;
 @dynamic content;
+@dynamic contenttype;
 @dynamic delivered;
 @dynamic msgid;
 @dynamic outgoing;
+@dynamic seen;
 @dynamic timestamp;
-@dynamic contenttype;
 @dynamic belongsTo;
 
 @end

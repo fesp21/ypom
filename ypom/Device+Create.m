@@ -1,17 +1,13 @@
 //
-//  Myself.m
+//  Device+Create.m
 //  ypom
 //
 //  Created by Christoph Krey on 15.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
-#import "Myself.h"
-#import "User.h"
+#import "Device+Create.h"
 
-
-@implementation Myself
-
-@dynamic myUser;
+@implementation Device (Create)
 
 @end

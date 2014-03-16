@@ -1,17 +1,13 @@
 //
-//  Myself.m
+//  OSodium.h
 //  ypom
 //
 //  Created by Christoph Krey on 15.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
-#import "Myself.h"
-#import "User.h"
+#import <Foundation/Foundation.h>
 
-
-@implementation Myself
-
-@dynamic myUser;
-
+@interface OSodium : NSObject
++ (OSodium *)theOSodium;
 @end

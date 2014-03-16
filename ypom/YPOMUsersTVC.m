@@ -14,28 +14,22 @@
 #import "YPOM.h"
 
 @interface YPOMUsersTVC () <YPOMdelegate>
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *version;
 @end
 
 @implementation YPOMUsersTVC
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    self.fetchedResultsController = nil;
-    [self.tableView reloadData];
-    
-}
-
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    self.version.title =  [NSBundle mainBundle].infoDictionary[@"CFBundleVersion"];
+
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.listener = self;
     self.view.backgroundColor = delegate.theme.backgroundColor;
-    
-    self.title = [NSString stringWithFormat:@"YPOM-%@-%@", delegate.myself.myUser.name, delegate.broker.host];
+    self.fetchedResultsController = nil;
+    [self.tableView reloadData];
     [self lineState];
 }
 
@@ -89,7 +83,7 @@
     [fetchRequest setFetchBatchSize:20];
     
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor1 = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+    NSSortDescriptor *sortDescriptor1 = [[NSSortDescriptor alloc] initWithKey:@"identifier" ascending:YES];
     NSArray *sortDescriptors = @[sortDescriptor1];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
@@ -127,9 +121,12 @@
     User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    cell.textLabel.text = [NSString stringWithFormat:@"%@", user.name];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)[user.hasMessages count] - 1];
+    cell.textLabel.text = [NSString stringWithFormat:@"%@", user.identifier];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",
+                                 user.hasMessages ? 0 : (unsigned long)[user.hasMessages count] - 1
+                                 ];
     
+    /*
     if (user.online) {
         if ([user.online boolValue]) {
             cell.textLabel.textColor = delegate.theme.onlineColor;
@@ -140,7 +137,9 @@
         cell.textLabel.textColor = delegate.theme.unknownColor;
     }
 
-    if ([user compare:delegate.myself.myUser] == NSOrderedSame) {
+    */
+    
+    if ([user.identifier isEqualToString:delegate.myself.myUser.identifier]) {
         cell.backgroundColor = delegate.theme.myColor;
     } else {
         cell.backgroundColor = delegate.theme.yourColor;

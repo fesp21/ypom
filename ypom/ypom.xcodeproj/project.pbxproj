@@ -29,15 +29,11 @@
 		842ECF6818CFD42F00AF6268 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 842ECF6718CFD42F00AF6268 /* CFNetwork.framework */; };
 		842ECF6A18CFD43B00AF6268 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 842ECF6918CFD43B00AF6268 /* Security.framework */; };
 		842ECF6E18CFD60200AF6268 /* ypom-dev.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 842ECF6D18CFD60200AF6268 /* ypom-dev.p12 */; };
-		842ECF7518CFD81000AF6268 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF7418CFD81000AF6268 /* User.m */; };
 		842ECF7918D0BE5F00AF6268 /* YPOMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF7818D0BE5F00AF6268 /* YPOMTheme.m */; };
 		8470C49A18C2785600133A87 /* YPOMSettingsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C49918C2785600133A87 /* YPOMSettingsTVC.m */; };
 		8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */; };
 		847A52DB18C3DE45004EF999 /* isutf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A52DA18C3DE45004EF999 /* isutf8.c */; };
 		847A5A4118C4B24F004EF999 /* base32.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4018C4B24F004EF999 /* base32.c */; };
-		847A5A4418C4C34F004EF999 /* Broker.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4318C4C34F004EF999 /* Broker.m */; };
-		847A5A4718C4C350004EF999 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4618C4C350004EF999 /* Message.m */; };
-		847A5A4D18C4C350004EF999 /* Myself.m in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4C18C4C350004EF999 /* Myself.m */; };
 		849D456618C9AC3700201BF3 /* MQTTClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D456518C9AC3700201BF3 /* MQTTClient.framework */; };
 		849D456718C9D68F00201BF3 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D455D18C908A900201BF3 /* libsodium.a */; };
 		849D457018CCDA2600201BF3 /* NSString+hexStringWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 849D456F18CCDA2600201BF3 /* NSString+hexStringWithData.m */; };
@@ -59,6 +55,17 @@
 		84CC0E8E18C7544D00D5985E /* NSString+HexToData.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CC0E8D18C7544D00D5985E /* NSString+HexToData.m */; };
 		84CC0E9418C7554D00D5985E /* NSString+stringWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CC0E9318C7554D00D5985E /* NSString+stringWithData.m */; };
 		84CC0E9718C7584F00D5985E /* YPOM+Wire.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CC0E9618C7584F00D5985E /* YPOM+Wire.m */; };
+		84D27DAE18D48D2400D888E0 /* OSodium.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DAD18D48D2400D888E0 /* OSodium.m */; };
+		84D27DB118D48FC400D888E0 /* OSodiumSecretBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DB018D48FC400D888E0 /* OSodiumSecretBox.m */; };
+		84D27DCA18D4B06F00D888E0 /* Broker.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DC918D4B06F00D888E0 /* Broker.m */; };
+		84D27DCD18D4B07000D888E0 /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DCC18D4B07000D888E0 /* Device.m */; };
+		84D27DD018D4B07000D888E0 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DCF18D4B07000D888E0 /* Message.m */; };
+		84D27DD318D4B07000D888E0 /* Group.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DD218D4B07000D888E0 /* Group.m */; };
+		84D27DD618D4B07000D888E0 /* Myself.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DD518D4B07000D888E0 /* Myself.m */; };
+		84D27DD918D4B07000D888E0 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DD818D4B07000D888E0 /* User.m */; };
+		84D27DDC18D4B27200D888E0 /* OSodiumBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DDB18D4B27200D888E0 /* OSodiumBox.m */; };
+		84D27DDF18D4B29900D888E0 /* OSodiumSign.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DDE18D4B29900D888E0 /* OSodiumSign.m */; };
+		84D27DE218D4C33200D888E0 /* Device+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DE118D4C33200D888E0 /* Device+Create.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,8 +133,6 @@
 		842ECF6718CFD42F00AF6268 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		842ECF6918CFD43B00AF6268 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		842ECF6D18CFD60200AF6268 /* ypom-dev.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ypom-dev.p12"; sourceTree = "<group>"; };
-		842ECF7318CFD81000AF6268 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
-		842ECF7418CFD81000AF6268 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		842ECF7718D0BE5F00AF6268 /* YPOMTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMTheme.h; sourceTree = "<group>"; };
 		842ECF7818D0BE5F00AF6268 /* YPOMTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMTheme.m; sourceTree = "<group>"; };
 		8470C49818C2785600133A87 /* YPOMSettingsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMSettingsTVC.h; sourceTree = "<group>"; };
@@ -138,12 +143,6 @@
 		847A52DC18C3DE60004EF999 /* isutf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = isutf8.h; path = ypom/isutf8.h; sourceTree = "<group>"; };
 		847A5A3F18C4B24F004EF999 /* base32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = base32.h; path = ypom/base32.h; sourceTree = "<group>"; };
 		847A5A4018C4B24F004EF999 /* base32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = base32.c; path = ypom/base32.c; sourceTree = "<group>"; };
-		847A5A4218C4C34F004EF999 /* Broker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Broker.h; sourceTree = "<group>"; };
-		847A5A4318C4C34F004EF999 /* Broker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Broker.m; sourceTree = "<group>"; };
-		847A5A4518C4C350004EF999 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
-		847A5A4618C4C350004EF999 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
-		847A5A4B18C4C350004EF999 /* Myself.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Myself.h; sourceTree = "<group>"; };
-		847A5A4C18C4C350004EF999 /* Myself.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Myself.m; sourceTree = "<group>"; };
 		849D452518C9088000201BF3 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		849D452618C9088000201BF3 /* crypto_auth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_auth.h; sourceTree = "<group>"; };
 		849D452718C9088000201BF3 /* crypto_auth_hmacsha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_auth_hmacsha256.h; sourceTree = "<group>"; };
@@ -227,6 +226,28 @@
 		84CC0E9318C7554D00D5985E /* NSString+stringWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+stringWithData.m"; sourceTree = "<group>"; };
 		84CC0E9518C7584F00D5985E /* YPOM+Wire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "YPOM+Wire.h"; sourceTree = "<group>"; };
 		84CC0E9618C7584F00D5985E /* YPOM+Wire.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "YPOM+Wire.m"; sourceTree = "<group>"; };
+		84D27DAC18D48D2400D888E0 /* OSodium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSodium.h; sourceTree = "<group>"; };
+		84D27DAD18D48D2400D888E0 /* OSodium.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSodium.m; sourceTree = "<group>"; };
+		84D27DAF18D48FC400D888E0 /* OSodiumSecretBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSodiumSecretBox.h; sourceTree = "<group>"; };
+		84D27DB018D48FC400D888E0 /* OSodiumSecretBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSodiumSecretBox.m; sourceTree = "<group>"; };
+		84D27DC818D4B06F00D888E0 /* Broker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Broker.h; sourceTree = "<group>"; };
+		84D27DC918D4B06F00D888E0 /* Broker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Broker.m; sourceTree = "<group>"; };
+		84D27DCB18D4B07000D888E0 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
+		84D27DCC18D4B07000D888E0 /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
+		84D27DCE18D4B07000D888E0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		84D27DCF18D4B07000D888E0 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
+		84D27DD118D4B07000D888E0 /* Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Group.h; sourceTree = "<group>"; };
+		84D27DD218D4B07000D888E0 /* Group.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Group.m; sourceTree = "<group>"; };
+		84D27DD418D4B07000D888E0 /* Myself.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Myself.h; sourceTree = "<group>"; };
+		84D27DD518D4B07000D888E0 /* Myself.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Myself.m; sourceTree = "<group>"; };
+		84D27DD718D4B07000D888E0 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		84D27DD818D4B07000D888E0 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		84D27DDA18D4B27200D888E0 /* OSodiumBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSodiumBox.h; sourceTree = "<group>"; };
+		84D27DDB18D4B27200D888E0 /* OSodiumBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSodiumBox.m; sourceTree = "<group>"; };
+		84D27DDD18D4B29900D888E0 /* OSodiumSign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSodiumSign.h; sourceTree = "<group>"; };
+		84D27DDE18D4B29900D888E0 /* OSodiumSign.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSodiumSign.m; sourceTree = "<group>"; };
+		84D27DE018D4C33200D888E0 /* Device+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Device+Create.h"; sourceTree = "<group>"; };
+		84D27DE118D4C33200D888E0 /* Device+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Device+Create.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -269,15 +290,19 @@
 		842CB23618BFCA4800804D8D /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
-				842ECF7318CFD81000AF6268 /* User.h */,
-				842ECF7418CFD81000AF6268 /* User.m */,
 				842CB24718BFCCC800804D8D /* YPOM.xcdatamodeld */,
-				847A5A4B18C4C350004EF999 /* Myself.h */,
-				847A5A4C18C4C350004EF999 /* Myself.m */,
-				847A5A4518C4C350004EF999 /* Message.h */,
-				847A5A4618C4C350004EF999 /* Message.m */,
-				847A5A4218C4C34F004EF999 /* Broker.h */,
-				847A5A4318C4C34F004EF999 /* Broker.m */,
+				84D27DD718D4B07000D888E0 /* User.h */,
+				84D27DD818D4B07000D888E0 /* User.m */,
+				84D27DD418D4B07000D888E0 /* Myself.h */,
+				84D27DD518D4B07000D888E0 /* Myself.m */,
+				84D27DD118D4B07000D888E0 /* Group.h */,
+				84D27DD218D4B07000D888E0 /* Group.m */,
+				84D27DCE18D4B07000D888E0 /* Message.h */,
+				84D27DCF18D4B07000D888E0 /* Message.m */,
+				84D27DCB18D4B07000D888E0 /* Device.h */,
+				84D27DCC18D4B07000D888E0 /* Device.m */,
+				84D27DC818D4B06F00D888E0 /* Broker.h */,
+				84D27DC918D4B06F00D888E0 /* Broker.m */,
 				842CB27718BFEAB100804D8D /* CoreDataTVC.h */,
 				842CB27818BFEAB100804D8D /* CoreDataTVC.m */,
 				842CB26218BFCEAE00804D8D /* Myself+Create.h */,
@@ -288,6 +313,8 @@
 				842CB26918BFCEDC00804D8D /* Broker+Create.m */,
 				842CB26B18BFCEF300804D8D /* Message+Create.h */,
 				842CB26C18BFCEF300804D8D /* Message+Create.m */,
+				84D27DE018D4C33200D888E0 /* Device+Create.h */,
+				84D27DE118D4C33200D888E0 /* Device+Create.m */,
 			);
 			name = CoreData;
 			sourceTree = "<group>";
@@ -382,6 +409,14 @@
 		84C1B36818BE8AA100C77138 = {
 			isa = PBXGroup;
 			children = (
+				84D27DAC18D48D2400D888E0 /* OSodium.h */,
+				84D27DAD18D48D2400D888E0 /* OSodium.m */,
+				84D27DAF18D48FC400D888E0 /* OSodiumSecretBox.h */,
+				84D27DB018D48FC400D888E0 /* OSodiumSecretBox.m */,
+				84D27DDA18D4B27200D888E0 /* OSodiumBox.h */,
+				84D27DDB18D4B27200D888E0 /* OSodiumBox.m */,
+				84D27DDD18D4B29900D888E0 /* OSodiumSign.h */,
+				84D27DDE18D4B29900D888E0 /* OSodiumSign.m */,
 				842ECF6D18CFD60200AF6268 /* ypom-dev.p12 */,
 				842ECF6618CFD41600AF6268 /* NWPusher */,
 				842ECF4818CFC2E900AF6268 /* YPOM_Dev.mobileprovision */,
@@ -629,39 +664,46 @@
 			buildActionMask = 2147483647;
 			files = (
 				842ECF6418CFD40D00AF6268 /* NWSecTools.m in Sources */,
+				84D27DDF18D4B29900D888E0 /* OSodiumSign.m in Sources */,
 				842ECF5F18CFD40D00AF6268 /* ioSock.c in Sources */,
 				842CB27C18BFEAB100804D8D /* YPOMUsersTVC.m in Sources */,
 				847A52DB18C3DE45004EF999 /* isutf8.c in Sources */,
 				842ECF6318CFD40D00AF6268 /* NWPushFeedback.m in Sources */,
 				84C1B3B118BE8B1300C77138 /* YPOM.m in Sources */,
 				8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */,
+				84D27DAE18D48D2400D888E0 /* OSodium.m in Sources */,
+				84D27DD018D4B07000D888E0 /* Message.m in Sources */,
 				842CB28518BFFD7500804D8D /* YPOMMessagesTVC.m in Sources */,
 				84C1B38118BE8AA100C77138 /* main.m in Sources */,
 				8470C49A18C2785600133A87 /* YPOMSettingsTVC.m in Sources */,
 				842CB26718BFCEC900804D8D /* User+Create.m in Sources */,
-				842ECF7518CFD81000AF6268 /* User.m in Sources */,
 				842ECF6018CFD40D00AF6268 /* NWHub.m in Sources */,
 				84C1B38518BE8AA100C77138 /* YPOMAppDelegate.m in Sources */,
 				842ECF6518CFD40D00AF6268 /* NWSSLConnection.m in Sources */,
-				847A5A4718C4C350004EF999 /* Message.m in Sources */,
 				841F41C718D21D0700D1586D /* YPOMThemesTVC.m in Sources */,
-				847A5A4418C4C34F004EF999 /* Broker.m in Sources */,
 				849D457018CCDA2600201BF3 /* NSString+hexStringWithData.m in Sources */,
 				84CC0E8E18C7544D00D5985E /* NSString+HexToData.m in Sources */,
+				84D27DD318D4B07000D888E0 /* Group.m in Sources */,
+				84D27DD618D4B07000D888E0 /* Myself.m in Sources */,
 				84CC0E9718C7584F00D5985E /* YPOM+Wire.m in Sources */,
+				84D27DE218D4C33200D888E0 /* Device+Create.m in Sources */,
 				847A5A4118C4B24F004EF999 /* base32.c in Sources */,
 				842CB24918BFCCC800804D8D /* YPOM.xcdatamodeld in Sources */,
+				84D27DDC18D4B27200D888E0 /* OSodiumBox.m in Sources */,
 				842ECF6118CFD40D00AF6268 /* NWNotification.m in Sources */,
 				842CB26418BFCEAE00804D8D /* Myself+Create.m in Sources */,
+				84D27DCA18D4B06F00D888E0 /* Broker.m in Sources */,
 				841F41CA18D2213900D1586D /* YPOMUserExperienceTVC.m in Sources */,
 				842ECF6218CFD40D00AF6268 /* NWPusher.m in Sources */,
+				84D27DB118D48FC400D888E0 /* OSodiumSecretBox.m in Sources */,
+				84D27DCD18D4B07000D888E0 /* Device.m in Sources */,
 				849D457718CCE6EA00201BF3 /* YPOMImageVC.m in Sources */,
 				842CB26A18BFCEDC00804D8D /* Broker+Create.m in Sources */,
 				84CC0E9418C7554D00D5985E /* NSString+stringWithData.m in Sources */,
+				84D27DD918D4B07000D888E0 /* User.m in Sources */,
 				842CB27B18BFEAB100804D8D /* CoreDataTVC.m in Sources */,
 				842CB26D18BFCEF300804D8D /* Message+Create.m in Sources */,
 				842ECF7918D0BE5F00AF6268 /* YPOMTheme.m in Sources */,
-				847A5A4D18C4C350004EF999 /* Myself.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

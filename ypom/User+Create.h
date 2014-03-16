@@ -10,22 +10,12 @@
 #import "Broker+Create.h"
 
 @interface User (Create)
-+ (User *)userWithPk:(NSData *)pk
-                name:(NSString *)name
++ (User *)userWithIdentifier:(NSString *)identifier
 inManagedObjectContext:(NSManagedObjectContext *)context;
 
-+ (User *)userWithBase32EncodedPk:(NSString *)pk32
-                name:(NSString *)name
-inManagedObjectContext:(NSManagedObjectContext *)context;
-
-+ (User *)existsUserWithPk:(NSData *)pk
++ (User *)existsUserWithIdentifier:(NSString *)identifier
       inManagedObjectContext:(NSManagedObjectContext *)context;
 
-+ (User *)existsUserWithBase32EncodedPk:(NSString *)pk32
-      inManagedObjectContext:(NSManagedObjectContext *)context;
-
-- (NSComparisonResult)compare:(User *)user;
-
-- (NSString *)base32EncodedPk;
++ (User *)newUserInManageObjectContext:(NSManagedObjectContext *)context;
 
 @end
