@@ -18,6 +18,7 @@
 #import "YPOMImageVC.h"
 #import "OSodiumSign.h"
 #import "OSodiumBox.h"
+#import <AddressBook/AddressBook.h>
 
 #include "isutf8.h"
 
@@ -47,7 +48,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     self.fetchedResultsController = nil;
-    self.title = self.user.identifier;
+    self.title = [self.user name];
     [self.tableView reloadData];
 }
 
@@ -152,6 +153,37 @@
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
+    Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+        if (![message.outgoing boolValue] && ![message.seen boolValue]) {
+            message.seen = @(TRUE);
+            YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+            OSodiumBox *box = [[OSodiumBox alloc] init];
+            box.pubkey = message.belongsTo.pubkey;
+            box.seckey = delegate.myself.myUser.seckey;
+            
+            NSError *error;
+            NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+            jsonObject[@"_type"] = @"see";
+            jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [message.timestamp timeIntervalSince1970]];
+            
+            box.secret = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+            
+            OSodiumSign *sign = [[OSodiumSign alloc] init];
+            sign.verkey = delegate.myself.myUser.verkey;
+            sign.sigkey = delegate.myself.myUser.sigkey;
+            sign.secret = [box boxOnWire];
+            
+            [delegate.session publishData:[[sign signOnWire] base64EncodedDataWithOptions:0]
+                                  onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
+                                           message.belongsTo.identifier,
+                                           delegate.myself.myUser.identifier]
+                                   retain:NO
+                                      qos:2];
+        }
+    }
+
     if ([cell.reuseIdentifier isEqualToString:@"NewMessage"]) {
         [self configureNewMessageCell:cell atIndexPath:indexPath];
     } else {
@@ -232,11 +264,7 @@
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
 
     if (outgoing) {
-        if (delivered) {
-            cell.backgroundColor = delegate.theme.myColor;
-        } else {
-            cell.backgroundColor = delegate.theme.unknownColor;
-        }
+        cell.backgroundColor = delegate.theme.myColor;
     } else {
         cell.backgroundColor = delegate.theme.yourColor;
     }
@@ -448,6 +476,47 @@
     }
 
 }
+- (IBAction)addressbookPressed:(UIBarButtonItem *)sender {
+    ABPeoplePickerNavigationController *picker =
+    [[ABPeoplePickerNavigationController alloc] init];
+    picker.peoplePickerDelegate = self;
+    
+    [self presentViewController:picker animated:YES completion:^{
+        //
+    }];
+}
+
+- (void)peoplePickerNavigationControllerDidCancel:
+(ABPeoplePickerNavigationController *)peoplePicker
+{
+    [self dismissViewControllerAnimated:YES completion:^{
+        //
+    }];
+}
 
 
+- (BOOL)peoplePickerNavigationController:
+(ABPeoplePickerNavigationController *)peoplePicker
+      shouldContinueAfterSelectingPerson:(ABRecordRef)person {
+    
+    self.user.abRecordId = @(ABRecordGetRecordID(person));
+    
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    [delegate saveContext];
+    
+    [self dismissViewControllerAnimated:YES completion:^{
+        //
+    }];
+    
+    return NO;
+}
+
+- (BOOL)peoplePickerNavigationController:
+(ABPeoplePickerNavigationController *)peoplePicker
+      shouldContinueAfterSelectingPerson:(ABRecordRef)person
+                                property:(ABPropertyID)property
+                              identifier:(ABMultiValueIdentifier)identifier
+{
+    return NO;
+}
 @end

@@ -12,12 +12,18 @@
 #import "Message+Create.h"
 #import "YPOMAppDelegate.h"
 #import "YPOM.h"
+#import <AddressBook/AddressBook.h>
 
 @interface YPOMUsersTVC () <YPOMdelegate>
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *version;
 @end
 
 @implementation YPOMUsersTVC
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+}
 
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -121,10 +127,8 @@
     User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    cell.textLabel.text = [NSString stringWithFormat:@"%@", user.identifier];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",
-                                 user.hasMessages ? 0 : (unsigned long)[user.hasMessages count] - 1
-                                 ];
+    cell.textLabel.text = [user name];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)[user numberOfUnseenMessages]];
     
     /*
     if (user.online) {

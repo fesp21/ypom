@@ -33,6 +33,7 @@
         message.belongsTo = user;
         message.delivered = @(NO);
         message.acknowledged = @(NO);
+        message.seen = @(NO);
         message.msgid = @(0);
     }
     

@@ -19,21 +19,20 @@
     memcpy(p, verkey.bytes, crypto_sign_PUBLICKEYBYTES);
     
     unsigned char *sm;
-    _sodium_alignedcalloc(&sm, data.length - crypto_sign_PUBLICKEYBYTES);
+    _sodium_alignedcalloc(&sm, data.length);
     
     if (sm) {
-        memcpy(sm, data.bytes + crypto_sign_PUBLICKEYBYTES, data.length - crypto_sign_PUBLICKEYBYTES);
+        memcpy(sm, data.bytes, data.length);
         
         unsigned char *m;
-        _sodium_alignedcalloc(&m, data.length - crypto_sign_PUBLICKEYBYTES);
+        _sodium_alignedcalloc(&m, data.length);
         
         unsigned long long mlen;
         
         if (m) {
-            if (!crypto_sign_open(m, &mlen, sm, data.length - crypto_sign_PUBLICKEYBYTES, verkey.bytes)) {
+            if (!crypto_sign_open(m, &mlen, sm, data.length, verkey.bytes)) {
                 sign = [[OSodiumSign alloc] init];
-                sign.verkey = [NSData dataWithBytes:p length:crypto_sign_PUBLICKEYBYTES];
-                sign.secret = [NSData dataWithBytes:m length:mlen];
+                sign.secret = [NSData dataWithBytes:m length:(NSUInteger)mlen];
             }
             free(m);
         }
@@ -44,7 +43,7 @@
 
 - (NSData *)signOnWire
 {
-    NSMutableData *data;
+    NSData *data;
     
     unsigned char p[crypto_sign_PUBLICKEYBYTES];
     unsigned char s[crypto_sign_SECRETKEYBYTES];
@@ -66,8 +65,7 @@
         if (sm) {
             crypto_sign(sm, &smlen, m, self.secret.length, s);
             
-            data = [[NSData dataWithBytes:p length:crypto_sign_PUBLICKEYBYTES] mutableCopy];
-            [data appendBytes:sm length:smlen];
+            data = [NSData dataWithBytes:sm length:(NSUInteger)smlen];
             free(sm);
         }
         free(m);

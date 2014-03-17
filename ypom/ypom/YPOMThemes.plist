@@ -183,9 +183,9 @@
 			<key>yourColor</key>
 			<dict>
 				<key>red</key>
-				<integer>0</integer>
+				<integer>100</integer>
 				<key>green</key>
-				<integer>0</integer>
+				<integer>200</integer>
 				<key>blue</key>
 				<integer>255</integer>
 				<key>alpha</key>

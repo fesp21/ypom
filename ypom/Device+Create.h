@@ -7,7 +7,10 @@
 //
 
 #import "Device.h"
+#import "User+Create.h"
 
 @interface Device (Create)
++ (Device *)deviceWithToken:(NSData *)token belongsTo:(User *)belongsTo;
++ (Device *)existsDeviceWithToken:(NSData *)token belongsTo:(User *)belongsTo;
 
 @end

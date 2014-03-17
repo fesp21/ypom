@@ -26,6 +26,8 @@
 @property (nonatomic) NSInteger errorCount;
 @property (strong, nonatomic) NSData *deviceToken;
 @property (nonatomic) BOOL background;
+@property (strong, nonatomic) NWPusher *pusher;
+@property (nonatomic) NWPusherResult pusherResult;
 @end
 
 @implementation YPOMAppDelegate
@@ -52,9 +54,12 @@
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     NSLog(@"applicationWillResignActive");
     
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+
     [self saveContext];
     [self disconnect:nil];
-
+    [self.pusher disconnect];
+    self.pusher = nil;
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
@@ -81,8 +86,6 @@
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     NSLog(@"applicationDidBecomeActive");
-    
-    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
     
     self.theme = [[YPOMTheme alloc] init];
         
@@ -115,6 +118,8 @@
     
     [self saveContext];
     [self disconnect:nil];
+    [self.pusher disconnect];
+    self.pusher = nil;
 
 }
 
@@ -283,7 +288,6 @@
     }
 }
 
-
 - (void)newMessage:(MQTTSession *)session
               data:(NSData *)data
            onTopic:(NSString *)topic
@@ -297,51 +301,6 @@
     
     NSArray *components = [topic pathComponents];
     
-    /*
-     if ([components count] == 2) {
-     User *user = [User existsUserWithBase32EncodedPk:components[1]
-     inManagedObjectContext:self.managedObjectContext];
-     
-     if (data.length) {
-     NSError *error;
-     NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-     if (dictionary) {
-     if ([dictionary[@"_type"] isEqualToString:@"usr"]) {
-     if (user) {
-     user.name = dictionary[@"name"];
-     } else {
-     user = [User userWithBase32EncodedPk:components[1]
-     name:dictionary[@"name"]
-     inManagedObjectContext:self.managedObjectContext];
-     }
-     NSData *dev = nil;
-     NSString *devInB64 = dictionary[@"dev"];
-     if (devInB64) {
-     dev = [[NSData alloc] initWithBase64EncodedString:devInB64 options:0];
-     }
-     user.dev = dev;
-     
-     [Message messageWithContent:nil
-     contentType:nil
-     timestamp:[NSDate dateWithTimeIntervalSince1970:FUTURE]
-     outgoing:YES
-     belongsTo:user
-     inManagedObjectContext:self.managedObjectContext];
-     } else {
-     NSLog(@"unknown _type:%@", dictionary[@"_type"]);
-     }
-     } else {
-     NSLog(@"illegal json:%@", error);
-     }
-     } else {
-     if (user) {
-     if ([user compare:self.myself.myUser] != NSOrderedSame) {
-     [self.managedObjectContext deleteObject:user];
-     }
-     }
-     }
-     }
-     */
     
     if ([components count] == 3) {
         User *receiver = [User existsUserWithIdentifier:components[1]
@@ -350,83 +309,113 @@
         User *sender = [User existsUserWithIdentifier:components[2]
                                inManagedObjectContext:self.managedObjectContext];
         
-        NSData *binData = [[NSData alloc] initWithBase64EncodedData:data options:0];
-        
-        OSodiumSign *sign = [OSodiumSign signFromData:binData
-                                               verkey:sender.verkey];
-        if (sign) {
-            OSodiumBox *box = [OSodiumBox boxFromData:sign.secret
-                                               pubkey:sender.pubkey
-                                               seckey:receiver.seckey];
-            if (box) {
-                NSError *error;
-                NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:box.secret options:0 error:&error];
-                if (dictionary) {
-                    if ([dictionary[@"_type"] isEqualToString:@"msg"]) {
-                        NSData *content = dictionary[@"content"] ? [[NSData alloc] initWithBase64EncodedString:dictionary[@"content"] options:0] : nil;
-                        NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
-                        NSString *contentType = dictionary[@"content-type"];
-                        Message *message = [Message messageWithContent:content
-                                                           contentType:contentType
-                                                             timestamp:timestamp
-                                                              outgoing:NO
-                                                             belongsTo:sender
-                                                inManagedObjectContext:self.managedObjectContext];
-                        // send notification
-                        
-                        if (self.notificationLevel) {
-                            UILocalNotification *notification = [[UILocalNotification alloc] init];
-                            notification.alertBody = @"Message received";
-                            if (self.notificationLevel > 1) {
-                                [notification.alertBody stringByAppendingFormat:@" from %@", sender.identifier];
-                                if (self.notificationLevel > 2) {
-                                    [notification.alertBody stringByAppendingFormat:@": %@", message.contenttype];
+        if (receiver && [receiver.identifier isEqualToString:self.myself.myUser.identifier] && sender) {
+            
+            NSData *binData = [[NSData alloc] initWithBase64EncodedData:data options:0];
+            
+            OSodiumSign *sign = [OSodiumSign signFromData:binData
+                                                   verkey:sender.verkey];
+            if (sign) {
+                OSodiumBox *box = [OSodiumBox boxFromData:sign.secret
+                                                   pubkey:sender.pubkey
+                                                   seckey:receiver.seckey];
+                if (box) {
+                    NSError *error;
+                    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:box.secret options:0 error:&error];
+                    if (dictionary) {
+                        if ([dictionary[@"_type"] isEqualToString:@"msg"]) {
+                            NSData *content = dictionary[@"content"] ? [[NSData alloc] initWithBase64EncodedString:dictionary[@"content"] options:0] : nil;
+                            NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
+                            NSString *contentType = dictionary[@"content-type"];
+                            Message *message = [Message messageWithContent:content
+                                                               contentType:contentType
+                                                                 timestamp:timestamp
+                                                                  outgoing:NO
+                                                                 belongsTo:sender
+                                                    inManagedObjectContext:self.managedObjectContext];
+                            //update
+                            sender.identifier = sender.identifier;
+                            
+                            // send notification
+                            
+                            if (self.notificationLevel) {
+                                UILocalNotification *notification = [[UILocalNotification alloc] init];
+                                NSString *body = @"Message received";
+                                if (self.notificationLevel > 1) {
+                                    body = [body stringByAppendingFormat:@" from %@", sender.identifier];
+                                    if (self.notificationLevel > 2) {
+                                        body = [body stringByAppendingFormat:@": %@", message.contenttype];
+                                    }
+                                }
+                                notification.alertBody = body;
+                                [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+                            }
+                            
+                            // send ACK
+                            message.acknowledged = @(TRUE);
+                            OSodiumBox *box = [[OSodiumBox alloc] init];
+                            box.pubkey = sender.pubkey;
+                            box.seckey = receiver.seckey;
+                            
+                            NSError *error;
+                            NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+                            jsonObject[@"_type"] = @"ack";
+                            jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
+                            jsonObject[@"dev"] = [self.deviceToken base64EncodedStringWithOptions:0];
+                            
+                            box.secret = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+                            
+                            OSodiumSign *sign = [[OSodiumSign alloc] init];
+                            sign.verkey = receiver.verkey;
+                            sign.sigkey = receiver.sigkey;
+                            sign.secret = [box boxOnWire];
+                            
+                            [self.session publishData:[[sign signOnWire] base64EncodedDataWithOptions:0]
+                                              onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
+                                                       sender.identifier,
+                                                       receiver.identifier]
+                                               retain:NO
+                                                  qos:2];
+                            
+                        } else if ([dictionary[@"_type"] isEqualToString:@"ack"]) {
+                            NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
+                            Message *message = [Message existsMessageWithTimestamp:timestamp
+                                                                          outgoing:YES
+                                                                         belongsTo:sender                                                        inManagedObjectContext:self.managedObjectContext];
+                            message.acknowledged = @(TRUE);
+                            NSString *deviceTokenString = dictionary[@"dev"];
+                            if (deviceTokenString) {
+                                NSData *deviceToken = [[NSData alloc] initWithBase64EncodedString:deviceTokenString
+                                                                                          options:0];
+                                if (deviceToken) {
+                                    [Device deviceWithToken:deviceToken belongsTo:sender];
                                 }
                             }
-                            notification.applicationIconBadgeNumber = 1;
-                            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+                            
+                        } else if ([dictionary[@"_type"] isEqualToString:@"see"]) {
+                            NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
+                            Message *message = [Message existsMessageWithTimestamp:timestamp
+                                                                          outgoing:YES
+                                                                         belongsTo:sender                                                        inManagedObjectContext:self.managedObjectContext];
+                            message.seen = @(TRUE);
+                        } else {
+                            NSLog(@"unknown _type:%@", dictionary[@"_type"]);
                         }
-                        
-                        // send ACK
-                        OSodiumBox *box = [[OSodiumBox alloc] init];
-                        box.pubkey = sender.pubkey;
-                        box.seckey = receiver.seckey;
-                        
-                        NSError *error;
-                        NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-                        jsonObject[@"_type"] = @"ack";
-                        jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
-                        
-                        box.secret = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-                        
-                        OSodiumSign *sign = [[OSodiumSign alloc] init];
-                        sign.verkey = receiver.verkey;
-                        sign.sigkey = receiver.sigkey;
-                        sign.secret = [box boxOnWire];
-                        
-                        [self.session publishData:[[sign signOnWire] base64EncodedDataWithOptions:0]
-                                          onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
-                                                   sender.identifier,
-                                                   receiver.identifier]
-                                           retain:NO
-                                              qos:2];
-                        
-                    } else if ([dictionary[@"_type"] isEqualToString:@"ack"]) {
-                        NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
-                        Message *message = [Message existsMessageWithTimestamp:timestamp
-                                                                      outgoing:YES
-                                                                     belongsTo:sender                                                        inManagedObjectContext:self.managedObjectContext];
-                        message.acknowledged = @(TRUE);
                     } else {
-                        NSLog(@"unknown _type:%@", dictionary[@"_type"]);
+                        NSLog(@"illegal json:%@", error);
                     }
+                    
+                    
                 } else {
-                    NSLog(@"illegal json:%@", error);
+                    [Message messageWithContent:[@"Can't boxOpen" dataUsingEncoding:NSUTF8StringEncoding]
+                                    contentType:@"text/plain; charset:\"utf-8\""
+                                      timestamp:[NSDate date]
+                                       outgoing:NO
+                                      belongsTo:sender
+                         inManagedObjectContext:self.managedObjectContext];
                 }
-                
-                
             } else {
-                [Message messageWithContent:[@"Can't boxOpen" dataUsingEncoding:NSUTF8StringEncoding]
+                [Message messageWithContent:[@"Can't signOpen" dataUsingEncoding:NSUTF8StringEncoding]
                                 contentType:@"text/plain; charset:\"utf-8\""
                                   timestamp:[NSDate date]
                                    outgoing:NO
@@ -434,13 +423,9 @@
                      inManagedObjectContext:self.managedObjectContext];
             }
         } else {
-            [Message messageWithContent:[@"Can't signOpen" dataUsingEncoding:NSUTF8StringEncoding]
-                            contentType:@"text/plain; charset:\"utf-8\""
-                              timestamp:[NSDate date]
-                               outgoing:NO
-                              belongsTo:sender
-                 inManagedObjectContext:self.managedObjectContext];
+            NSLog(@"unkown sender/receiver");
         }
+        
     }
     
     if (self.listener) {
@@ -529,6 +514,9 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo
 fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
     NSLog(@"App didReceiveRemoteNotification fetchCompletionHandler %@", userInfo);
+    
+    [UIApplication sharedApplication].applicationIconBadgeNumber++;
+
     if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
         if (!self.background) {
             self.background = TRUE;
@@ -552,35 +540,40 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
     if ([user.hasDevices count]) {
         NSURL *url = [NSBundle.mainBundle URLForResource:@"ypom-dev.p12" withExtension:nil];
         NSData *pkcs12 = [NSData dataWithContentsOfURL:url];
-        NWPusher *pusher = [[NWPusher alloc] init];
-        NWPusherResult connected = [pusher connectWithPKCS12Data:pkcs12 password:@"pa$$word"];
-        if (connected == kNWPusherResultSuccess) {
+        if (!self.pusher) {
+            self.pusher = [[NWPusher alloc] init];
+            self.pusherResult = [self.pusher connectWithPKCS12Data:pkcs12 password:@"pa$$word"];
+        }
+        if (self.pusherResult == kNWPusherResultSuccess) {
             NSLog(@"Connected to APN");
         } else {
-            NSLog(@"Unable to connect: %@", [NWPusher stringFromResult:connected]);
+            NSLog(@"Unable to connect: %@", [NWPusher stringFromResult:self.pusherResult]);
+            self.pusher = nil;
         }
         
-        if (connected) {
+        if (self.pusherResult == kNWPusherResultSuccess) {
             for (Device *dev in user.hasDevices) {
                 NSString *payload = @"{\"aps\":{\"content-available\":\"1\"}}";
                 NSString *token = [NSString hexStringWithData:dev.deviceToken];
-                NWPusherResult pushed = [pusher pushPayload:payload token:token identifier:rand()];
+                NWPusherResult pushed = [self.pusher pushPayload:payload token:token identifier:rand()];
                 if (pushed == kNWPusherResultSuccess) {
                     NSLog(@"Notification sending");
                 } else {
                     NSLog(@"Unable to sent: %@", [NWPusher stringFromResult:pushed]);
+                    [self.pusher disconnect];
+                    self.pusher = nil;
                 }
                 if (pushed) {
                     NSUInteger identifier = 0;
-                    NWPusherResult accepted = [pusher fetchFailedIdentifier:&identifier];
+                    NWPusherResult accepted = [self.pusher fetchFailedIdentifier:&identifier];
                     if (accepted == kNWPusherResultSuccess) {
                         NSLog(@"Notification sent successfully");
                     } else {
-                        NSLog(@"Notification with identifier %i rejected: %@", (int)identifier, [NWPusher stringFromResult:accepted]);
+                        NSLog(@"Notification with identifier %i rejected: %@", (int)identifier,
+                              [NWPusher stringFromResult:accepted]);
                     }
                 }
             }
-            [pusher disconnect];
         }
     }
 }
@@ -593,51 +586,62 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
+#ifdef DEBUG
     NSLog(@"openURL:%@ sourceApplication:%@ annotation:%@", url, sourceApplication, annotation);
+#endif
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"YPOM File"
+                                                    message:@"proccessing..."
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    BOOL result = TRUE;
+    NSString *identifier;
     
     if (url) {
         NSError *error;
         NSInputStream *input = [NSInputStream inputStreamWithURL:url];
-        if ([input streamError]) {
-            NSLog(@"Error inputStreamWithURL %@ %@", [input streamError], url);
-            return FALSE;
-        }
-        [input open];
-        if ([input streamError]) {
-            NSLog(@"Error open %@ %@", [input streamError], url);
-            return FALSE;
-        }
-        
-        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithStream:input options:0 error:&error];
-        if (dictionary) {
-            for (NSString *key in [dictionary allKeys]) {
-                NSLog(@"json %@:%@", key, dictionary[key]);
-            }
-            
-            NSString *identifier = dictionary[@"id"];
-            NSData *pubkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"pubkey"] options:0];
-            NSData *verkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"verkey"] options:0];
-            
-            if (identifier && pubkey && verkey) {
-                User *user = [User userWithIdentifier:identifier inManagedObjectContext:self.managedObjectContext];
-                user.pubkey = pubkey;
-                user.verkey = verkey;
+        if (![input streamError]) {
+            [input open];
+            if (![input streamError]) {
+                
+                NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithStream:input options:0 error:&error];
+                if (dictionary) {
+#ifdef DEBUG
+                    for (NSString *key in [dictionary allKeys]) {
+                        NSLog(@"json %@:%@", key, dictionary[key]);
+                    }
+#endif
+                    identifier = dictionary[@"id"];
+                    NSData *pubkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"pubkey"] options:0];
+                    NSData *verkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"verkey"] options:0];
+                    
+                    if (identifier && pubkey && verkey) {
+                        User *user = [User userWithIdentifier:identifier inManagedObjectContext:self.managedObjectContext];
+                        user.pubkey = pubkey;
+                        user.verkey = verkey;
+                    } else {
+                        alert.message = @"Error invalid ypom file";
+                        result = FALSE;
+                    }
+                } else {
+                    alert.message = @"Error illegal json in file";
+                    result = FALSE;
+                }
             } else {
-                NSLog(@"Error invalid ypom file");
-                return FALSE;
+                alert.message = [NSString stringWithFormat:@"Error open %@ %@", [input streamError], url];
+                result = FALSE;
             }
         } else {
-            NSLog(@"Error illegal json in init file %@)", error);
-            return FALSE;
+            alert.message = [NSString stringWithFormat:@"Error inputStreamWithURL %@ %@", [input streamError], url];
+            result = FALSE;
         }
-        
-        NSLog(@"Init file %@ successfully processed)", [url lastPathComponent]);
-        
+        alert.message = [NSString stringWithFormat:@"Successfully processed %@", identifier];
     }
     [self saveContext];
-    return TRUE;
+    [alert show];
+    return result;
 }
-
 
 @end
 

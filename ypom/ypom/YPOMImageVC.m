@@ -7,6 +7,7 @@
 //
 
 #import "YPOMImageVC.h"
+#import <AssetsLibrary/AssetsLibrary.h>
 
 @interface YPOMImageVC () <UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -82,6 +83,14 @@
     self.scrollView.maximumZoomScale = 5.0;
     self.scrollView.delegate = self;
     [self resetImage];
+}
+- (IBAction)storePressed:(UIBarButtonItem *)sender {
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    [library writeImageDataToSavedPhotosAlbum:self.imageData
+                                     metadata:@{}
+                              completionBlock:^(NSURL *assetURL, NSError *error) {
+                                  NSLog(@"writeImageDataToSavedPhotosAlbum %@ %@", assetURL, error);
+                              }];
 }
 
 @end

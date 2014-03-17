@@ -30,6 +30,9 @@
 		842ECF6A18CFD43B00AF6268 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 842ECF6918CFD43B00AF6268 /* Security.framework */; };
 		842ECF6E18CFD60200AF6268 /* ypom-dev.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 842ECF6D18CFD60200AF6268 /* ypom-dev.p12 */; };
 		842ECF7918D0BE5F00AF6268 /* YPOMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF7818D0BE5F00AF6268 /* YPOMTheme.m */; };
+		8454B7AA18D5F2800046624C /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8454B7A918D5F2800046624C /* AssetsLibrary.framework */; };
+		8454B7AF18D5F4990046624C /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8454B7AE18D5F4990046624C /* AddressBookUI.framework */; };
+		8454B7B118D5F76E0046624C /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8454B7B018D5F76E0046624C /* AddressBook.framework */; };
 		8470C49A18C2785600133A87 /* YPOMSettingsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C49918C2785600133A87 /* YPOMSettingsTVC.m */; };
 		8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */; };
 		847A52DB18C3DE45004EF999 /* isutf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A52DA18C3DE45004EF999 /* isutf8.c */; };
@@ -135,6 +138,9 @@
 		842ECF6D18CFD60200AF6268 /* ypom-dev.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ypom-dev.p12"; sourceTree = "<group>"; };
 		842ECF7718D0BE5F00AF6268 /* YPOMTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMTheme.h; sourceTree = "<group>"; };
 		842ECF7818D0BE5F00AF6268 /* YPOMTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMTheme.m; sourceTree = "<group>"; };
+		8454B7A918D5F2800046624C /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		8454B7AE18D5F4990046624C /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		8454B7B018D5F76E0046624C /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		8470C49818C2785600133A87 /* YPOMSettingsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMSettingsTVC.h; sourceTree = "<group>"; };
 		8470C49918C2785600133A87 /* YPOMSettingsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMSettingsTVC.m; sourceTree = "<group>"; };
 		8470C4C218C2B9DE00133A87 /* YPOMNewTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMNewTVCell.h; sourceTree = "<group>"; };
@@ -255,6 +261,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8454B7B118D5F76E0046624C /* AddressBook.framework in Frameworks */,
+				8454B7AF18D5F4990046624C /* AddressBookUI.framework in Frameworks */,
+				8454B7AA18D5F2800046624C /* AssetsLibrary.framework in Frameworks */,
 				842ECF6A18CFD43B00AF6268 /* Security.framework in Frameworks */,
 				842ECF6818CFD42F00AF6268 /* CFNetwork.framework in Frameworks */,
 				849D456718C9D68F00201BF3 /* libsodium.a in Frameworks */,
@@ -453,6 +462,9 @@
 		84C1B37318BE8AA100C77138 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8454B7B018D5F76E0046624C /* AddressBook.framework */,
+				8454B7AE18D5F4990046624C /* AddressBookUI.framework */,
+				8454B7A918D5F2800046624C /* AssetsLibrary.framework */,
 				842ECF6918CFD43B00AF6268 /* Security.framework */,
 				842ECF6718CFD42F00AF6268 /* CFNetwork.framework */,
 				849D456518C9AC3700201BF3 /* MQTTClient.framework */,

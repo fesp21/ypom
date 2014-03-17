@@ -18,4 +18,7 @@ inManagedObjectContext:(NSManagedObjectContext *)context;
 
 + (User *)newUserInManageObjectContext:(NSManagedObjectContext *)context;
 
+- (NSString *)name;
+- (NSUInteger)numberOfUnseenMessages;
+
 @end

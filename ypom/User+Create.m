@@ -7,10 +7,12 @@
 //
 
 #import "User+Create.h"
-#include "base32.h"
-#include "sodium.h"
-#include "OSodiumBox.h"
-#include "OSodiumSign.h"
+#import "Message+Create.h"
+#import "base32.h"
+#import "sodium.h"
+#import "OSodiumBox.h"
+#import "OSodiumSign.h"
+#import <AddressBook/AddressBook.h>
 
 #define IDENTIFIER_LEN 5
 
@@ -78,6 +80,37 @@
     }
     
     return user;
+}
+
+- (NSString *)name
+{
+    NSString *name = self.identifier;
+    
+    ABRecordID rid = self.abRecordId ? [self.abRecordId intValue] : kABRecordInvalidID;
+    if (rid && rid != kABRecordInvalidID) {
+        CFErrorRef myError = NULL;
+        ABAddressBookRef abref = ABAddressBookCreateWithOptions(NULL, &myError);
+        if (abref) {
+            ABRecordRef rref = ABAddressBookGetPersonWithRecordID(abref, rid);
+            name = CFBridgingRelease(ABRecordCopyCompositeName(rref));
+            CFRelease(abref);
+        }
+    }
+    return name;
+}
+
+- (NSUInteger)numberOfUnseenMessages
+{
+    NSUInteger u = 0;
+    
+    for (Message *message in self.hasMessages) {
+        if (message.outgoing && ![message.outgoing boolValue]) {
+            if (message.seen && ![message.seen boolValue]) {
+                u++;
+            }
+        }
+    }
+    return u;
 }
 
 

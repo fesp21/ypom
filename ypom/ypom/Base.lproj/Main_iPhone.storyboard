@@ -168,7 +168,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="User" id="Bmb-Z8-A1U">
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="bookmarks" id="dRl-Cb-gYV"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="bookmarks" id="dRl-Cb-gYV">
+                            <connections>
+                                <action selector="addressbookPressed:" destination="LJz-yo-Ved" id="Vjr-0P-CND"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="27l-T7-9WV" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -201,7 +205,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="fmn-mD-37b">
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="action" id="hjv-ek-1gq"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="hjv-ek-1gq">
+                            <connections>
+                                <action selector="storePressed:" destination="e7u-7Q-k3l" id="6yR-GF-HZE"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="scrollView" destination="YUw-wQ-w9i" id="e5s-YB-WSg"/>
@@ -533,7 +541,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="YPOM" id="yT2-LZ-e6P">
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Item" style="plain" id="NlX-5U-QX8"/>
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Item" id="NlX-5U-QX8"/>
                     </navigationItem>
                     <connections>
                         <outlet property="version" destination="NlX-5U-QX8" id="Clb-WB-GuA"/>
