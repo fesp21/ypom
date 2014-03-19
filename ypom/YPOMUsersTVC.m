@@ -128,7 +128,11 @@
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
     cell.textLabel.text = [user name];
+    cell.textLabel.textColor = delegate.theme.textColor;
+
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)[user numberOfUnseenMessages]];
+    cell.detailTextLabel.textColor = delegate.theme.textColor;
+
     
     /*
     if (user.online) {

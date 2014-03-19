@@ -12,7 +12,12 @@
 #import <AddressBookUI/AddressBookUI.h>
 
 
-@interface YPOMMessagesTVC : CoreDataTVC <UINavigationControllerDelegate, UIImagePickerControllerDelegate,ABPeoplePickerNavigationControllerDelegate>
+@interface YPOMMessagesTVC : CoreDataTVC <
+UINavigationControllerDelegate,
+UIImagePickerControllerDelegate,
+ABPeoplePickerNavigationControllerDelegate,
+UITextFieldDelegate
+>
 @property (strong, nonatomic) User *user;
 
 @end

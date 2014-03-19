@@ -51,6 +51,11 @@
 {
     [super viewWillAppear:animated];
     
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+
+    self.view.backgroundColor = delegate.theme.backgroundColor;
+    self.tableView.tintColor = delegate.theme.yourColor;
+    
     [self saveOld];
     
     [self changed];
@@ -75,9 +80,6 @@
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.listener = self;
-    
-    self.view.backgroundColor = delegate.theme.backgroundColor;
-    self.navigationController.navigationBar.barTintColor = delegate.theme.barColor;
     
     [self lineState];
 }

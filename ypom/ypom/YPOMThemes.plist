@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>defaultTheme</key>
-	<string>default</string>
 	<key>themes</key>
 	<dict>
 		<key>classic</key>
@@ -99,7 +97,7 @@
 			<key>messageTextAttributes</key>
 			<dict/>
 		</dict>
-		<key>default</key>
+		<key>colorful</key>
 		<dict>
 			<key>messageTextAttributes</key>
 			<dict/>
@@ -188,6 +186,99 @@
 				<integer>200</integer>
 				<key>blue</key>
 				<integer>255</integer>
+				<key>alpha</key>
+				<integer>1</integer>
+			</dict>
+		</dict>
+		<key>default</key>
+		<dict>
+			<key>messageTextAttributes</key>
+			<dict/>
+			<key>backgroundColor</key>
+			<dict>
+				<key>red</key>
+				<integer>57</integer>
+				<key>green</key>
+				<integer>69</integer>
+				<key>blue</key>
+				<integer>132</integer>
+				<key>alpha</key>
+				<integer>1</integer>
+			</dict>
+			<key>barColor</key>
+			<dict>
+				<key>red</key>
+				<integer>250</integer>
+				<key>green</key>
+				<integer>250</integer>
+				<key>blue</key>
+				<integer>250</integer>
+				<key>alpha</key>
+				<integer>1</integer>
+			</dict>
+			<key>textColor</key>
+			<dict>
+				<key>red</key>
+				<integer>231</integer>
+				<key>green</key>
+				<integer>235</integer>
+				<key>blue</key>
+				<integer>239</integer>
+				<key>alpha</key>
+				<integer>1</integer>
+			</dict>
+			<key>onlineColor</key>
+			<dict>
+				<key>red</key>
+				<integer>239</integer>
+				<key>green</key>
+				<integer>223</integer>
+				<key>blue</key>
+				<integer>189</integer>
+				<key>alpha</key>
+				<integer>1</integer>
+			</dict>
+			<key>offlineColor</key>
+			<dict>
+				<key>red</key>
+				<integer>156</integer>
+				<key>green</key>
+				<integer>60</integer>
+				<key>blue</key>
+				<integer>107</integer>
+				<key>alpha</key>
+				<integer>1</integer>
+			</dict>
+			<key>unknownColor</key>
+			<dict>
+				<key>red</key>
+				<integer>57</integer>
+				<key>green</key>
+				<integer>73</integer>
+				<key>blue</key>
+				<integer>132</integer>
+				<key>alpha</key>
+				<integer>1</integer>
+			</dict>
+			<key>myColor</key>
+			<dict>
+				<key>red</key>
+				<integer>0</integer>
+				<key>green</key>
+				<integer>0</integer>
+				<key>blue</key>
+				<integer>0</integer>
+				<key>alpha</key>
+				<integer>1</integer>
+			</dict>
+			<key>yourColor</key>
+			<dict>
+				<key>red</key>
+				<integer>0</integer>
+				<key>green</key>
+				<integer>24</integer>
+				<key>blue</key>
+				<integer>48</integer>
 				<key>alpha</key>
 				<integer>1</integer>
 			</dict>

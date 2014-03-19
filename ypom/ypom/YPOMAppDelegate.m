@@ -25,7 +25,8 @@
 @property (strong, nonatomic) NSError *lastError;
 @property (nonatomic) NSInteger errorCount;
 @property (strong, nonatomic) NSData *deviceToken;
-@property (nonatomic) BOOL background;
+@property (strong, nonatomic) NSTimer *backgroundTimer;
+@property (strong, nonatomic) void (^handler)(UIBackgroundFetchResult result);
 @property (strong, nonatomic) NWPusher *pusher;
 @property (nonatomic) NWPusherResult pusherResult;
 @end
@@ -42,10 +43,43 @@
     
     [OSodium theOSodium];
     
+    NSDictionary *appDefaults = @{
+                                  @"theme" : @"default",
+                                  @"notificationLevel" : @(3),
+                                  @"imageSize" : @(640.0),
+                                  };
+    [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
+
+    self.themes = [[YPOMThemes alloc] init];
+    self.theme = [self.themes selectTheme:[[NSUserDefaults standardUserDefaults] stringForKey:@"theme"]];
+    self.notificationLevel = [[NSUserDefaults standardUserDefaults] integerForKey:@"notificationLevel"];
+    self.imageSize = [[NSUserDefaults standardUserDefaults] doubleForKey:@"imageSize"];
+    
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeNewsstandContentAvailability)];
     
     return YES;
+}
+
+- (void)setTheme:(YPOMTheme *)theme
+{
+    _theme = theme;
+    [[NSUserDefaults standardUserDefaults] setObject:theme.name forKey:@"theme"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)setNotificationLevel:(NSUInteger)notificationLevel
+{
+    _notificationLevel = notificationLevel;
+    [[NSUserDefaults standardUserDefaults] setObject:@(notificationLevel) forKey:@"notificationLevel"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)setImageSize:(double)imageSize
+{
+    _imageSize = imageSize;
+    [[NSUserDefaults standardUserDefaults] setObject:@(imageSize) forKey:@"imageSize"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -87,8 +121,6 @@
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     NSLog(@"applicationDidBecomeActive");
     
-    self.theme = [[YPOMTheme alloc] init];
-        
     self.myself = [Myself existsMyselfInManagedObjectContext:self.managedObjectContext];
     if (!self.myself) {
         User *user = [User newUserInManageObjectContext:self.managedObjectContext];
@@ -108,7 +140,9 @@
                       inManagedObjectContext:self.managedObjectContext];
     }
 
-    [self connect:nil];
+    if (self.state != 1) {
+        [self connect:nil];
+    }
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -340,11 +374,11 @@
                             
                             if (self.notificationLevel) {
                                 UILocalNotification *notification = [[UILocalNotification alloc] init];
-                                NSString *body = @"Message received";
+                                NSString *body = @"Message";
                                 if (self.notificationLevel > 1) {
-                                    body = [body stringByAppendingFormat:@" from %@", sender.identifier];
+                                    body = [body stringByAppendingFormat:@" from %@", [sender name]];
                                     if (self.notificationLevel > 2) {
-                                        body = [body stringByAppendingFormat:@": %@", message.contenttype];
+                                        body = [body stringByAppendingFormat:@": %@", [message textOfMessage]];
                                     }
                                 }
                                 notification.alertBody = body;
@@ -361,7 +395,9 @@
                             NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
                             jsonObject[@"_type"] = @"ack";
                             jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
-                            jsonObject[@"dev"] = [self.deviceToken base64EncodedStringWithOptions:0];
+                            if (self.deviceToken) {
+                                jsonObject[@"dev"] = [self.deviceToken base64EncodedStringWithOptions:0];
+                            }
                             
                             box.secret = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
                             
@@ -517,16 +553,28 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
     
     [UIApplication sharedApplication].applicationIconBadgeNumber++;
 
-    if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
-        if (!self.background) {
-            self.background = TRUE;
-            [self connect:nil];
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:20]];
-            [self disconnect:nil];
-            self.background = FALSE;
-        }
+    if (self.state == 1 || [UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+        completionHandler(UIBackgroundFetchResultNoData);
+    } else {
+        self.handler = completionHandler;
+        self.backgroundTimer = [NSTimer scheduledTimerWithTimeInterval:25
+                                                                target:self
+                                                              selector:@selector(backgroundDisconnect:)
+                                                              userInfo:nil
+                                                               repeats:NO];
+        [self connect:nil];
+        
     }
     completionHandler(UIBackgroundFetchResultNewData);
+}
+
+- (void)backgroundDisconnect:(NSTimer *)timer
+{
+    self.backgroundTimer = nil;
+    if (self.state == 1 && [UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
+        [self disconnect:nil];
+    }
+    self.handler(UIBackgroundFetchResultNewData);
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken

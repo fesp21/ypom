@@ -8,6 +8,7 @@
 
 #import "Message+Create.h"
 #import "User+Create.h"
+#import "NSString+stringWithData.h"
 
 @implementation Message (Create)
 + (Message *)messageWithContent:(NSData *)content
@@ -88,6 +89,37 @@
     }
     
     return message;
+}
+
+- (NSString *)textOfMessage
+{
+    NSString *text;
+    if (!self.contenttype) {
+        text = [NSString stringWithData:self.content];
+    } else {
+        NSRange range = [self.contenttype rangeOfString:@"text/plain" options:NSCaseInsensitiveSearch];
+        if (range.location != NSNotFound) {
+            NSRange range = [self.contenttype rangeOfString:@"charset:\"utf-8\"" options:NSCaseInsensitiveSearch];
+            if (range.location != NSNotFound) {
+                char *cp = malloc(self.content.length + 1);
+                if (cp) {
+                    [self.content getBytes:cp length:self.content.length];
+                    cp[self.content.length] = 0;
+                    text = [NSString stringWithUTF8String:cp];
+                    free(cp);
+                } else {
+                    text = [NSString stringWithFormat:@"UTF-8 can't malloc %lu",
+                            (unsigned long)self.content.length + 1];
+                }
+            } else {
+                text = [NSString stringWithData:self.content];
+            }
+        } else {
+            text = [NSString stringWithFormat:@"content-type: %@",
+                    self.contenttype];
+        }
+    }
+    return text;
 }
 
 @end

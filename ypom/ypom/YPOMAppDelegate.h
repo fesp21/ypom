@@ -11,7 +11,7 @@
 #import "Myself+Create.h"
 #import "Broker+Create.h"
 #import "User+Create.h"
-#import "YPOMTheme.h"
+#import "YPOMThemes.h"
 
 @protocol YPOMdelegate <NSObject>
 
@@ -33,8 +33,10 @@
 @property (nonatomic) int state;
 @property (strong, nonatomic) Myself *myself;
 @property (strong, nonatomic) Broker *broker;
+@property (strong, nonatomic) YPOMThemes *themes;
 @property (strong, nonatomic) YPOMTheme *theme;
 @property (nonatomic) NSUInteger notificationLevel;
+@property (nonatomic) double imageSize;
 
 - (void)connect:(id)object;
 - (void)unsubscribe:(User *)user;

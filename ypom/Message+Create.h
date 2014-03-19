@@ -26,4 +26,6 @@ inManagedObjectContext:(NSManagedObjectContext *)context;
 + (Message *)existsMessageWithMsgId:(UInt16)msgId
              inManagedObjectContext:(NSManagedObjectContext *)context;
 
+- (NSString *)textOfMessage;
+
 @end

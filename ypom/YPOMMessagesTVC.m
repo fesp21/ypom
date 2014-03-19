@@ -60,7 +60,6 @@
     self.view.backgroundColor = delegate.theme.backgroundColor;
     delegate.listener = self;
     
-    
     [self lineState];
 
 }
@@ -198,23 +197,21 @@
 - (void)configureMessageCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    UILabel *timestamp = (UILabel *)[cell.contentView viewWithTag:2];
-    timestamp.text = [NSString stringWithFormat:@"%@%@%@ %@",
-                      [message.delivered boolValue] ? @"✔︎": @"",
-                      [message.acknowledged boolValue] ? @"✔︎": @"",
-                      [message.seen boolValue] ? @"✔︎": @"",
-                      [NSDateFormatter localizedStringFromDate:message.timestamp
-                                                     dateStyle:NSDateFormatterShortStyle
-                                                     timeStyle:NSDateFormatterMediumStyle]];
     
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+
+    UILabel *timestamp = (UILabel *)[cell.contentView viewWithTag:2];
+    timestamp.text = [self statusText:message];
+    timestamp.textColor = delegate.theme.textColor;
 
     UILabel *text = (UILabel *)[cell.contentView viewWithTag:1];
     text.lineBreakMode = NSLineBreakByWordWrapping;
     text.numberOfLines = 0;
     text.preferredMaxLayoutWidth = cell.frame.size.width * 0.8;
     
-    text.text = [self textOfMessage:message];
-    
+    text.text = [message textOfMessage];
+    text.textColor = delegate.theme.textColor;
+
     [text sizeToFit];
     [timestamp sizeToFit];
     [cell.contentView sizeToFit];
@@ -227,14 +224,11 @@
 {
     Message *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+
     UILabel *timestamp = (UILabel *)[cell.contentView viewWithTag:2];
-    timestamp.text = [NSString stringWithFormat:@"%@%@%@ %@",
-                      [message.delivered boolValue] ? @"✔︎": @"",
-                      [message.acknowledged boolValue] ? @"✔︎": @"",
-                      [message.seen boolValue] ? @"✔︎": @"",
-                      [NSDateFormatter localizedStringFromDate:message.timestamp
-                                                     dateStyle:NSDateFormatterShortStyle
-                                                     timeStyle:NSDateFormatterMediumStyle]];
+    timestamp.text = [self statusText:message];
+    timestamp.textColor = delegate.theme.textColor;
     
     UIImageView *imageView = (UIImageView *)[cell viewWithTag:1];
     
@@ -270,6 +264,18 @@
     }
 }
 
+- (NSString *)statusText:(Message *)message
+{
+    return [NSString stringWithFormat:@"%@%@%@ %@ (%lu)",
+            [message.delivered boolValue] ? @"✔︎": @"",
+            [message.acknowledged boolValue] ? @"✔︎": @"",
+            [message.seen boolValue] ? @"✔︎": @"",
+            [NSDateFormatter localizedStringFromDate:message.timestamp
+                                           dateStyle:NSDateFormatterShortStyle
+                                           timeStyle:NSDateFormatterMediumStyle],
+            (unsigned long)message.content.length];
+}
+
 
 - (void)configureNewMessageCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
@@ -278,11 +284,17 @@
     
     UITextField *text = (UITextField *)[cell viewWithTag:1];
     text.text = @"";
+    text.delegate = self;
     
     if ([cell respondsToSelector:@selector(setMessage:)]) {
         [cell performSelector:@selector(setMessage:) withObject:message];
     }
     cell.backgroundColor = delegate.theme.myColor;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    return YES;
 }
 
 - (IBAction)image:(UIButton *)sender {
@@ -310,7 +322,7 @@
         if (range.location != NSNotFound) {
             return 7 + 100 + 8 + 12 + 7;
         } else {
-            NSString *text = [self textOfMessage:message];
+            NSString *text = [message textOfMessage];
             NSStringDrawingContext *sdc = [[NSStringDrawingContext alloc] init];
             sdc.minimumScaleFactor = 1.0;
             
@@ -326,61 +338,85 @@
     }
 }
 
-- (NSString *)textOfMessage:(Message *)message
-{
-    NSString *text;
-    if (!message.contenttype) {
-        text = [NSString stringWithData:message.content];
-    } else {
-        NSRange range = [message.contenttype rangeOfString:@"text/plain" options:NSCaseInsensitiveSearch];
-        if (range.location != NSNotFound) {
-            NSRange range = [message.contenttype rangeOfString:@"charset:\"utf-8\"" options:NSCaseInsensitiveSearch];
-            if (range.location != NSNotFound) {
-                char *cp = malloc(message.content.length + 1);
-                if (cp) {
-                    [message.content getBytes:cp length:message.content.length];
-                    cp[message.content.length] = 0;
-                    text = [NSString stringWithUTF8String:cp];
-                    free(cp);
-                } else {
-                    text = [NSString stringWithFormat:@"UTF-8 can't malloc %lu",
-                                 (unsigned long)message.content.length + 1];
-                }
-            } else {
-                text = [NSString stringWithData:message.content];
-            }
-        } else {
-            text = [NSString stringWithFormat:@"content-type: %@",
-                         message.contenttype];
-        }
-    }
-    return text;
-}
-
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    UIImage *image = info[UIImagePickerControllerOriginalImage];
-    UIImage *imageToSend;
-    if (image.CGImage) {
-        imageToSend = [UIImage imageWithCGImage:image.CGImage];
-    } else if (image.CIImage) {
-        imageToSend = [UIImage imageWithCIImage:image.CIImage];
-    } else {
-        imageToSend = image;
-    }
-    
-    NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-    NSDate *timestamp = [NSDate date];
-    jsonObject[@"_type"] = @"msg";
-    jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
-    jsonObject[@"content"] = [UIImagePNGRepresentation(imageToSend) base64EncodedStringWithOptions:0];
-    jsonObject[@"content-type"] = @"image/png";
-    
-    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    [self sendAny:jsonObject to:self.selectedCellForImage.message.belongsTo from:delegate.myself.myUser];
- 
     [self dismissViewControllerAnimated:YES completion:^(void){
-       //
+        UIImage *image = info[UIImagePickerControllerOriginalImage];
+        NSLog(@"image: w%f h%f s%f o%d", image.size.width, image.size.height, image.scale, image.imageOrientation);
+        
+        YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+
+        UIImage *imageToSend;
+
+        /* 
+         * need to do some work here to downsize the image
+         */
+        
+        double viewWidth = delegate.imageSize;
+        double imageWidth = image.size.width;
+        double widthScale = viewWidth / imageWidth;
+        
+        double viewHeight = delegate.imageSize;
+        double imageHeight = image.size.height;
+        double heightScale = viewHeight / imageHeight;
+        
+        double imageScale = MIN(widthScale, heightScale);
+                
+        NSLog(@"scales: w%f h%f", widthScale, heightScale);
+        
+        if (image.CGImage) {
+            NSLog(@"CGImage");
+            
+            CGRect r = CGRectMake(0, 0, imageWidth, imageHeight);
+            if (imageScale < 1.0) {
+                r.size = CGSizeMake(r.size.width*imageScale, r.size.height*imageScale);
+            }
+            NSLog(@"scales: w%f h%f", r.size.width, r.size.height);
+
+            UIGraphicsBeginImageContext(r.size);
+            CGContextRef cRef = UIGraphicsGetCurrentContext();
+            CGContextSaveGState(cRef);
+
+            CGContextTranslateCTM(cRef, r.size.width/2, r.size.height/2);
+            CGContextRotateCTM(cRef, (image.imageOrientation % 4) * -M_PI / 2);
+            CGContextScaleCTM(cRef, 1.0, image.imageOrientation > 3 ? 1.0 : -1.0);
+            CGRect drawRect;
+            if (image.imageOrientation % 2) {
+                drawRect = CGRectMake(-r.size.height / 2, -r.size.width / 2, r.size.height, r.size.width);
+
+            } else {
+                drawRect = CGRectMake(-r.size.width / 2, -r.size.height / 2, r.size.width, r.size.height);
+
+            }
+            CGContextDrawImage(cRef, drawRect, image.CGImage);
+
+            CGContextRestoreGState(cRef);
+            imageToSend = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+        }
+
+        NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+        NSDate *timestamp = [NSDate date];
+        jsonObject[@"_type"] = @"msg";
+        jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
+        
+        if (imageToSend) {
+            NSLog(@"imageToSend: w%f h%f s%f", imageToSend.size.width, imageToSend.size.height, imageToSend.scale);
+            
+            jsonObject[@"content"] = [UIImagePNGRepresentation(imageToSend) base64EncodedStringWithOptions:0];
+            jsonObject[@"content-type"] = @"image/png";
+            
+            NSLog(@"contentsize: %lu", (unsigned long)[jsonObject[@"content"] length]);
+
+            [self sendAny:jsonObject to:self.selectedCellForImage.message.belongsTo from:delegate.myself.myUser];
+        } else {
+            jsonObject[@"content"] = [[@"cannot convert image" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
+            jsonObject[@"content-type"] = @"text/plain; charset:\"utf-8\"";
+            
+            NSLog(@"contentsize: %lu", (unsigned long)[jsonObject[@"content"] length]);
+            
+        }
+        [self sendAny:jsonObject to:self.selectedCellForImage.message.belongsTo from:delegate.myself.myUser];
     }];
 }
 
@@ -395,20 +431,23 @@
 - (IBAction)send:(UIButton *)sender {
     UIView *view = (UIView *)sender.superview;
     UITextView *text = (UITextView *)[view viewWithTag:1];
-    [text resignFirstResponder];
-    
-    UIView *view2 = view.superview;
-    YPOMNewTVCell *newTVCell = (YPOMNewTVCell *)view2.superview;
-    
-    NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-    NSDate *timestamp = [NSDate date];
-    jsonObject[@"_type"] = @"msg";
-    jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
-    jsonObject[@"content"] = [[text.text dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
-    jsonObject[@"content-type"] = @"text/plain; charset:\"utf-8\"";
-    
-    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    [self sendAny:jsonObject to:newTVCell.message.belongsTo from:delegate.myself.myUser];
+    if (text.text.length) {
+        [text resignFirstResponder];
+        
+        UIView *view2 = view.superview;
+        YPOMNewTVCell *newTVCell = (YPOMNewTVCell *)view2.superview;
+        
+        NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+        NSDate *timestamp = [NSDate date];
+        jsonObject[@"_type"] = @"msg";
+        jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
+        jsonObject[@"content"] = [[text.text dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
+        jsonObject[@"content-type"] =@"text/plain; charset:\"utf-8\"";
+        
+        YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+        [self sendAny:jsonObject to:newTVCell.message.belongsTo from:delegate.myself.myUser];
+        text.text = @"";
+    }
 }
 
 - (void)sendAny:(NSDictionary *)jsonObject to:(User *)to from:(User *)from
