@@ -20,6 +20,7 @@
 @interface YPOMSettingsTVC () <YPOMdelegate>
 @property (weak, nonatomic) IBOutlet UITextField *identifier;
 @property (weak, nonatomic) IBOutlet UITextField *phrase;
+@property (weak, nonatomic) IBOutlet UITextView *cipher;
 
 @property (weak, nonatomic) IBOutlet UITextField *host;
 @property (weak, nonatomic) IBOutlet UITextField *port;
@@ -27,7 +28,6 @@
 @property (weak, nonatomic) IBOutlet UITextField *password;
 @property (weak, nonatomic) IBOutlet UISwitch *tls;
 @property (weak, nonatomic) IBOutlet UISwitch *auth;
-@property (weak, nonatomic) IBOutlet UITextField *email;
 
 @property (strong, nonatomic) User *oldUser;
 @property (strong, nonatomic) NSString *oldHost;
@@ -153,14 +153,6 @@
     
 }
 
-- (IBAction)createPressed:(UIButton *)sender {
-    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    delegate.myself.myUser = [User newUserInManageObjectContext:delegate.managedObjectContext];
-    
-    [self changed];
-}
-
-
 - (IBAction)hostChanged:(UITextField *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
@@ -251,7 +243,6 @@
                                               otherButtonTitles:nil];
         [alert show];
     }
-
 }
 - (IBAction)invitePressed:(UIButton *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
@@ -278,6 +269,71 @@
     self.dic = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
     self.dic.delegate = self;
     [self.dic presentOptionsMenuFromRect:self.view.bounds inView:self.view animated:YES];
+}
+
+- (IBAction)loadPressed:(UIButton *)sender {
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    if (self.phrase.text.length) {
+        if (self.cipher.text.length) {
+            
+            OSodiumSecretBox *secretBox = [OSodiumSecretBox
+                                           secretBoxFromData:[self.cipher.text hexToData]
+                                           phrase:[self.phrase.text dataUsingEncoding:NSUTF8StringEncoding]
+                                           ];
+            if (secretBox) {
+                NSLog(@"json %@", secretBox.secret);
+                
+                NSError *error;
+                NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:secretBox.secret
+                                                                           options:0
+                                                                             error:&error];
+                if (dictionary) {
+#ifdef DEBUG
+                    for (NSString *key in [dictionary allKeys]) {
+                        NSLog(@"json %@:%@", key, dictionary[key]);
+                    }
+#endif
+                    User *user = [User userWithIdentifier:dictionary[@"id"]
+                                   inManagedObjectContext:delegate.managedObjectContext];
+                    
+                    user.pubkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"pubkey"] options:0];
+                    user.seckey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"seckey"] options:0];
+                    user.sigkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"sigkey"] options:0];
+                    user.verkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"verkey"] options:0];
+                    
+                    delegate.myself.myUser = user;
+                } else {
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Load YPOM Identiy"
+                                                                    message:@"Illegal JSON"
+                                                                   delegate:self
+                                                          cancelButtonTitle:@"OK"
+                                                          otherButtonTitles:nil];
+                    [alert show];
+                }
+            } else {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Load YPOM Identiy"
+                                                                message:@"Cannot secretBoxOpen"
+                                                               delegate:self
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil];
+                [alert show];
+            }
+        } else {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Load YPOM Identity"
+                                                            message:@"Please specify cipher"
+                                                           delegate:self
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+            [alert show];
+        }
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Load YPOM Identity"
+                                                        message:@"Please specify phrase"
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
 }
 
 - (IBAction)textFieldReturn:(id)sender

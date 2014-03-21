@@ -403,8 +403,11 @@
         if (imageToSend) {
             NSLog(@"imageToSend: w%f h%f s%f", imageToSend.size.width, imageToSend.size.height, imageToSend.scale);
             
-            jsonObject[@"content"] = [UIImagePNGRepresentation(imageToSend) base64EncodedStringWithOptions:0];
-            jsonObject[@"content-type"] = @"image/png";
+            NSString *imageString;
+            imageString = [UIImageJPEGRepresentation(imageToSend, 0.75) base64EncodedStringWithOptions:0];
+            
+            jsonObject[@"content"] = imageString;
+            jsonObject[@"content-type"] = @"image/jpg";
             
             NSLog(@"contentsize: %lu", (unsigned long)[jsonObject[@"content"] length]);
 

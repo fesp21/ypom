@@ -29,6 +29,8 @@
 @property (strong, nonatomic) void (^handler)(UIBackgroundFetchResult result);
 @property (strong, nonatomic) NWPusher *pusher;
 @property (nonatomic) NWPusherResult pusherResult;
+
+@property (strong, nonatomic) UIDocumentInteractionController *dic;
 @end
 
 @implementation YPOMAppDelegate
@@ -645,6 +647,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
                                           otherButtonTitles:nil];
     BOOL result = TRUE;
     NSString *identifier;
+    [self disconnect:nil];
     
     if (url) {
         NSError *error;
@@ -663,11 +666,50 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
                     identifier = dictionary[@"id"];
                     NSData *pubkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"pubkey"] options:0];
                     NSData *verkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"verkey"] options:0];
+                    NSData *login = [[NSData alloc] initWithBase64EncodedString:dictionary[@"login"] options:0];
                     
                     if (identifier && pubkey && verkey) {
                         User *user = [User userWithIdentifier:identifier inManagedObjectContext:self.managedObjectContext];
                         user.pubkey = pubkey;
                         user.verkey = verkey;
+                        
+                        if (login) {
+                            
+                            OSodiumSign *sign = [OSodiumSign signFromData:login
+                                                                   verkey:verkey];
+                            if (sign) {
+                                OSodiumBox *box = [OSodiumBox boxFromData:sign.secret
+                                                                   pubkey:pubkey
+                                                                   seckey:self.myself.myUser.seckey];
+                                if (box) {
+                                    NSError *error;
+                                    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:box.secret options:0 error:&error];
+                                    if (dictionary) {
+                                        self.broker.host = dictionary[@"host"];
+                                        NSString *portString = dictionary[@"port"];
+                                        self.broker.port = @([portString integerValue]);
+                                        NSString *tlsString = dictionary[@"tls"];
+                                        self.broker.tls = @([tlsString boolValue]);
+                                        NSString *authString = dictionary[@"auth"];
+                                        self.broker.auth = @([authString boolValue]);
+                                        self.broker.user = dictionary[@"user"];
+                                        self.broker.passwd = dictionary[@"passwd"];
+                                        alert.message = [NSString stringWithFormat:@"Successfully processed %@", identifier];
+                                    } else {
+                                        alert.message = @"illegal json in login data";
+                                        result = FALSE;
+                                    }
+                                } else {
+                                    alert.message = @"cannot boxOpen login data";
+                                    result = FALSE;
+                                }
+                            } else {
+                                alert.message = @"signature in login data wrong";
+                                result = FALSE;
+                            }
+                        } else {
+                            alert.message = [NSString stringWithFormat:@"Successfully processed w/o login data %@", identifier];
+                        }
                     } else {
                         alert.message = @"Error invalid ypom file";
                         result = FALSE;
@@ -684,9 +726,9 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
             alert.message = [NSString stringWithFormat:@"Error inputStreamWithURL %@ %@", [input streamError], url];
             result = FALSE;
         }
-        alert.message = [NSString stringWithFormat:@"Successfully processed %@", identifier];
     }
     [self saveContext];
+    [self connect:nil];
     [alert show];
     return result;
 }

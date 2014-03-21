@@ -43,9 +43,9 @@
                                                c,
                                                crypto_secretbox_BOXZEROBYTES + data.length - crypto_secretbox_NONCEBYTES,
                                                n,
-                                               secretBox.key.bytes)) {
+                                               box.key.bytes)) {
                         box.secret = [NSData dataWithBytes:m + crypto_secretbox_ZEROBYTES
-                                                    length:data.length - crypto_secretbox_NONCEBYTES];
+                                                    length:data.length - crypto_secretbox_NONCEBYTES + crypto_secretbox_BOXZEROBYTES - crypto_secretbox_ZEROBYTES];
                         secretBox = box;
                     }
                     free(m);

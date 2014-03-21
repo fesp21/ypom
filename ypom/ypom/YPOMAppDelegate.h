@@ -19,7 +19,7 @@
 
 @end
 
-@interface YPOMAppDelegate : UIResponder <UIApplicationDelegate, MQTTSessionDelegate>
+@interface YPOMAppDelegate : UIResponder <UIApplicationDelegate, MQTTSessionDelegate, UIDocumentInteractionControllerDelegate>
 
 @property (weak, nonatomic) id<YPOMdelegate> listener;
 
