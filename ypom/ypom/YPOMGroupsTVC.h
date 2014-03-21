@@ -1,17 +1,13 @@
 //
-//  Myself.m
+//  YPOMGroupsTVC.h
 //  ypom
 //
 //  Created by Christoph Krey on 21.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
-#import "Myself.h"
-#import "User.h"
+#import "CoreDataTVC.h"
 
-
-@implementation Myself
-
-@dynamic myUser;
+@interface YPOMGroupsTVC : CoreDataTVC
 
 @end

@@ -1,31 +1,26 @@
 //
-//  YPOMUsersTVC.m
-//  YPOM
+//  YPOMGroupsTVC.m
+//  ypom
 //
-//  Created by Christoph Krey on 12.11.13.
-//  Copyright (c) 2013 Christoph Krey. All rights reserved.
+//  Created by Christoph Krey on 21.03.14.
+//  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
-#import "YPOMUsersTVC.h"
-#import "User+Create.h"
-#import "Group+Create.h"
-#import "Broker+Create.h"
-#import "Message+Create.h"
+#import "YPOMGroupsTVC.h"
 #import "YPOMAppDelegate.h"
-#import "YPOM.h"
-#import <AddressBook/AddressBook.h>
+#import "Group+Create.h"
+#import "UserGroup.h"
+#import "YPOMGroupTVC.h"
 
-@interface YPOMUsersTVC () <YPOMdelegate>
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *version;
+@interface YPOMGroupsTVC () <YPOMdelegate>
+
 @end
 
-@implementation YPOMUsersTVC
+@implementation YPOMGroupsTVC
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    self.version.title =  [NSBundle mainBundle].infoDictionary[@"CFBundleVersion"];
-
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.listener = self;
@@ -61,12 +56,18 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-    User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
-
+    Group *group = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    if ([segue.identifier isEqualToString:@"setGroup:"]) {
+        if ([segue.destinationViewController respondsToSelector:@selector(setGroup:)]) {
+            [segue.destinationViewController performSelector:@selector(setGroup:)
+                                                  withObject:group];
+        }
+    }
     if ([segue.identifier isEqualToString:@"setUser:"]) {
         if ([segue.destinationViewController respondsToSelector:@selector(setUser:)]) {
             [segue.destinationViewController performSelector:@selector(setUser:)
-                                                  withObject:user];
+                                                  withObject:group.isUser];
         }
     }
 }
@@ -78,7 +79,7 @@
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     // Edit the entity name as appropriate.
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"User" inManagedObjectContext:delegate.managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Group" inManagedObjectContext:delegate.managedObjectContext];
     [fetchRequest setEntity:entity];
     
     // Set the batch size to a suitable number.
@@ -113,41 +114,31 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"User" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Group" forIndexPath:indexPath];
     [self configureCell:cell atIndexPath:indexPath];
     return cell;
 }
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    Group *group = [self.fetchedResultsController objectAtIndexPath:indexPath];
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    cell.textLabel.text = [user name];
+    cell.textLabel.text = group.name;
     cell.textLabel.textColor = delegate.theme.textColor;
-
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)[user numberOfUnseenMessages]];
+    
+    cell.detailTextLabel.text = group.identifier;
     cell.detailTextLabel.textColor = delegate.theme.textColor;
-
     
-    /*
-    if (user.online) {
-        if ([user.online boolValue]) {
-            cell.textLabel.textColor = delegate.theme.onlineColor;
-        } else {
-            cell.textLabel.textColor = delegate.theme.offlineColor ;
-        }
-    } else {
-        cell.textLabel.textColor = delegate.theme.unknownColor;
-    }
+    cell.backgroundColor = delegate.theme.yourColor;
+}
 
-    */
+- (IBAction)addPressed:(UIBarButtonItem *)sender {
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+
+    [Group newGroupInManageObjectContext:delegate.managedObjectContext];
     
-    if ([user.identifier isEqualToString:delegate.myself.myUser.identifier]) {
-        cell.backgroundColor = delegate.theme.myColor;
-    } else {
-        cell.backgroundColor = delegate.theme.yourColor;
-    }
+    [delegate saveContext];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -159,6 +150,33 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
+        Group *group = [self.fetchedResultsController objectAtIndexPath:indexPath];
+
+        for (UserGroup *userGroup in group.hasUsers) {
+            NSError *error;
+            NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+            jsonObject[@"_type"] = @"leave";
+            jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f",
+                                        [[NSDate date] timeIntervalSince1970]];
+            NSMutableArray *members = [[NSMutableArray alloc] init];
+            for (UserGroup *userGroup in group.hasUsers) {
+                [members addObject:userGroup.user.identifier];
+            }
+            NSDictionary *groupDictionary = @{
+                                              @"id": group.identifier,
+                                              @"name": group.name,
+                                              @"members":members
+                                              };
+            jsonObject[@"group"] = groupDictionary;
+            
+            YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+            [delegate safeSend:[NSJSONSerialization dataWithJSONObject:jsonObject
+                                                               options:0
+                                                                 error:&error]
+                            to:userGroup.user];
+            [delegate sendPush:userGroup.user];
+        }
+
         NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
         [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
         
@@ -171,6 +189,7 @@
         }
     }
 }
+
 
 
 @end

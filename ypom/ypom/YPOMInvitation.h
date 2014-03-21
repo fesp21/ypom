@@ -1,5 +1,5 @@
 //
-//  Myself.h
+//  YPOMInvitation.h
 //  ypom
 //
 //  Created by Christoph Krey on 21.03.14.
@@ -7,12 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
 
-@class User;
-
-@interface Myself : NSManagedObject
-
-@property (nonatomic, retain) User *myUser;
-
+@interface YPOMInvitation : NSObject <UIAlertViewDelegate>
+@property (strong, nonatomic) NSDictionary *group;
+- (void)show;
 @end

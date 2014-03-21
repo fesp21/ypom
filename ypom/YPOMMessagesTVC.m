@@ -8,6 +8,8 @@
 
 #import "YPOMMessagesTVC.h"
 #import "User+Create.h"
+#import "Group+Create.h"
+#import "UserGroup.h"
 #import "Broker+Create.h"
 #import "Message+Create.h"
 #import "YPOMAppDelegate.h"
@@ -156,30 +158,17 @@
     
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
         if (![message.outgoing boolValue] && ![message.seen boolValue]) {
-            message.seen = @(TRUE);
-            YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-            OSodiumBox *box = [[OSodiumBox alloc] init];
-            box.pubkey = message.belongsTo.pubkey;
-            box.seckey = delegate.myself.myUser.seckey;
-            
-            NSError *error;
-            NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-            jsonObject[@"_type"] = @"see";
-            jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [message.timestamp timeIntervalSince1970]];
-            
-            box.secret = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-            
-            OSodiumSign *sign = [[OSodiumSign alloc] init];
-            sign.verkey = delegate.myself.myUser.verkey;
-            sign.sigkey = delegate.myself.myUser.sigkey;
-            sign.secret = [box boxOnWire];
-            
-            [delegate.session publishData:[[sign signOnWire] base64EncodedDataWithOptions:0]
-                                  onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
-                                           message.belongsTo.identifier,
-                                           delegate.myself.myUser.identifier]
-                                   retain:NO
-                                      qos:2];
+            if (!message.belongsTo.isGroup) {
+                message.seen = @(TRUE);
+                YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+                NSError *error;
+                NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+                jsonObject[@"_type"] = @"see";
+                jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [message.timestamp timeIntervalSince1970]];
+                NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+                
+                [delegate safeSend:data to:message.belongsTo];
+            }
         }
     }
 
@@ -342,7 +331,7 @@
 {
     [self dismissViewControllerAnimated:YES completion:^(void){
         UIImage *image = info[UIImagePickerControllerOriginalImage];
-        NSLog(@"image: w%f h%f s%f o%d", image.size.width, image.size.height, image.scale, image.imageOrientation);
+        NSLog(@"image: w%f h%f s%f o%ld", image.size.width, image.size.height, image.scale, (long)image.imageOrientation);
         
         YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
 
@@ -411,7 +400,7 @@
             
             NSLog(@"contentsize: %lu", (unsigned long)[jsonObject[@"content"] length]);
 
-            [self sendAny:jsonObject to:self.selectedCellForImage.message.belongsTo from:delegate.myself.myUser];
+            [self sendAny:jsonObject to:self.selectedCellForImage.message.belongsTo];
         } else {
             jsonObject[@"content"] = [[@"cannot convert image" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
             jsonObject[@"content-type"] = @"text/plain; charset:\"utf-8\"";
@@ -419,7 +408,10 @@
             NSLog(@"contentsize: %lu", (unsigned long)[jsonObject[@"content"] length]);
             
         }
-        [self sendAny:jsonObject to:self.selectedCellForImage.message.belongsTo from:delegate.myself.myUser];
+        if (self.selectedCellForImage.message.belongsTo.isGroup) {
+            jsonObject[@"group"] = @{@"id": self.selectedCellForImage.message.belongsTo.isGroup.identifier};
+        }
+        [self sendAny:jsonObject to:self.selectedCellForImage.message.belongsTo];
     }];
 }
 
@@ -446,38 +438,38 @@
         jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
         jsonObject[@"content"] = [[text.text dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
         jsonObject[@"content-type"] =@"text/plain; charset:\"utf-8\"";
+        if (newTVCell.message.belongsTo.isGroup) {
+            jsonObject[@"group"] = @{@"id": newTVCell.message.belongsTo.isGroup.identifier};
+        }
         
-        YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-        [self sendAny:jsonObject to:newTVCell.message.belongsTo from:delegate.myself.myUser];
+        [self sendAny:jsonObject to:newTVCell.message.belongsTo];
         text.text = @"";
     }
 }
 
-- (void)sendAny:(NSDictionary *)jsonObject to:(User *)to from:(User *)from
+- (void)sendAny:(NSDictionary *)jsonObject to:(User *)to
 {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    OSodiumBox *box = [[OSodiumBox alloc] init];
-    box.pubkey = to.pubkey;
-    box.seckey = from.seckey;
-    
     NSError *error;
-    box.secret = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+    NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
     
-    OSodiumSign *sign = [[OSodiumSign alloc] init];
-    sign.verkey = from.verkey;
-    sign.sigkey = from.sigkey;
-    sign.secret = [box boxOnWire];
+    UInt16 msgId;
+    if (to.isGroup) {
+        for (UserGroup *userGroup in to.isGroup.hasUsers) {
+            if (userGroup.user != delegate.myself.myUser) {
+                msgId = [delegate safeSend:data to:userGroup.user];
+                [delegate sendPush:userGroup.user];
+            }
+        }
+    } else {
+        msgId = [delegate safeSend:data to:to];
+        [delegate sendPush:to];
+    }
     
-    UInt16 msgId = [delegate.session publishData:[[sign signOnWire] base64EncodedDataWithOptions:0]
-                                         onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
-                                                  to.identifier,
-                                                  from.identifier]
-                                          retain:NO
-                                             qos:2];
-    
-    Message *message = [Message messageWithContent:[[NSData alloc] initWithBase64EncodedData:jsonObject[@"content"]
-                                                                                     options:0]
+    Message *message = [Message messageWithContent:
+                        [[NSData alloc] initWithBase64EncodedData:jsonObject[@"content"]
+                                                          options:0]
                                        contentType:jsonObject[@"content-type"]
                                          timestamp:[NSDate dateWithTimeIntervalSince1970:
                                                     [jsonObject[@"timestamp"] doubleValue]]
@@ -491,7 +483,6 @@
     } else {
         message.delivered = @(TRUE);
     }
-    [delegate sendPush:to];
     
     [delegate saveContext];
 }
@@ -561,4 +552,27 @@
 {
     return NO;
 }
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Return NO if you do not want the specified item to be editable.
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
+        [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
+        
+        NSError *error = nil;
+        if (![context save:&error]) {
+            // Replace this implementation with code to handle the error appropriately.
+            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+        }
+    }
+}
+
 @end

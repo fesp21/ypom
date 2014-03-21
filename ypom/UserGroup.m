@@ -1,17 +1,20 @@
 //
-//  Myself.m
+//  UserGroup.m
 //  ypom
 //
 //  Created by Christoph Krey on 21.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
-#import "Myself.h"
+#import "UserGroup.h"
+#import "Group.h"
 #import "User.h"
 
 
-@implementation Myself
+@implementation UserGroup
 
-@dynamic myUser;
+@dynamic confirmed;
+@dynamic group;
+@dynamic user;
 
 @end

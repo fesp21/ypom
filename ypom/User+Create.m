@@ -7,6 +7,7 @@
 //
 
 #import "User+Create.h"
+#import "Group+Create.h"
 #import "Message+Create.h"
 #import "base32.h"
 #import "sodium.h"
@@ -84,16 +85,21 @@
 
 - (NSString *)name
 {
-    NSString *name = self.identifier;
-    
-    ABRecordID rid = self.abRecordId ? [self.abRecordId intValue] : kABRecordInvalidID;
-    if (rid && rid != kABRecordInvalidID) {
-        CFErrorRef myError = NULL;
-        ABAddressBookRef abref = ABAddressBookCreateWithOptions(NULL, &myError);
-        if (abref) {
-            ABRecordRef rref = ABAddressBookGetPersonWithRecordID(abref, rid);
-            name = CFBridgingRelease(ABRecordCopyCompositeName(rref));
-            CFRelease(abref);
+    NSString *name;
+    if (self.isGroup) {
+        name = [NSString stringWithFormat:@"G:%@", self.isGroup.name];
+    } else {
+        name = self.identifier;
+        
+        ABRecordID rid = self.abRecordId ? [self.abRecordId intValue] : kABRecordInvalidID;
+        if (rid && rid != kABRecordInvalidID) {
+            CFErrorRef myError = NULL;
+            ABAddressBookRef abref = ABAddressBookCreateWithOptions(NULL, &myError);
+            if (abref) {
+                ABRecordRef rref = ABAddressBookGetPersonWithRecordID(abref, rid);
+                name = CFBridgingRelease(ABRecordCopyCompositeName(rref));
+                CFRelease(abref);
+            }
         }
     }
     return name;

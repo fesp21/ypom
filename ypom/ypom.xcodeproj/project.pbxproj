@@ -34,6 +34,11 @@
 		8454B7AF18D5F4990046624C /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8454B7AE18D5F4990046624C /* AddressBookUI.framework */; };
 		8454B7B118D5F76E0046624C /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8454B7B018D5F76E0046624C /* AddressBook.framework */; };
 		8454B7BD18D8EE090046624C /* YPOMThemes.m in Sources */ = {isa = PBXBuildFile; fileRef = 8454B7BC18D8EE090046624C /* YPOMThemes.m */; };
+		8459A4C318DC423A007098EB /* Group+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 8459A4C218DC423A007098EB /* Group+Create.m */; };
+		8459A4C618DC973B007098EB /* YPOMMembersTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8459A4C518DC973B007098EB /* YPOMMembersTVC.m */; };
+		8459A4C918DC975B007098EB /* YPOMGroupTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8459A4C818DC975B007098EB /* YPOMGroupTVC.m */; };
+		8459A4CC18DC977B007098EB /* YPOMInviteMembersTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8459A4CB18DC977B007098EB /* YPOMInviteMembersTVC.m */; };
+		8459A4FA18DCAFEA007098EB /* YPOMInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8459A4F918DCAFEA007098EB /* YPOMInvitation.m */; };
 		8470C49A18C2785600133A87 /* YPOMSettingsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C49918C2785600133A87 /* YPOMSettingsTVC.m */; };
 		8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */; };
 		847A52DB18C3DE45004EF999 /* isutf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A52DA18C3DE45004EF999 /* isutf8.c */; };
@@ -42,6 +47,7 @@
 		849D456718C9D68F00201BF3 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D455D18C908A900201BF3 /* libsodium.a */; };
 		849D457018CCDA2600201BF3 /* NSString+hexStringWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 849D456F18CCDA2600201BF3 /* NSString+hexStringWithData.m */; };
 		849D457718CCE6EA00201BF3 /* YPOMImageVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 849D457618CCE6EA00201BF3 /* YPOMImageVC.m */; };
+		84A3623718DC4001009EE9C7 /* YPOMGroupsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 84A3623618DC4001009EE9C7 /* YPOMGroupsTVC.m */; };
 		84C1B37518BE8AA100C77138 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37418BE8AA100C77138 /* Foundation.framework */; };
 		84C1B37718BE8AA100C77138 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37618BE8AA100C77138 /* CoreGraphics.framework */; };
 		84C1B37918BE8AA100C77138 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C1B37818BE8AA100C77138 /* UIKit.framework */; };
@@ -56,17 +62,18 @@
 		84C1B3A418BE8AA100C77138 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 84C1B3A218BE8AA100C77138 /* InfoPlist.strings */; };
 		84C1B3A618BE8AA100C77138 /* ypomTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C1B3A518BE8AA100C77138 /* ypomTests.m */; };
 		84C1B3B118BE8B1300C77138 /* YPOM.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C1B3B018BE8B1300C77138 /* YPOM.m */; };
+		84C9749218DCC81B0048B22C /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C9749118DCC81B0048B22C /* Device.m */; };
+		84C9749518DCC81C0048B22C /* Group.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C9749418DCC81C0048B22C /* Group.m */; };
+		84C9749818DCC81C0048B22C /* Myself.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C9749718DCC81C0048B22C /* Myself.m */; };
+		84C9749B18DCC81C0048B22C /* UserGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C9749A18DCC81C0048B22C /* UserGroup.m */; };
+		84C9749E18DCC81C0048B22C /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C9749D18DCC81C0048B22C /* Message.m */; };
+		84C974A118DCC81C0048B22C /* Broker.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C974A018DCC81C0048B22C /* Broker.m */; };
+		84C974A418DCC81C0048B22C /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C974A318DCC81C0048B22C /* User.m */; };
 		84CC0E8E18C7544D00D5985E /* NSString+HexToData.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CC0E8D18C7544D00D5985E /* NSString+HexToData.m */; };
 		84CC0E9418C7554D00D5985E /* NSString+stringWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CC0E9318C7554D00D5985E /* NSString+stringWithData.m */; };
 		84CC0E9718C7584F00D5985E /* YPOM+Wire.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CC0E9618C7584F00D5985E /* YPOM+Wire.m */; };
 		84D27DAE18D48D2400D888E0 /* OSodium.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DAD18D48D2400D888E0 /* OSodium.m */; };
 		84D27DB118D48FC400D888E0 /* OSodiumSecretBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DB018D48FC400D888E0 /* OSodiumSecretBox.m */; };
-		84D27DCA18D4B06F00D888E0 /* Broker.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DC918D4B06F00D888E0 /* Broker.m */; };
-		84D27DCD18D4B07000D888E0 /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DCC18D4B07000D888E0 /* Device.m */; };
-		84D27DD018D4B07000D888E0 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DCF18D4B07000D888E0 /* Message.m */; };
-		84D27DD318D4B07000D888E0 /* Group.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DD218D4B07000D888E0 /* Group.m */; };
-		84D27DD618D4B07000D888E0 /* Myself.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DD518D4B07000D888E0 /* Myself.m */; };
-		84D27DD918D4B07000D888E0 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DD818D4B07000D888E0 /* User.m */; };
 		84D27DDC18D4B27200D888E0 /* OSodiumBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DDB18D4B27200D888E0 /* OSodiumBox.m */; };
 		84D27DDF18D4B29900D888E0 /* OSodiumSign.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DDE18D4B29900D888E0 /* OSodiumSign.m */; };
 		84D27DE218D4C33200D888E0 /* Device+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DE118D4C33200D888E0 /* Device+Create.m */; };
@@ -144,6 +151,17 @@
 		8454B7B918D744240046624C /* YPOM_Dev.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = YPOM_Dev.mobileprovision; sourceTree = "<group>"; };
 		8454B7BB18D8EE090046624C /* YPOMThemes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMThemes.h; sourceTree = "<group>"; };
 		8454B7BC18D8EE090046624C /* YPOMThemes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMThemes.m; sourceTree = "<group>"; };
+		8459A4C118DC423A007098EB /* Group+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Group+Create.h"; sourceTree = "<group>"; };
+		8459A4C218DC423A007098EB /* Group+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Group+Create.m"; sourceTree = "<group>"; };
+		8459A4C418DC973B007098EB /* YPOMMembersTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YPOMMembersTVC.h; path = ../YPOMMembersTVC.h; sourceTree = "<group>"; };
+		8459A4C518DC973B007098EB /* YPOMMembersTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YPOMMembersTVC.m; path = ../YPOMMembersTVC.m; sourceTree = "<group>"; };
+		8459A4C718DC975B007098EB /* YPOMGroupTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YPOMGroupTVC.h; path = ../YPOMGroupTVC.h; sourceTree = "<group>"; };
+		8459A4C818DC975B007098EB /* YPOMGroupTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YPOMGroupTVC.m; path = ../YPOMGroupTVC.m; sourceTree = "<group>"; };
+		8459A4CA18DC977B007098EB /* YPOMInviteMembersTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YPOMInviteMembersTVC.h; path = ../YPOMInviteMembersTVC.h; sourceTree = "<group>"; };
+		8459A4CB18DC977B007098EB /* YPOMInviteMembersTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YPOMInviteMembersTVC.m; path = ../YPOMInviteMembersTVC.m; sourceTree = "<group>"; };
+		8459A4CD18DCA1AE007098EB /* YPOM 0.31.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "YPOM 0.31.xcdatamodel"; sourceTree = "<group>"; };
+		8459A4F818DCAFEA007098EB /* YPOMInvitation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMInvitation.h; sourceTree = "<group>"; };
+		8459A4F918DCAFEA007098EB /* YPOMInvitation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMInvitation.m; sourceTree = "<group>"; };
 		8470C49818C2785600133A87 /* YPOMSettingsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMSettingsTVC.h; sourceTree = "<group>"; };
 		8470C49918C2785600133A87 /* YPOMSettingsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMSettingsTVC.m; sourceTree = "<group>"; };
 		8470C4C218C2B9DE00133A87 /* YPOMNewTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMNewTVCell.h; sourceTree = "<group>"; };
@@ -210,6 +228,9 @@
 		849D456F18CCDA2600201BF3 /* NSString+hexStringWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+hexStringWithData.m"; sourceTree = "<group>"; };
 		849D457518CCE6EA00201BF3 /* YPOMImageVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMImageVC.h; sourceTree = "<group>"; };
 		849D457618CCE6EA00201BF3 /* YPOMImageVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMImageVC.m; sourceTree = "<group>"; };
+		84A3623518DC4001009EE9C7 /* YPOMGroupsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOMGroupsTVC.h; sourceTree = "<group>"; };
+		84A3623618DC4001009EE9C7 /* YPOMGroupsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOMGroupsTVC.m; sourceTree = "<group>"; };
+		84A3623B18DC418A009EE9C7 /* YPOM 0.3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "YPOM 0.3.xcdatamodel"; sourceTree = "<group>"; };
 		84C1B37118BE8AA100C77138 /* ypom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ypom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C1B37418BE8AA100C77138 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		84C1B37618BE8AA100C77138 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -229,6 +250,21 @@
 		84C1B3A518BE8AA100C77138 /* ypomTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ypomTests.m; sourceTree = "<group>"; };
 		84C1B3AF18BE8B1300C77138 /* YPOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOM.h; sourceTree = "<group>"; };
 		84C1B3B018BE8B1300C77138 /* YPOM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOM.m; sourceTree = "<group>"; };
+		84C9748618DCC5780048B22C /* YPOM 0.32.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "YPOM 0.32.xcdatamodel"; sourceTree = "<group>"; };
+		84C9749018DCC81B0048B22C /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
+		84C9749118DCC81B0048B22C /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
+		84C9749318DCC81C0048B22C /* Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Group.h; sourceTree = "<group>"; };
+		84C9749418DCC81C0048B22C /* Group.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Group.m; sourceTree = "<group>"; };
+		84C9749618DCC81C0048B22C /* Myself.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Myself.h; sourceTree = "<group>"; };
+		84C9749718DCC81C0048B22C /* Myself.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Myself.m; sourceTree = "<group>"; };
+		84C9749918DCC81C0048B22C /* UserGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserGroup.h; sourceTree = "<group>"; };
+		84C9749A18DCC81C0048B22C /* UserGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserGroup.m; sourceTree = "<group>"; };
+		84C9749C18DCC81C0048B22C /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		84C9749D18DCC81C0048B22C /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
+		84C9749F18DCC81C0048B22C /* Broker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Broker.h; sourceTree = "<group>"; };
+		84C974A018DCC81C0048B22C /* Broker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Broker.m; sourceTree = "<group>"; };
+		84C974A218DCC81C0048B22C /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		84C974A318DCC81C0048B22C /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		84CC0E8C18C7544D00D5985E /* NSString+HexToData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+HexToData.h"; path = "ypom/NSString+HexToData.h"; sourceTree = "<group>"; };
 		84CC0E8D18C7544D00D5985E /* NSString+HexToData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+HexToData.m"; path = "ypom/NSString+HexToData.m"; sourceTree = "<group>"; };
 		84CC0E9218C7554D00D5985E /* NSString+stringWithData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+stringWithData.h"; sourceTree = "<group>"; };
@@ -239,18 +275,6 @@
 		84D27DAD18D48D2400D888E0 /* OSodium.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSodium.m; sourceTree = "<group>"; };
 		84D27DAF18D48FC400D888E0 /* OSodiumSecretBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSodiumSecretBox.h; sourceTree = "<group>"; };
 		84D27DB018D48FC400D888E0 /* OSodiumSecretBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSodiumSecretBox.m; sourceTree = "<group>"; };
-		84D27DC818D4B06F00D888E0 /* Broker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Broker.h; sourceTree = "<group>"; };
-		84D27DC918D4B06F00D888E0 /* Broker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Broker.m; sourceTree = "<group>"; };
-		84D27DCB18D4B07000D888E0 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
-		84D27DCC18D4B07000D888E0 /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
-		84D27DCE18D4B07000D888E0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
-		84D27DCF18D4B07000D888E0 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
-		84D27DD118D4B07000D888E0 /* Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Group.h; sourceTree = "<group>"; };
-		84D27DD218D4B07000D888E0 /* Group.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Group.m; sourceTree = "<group>"; };
-		84D27DD418D4B07000D888E0 /* Myself.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Myself.h; sourceTree = "<group>"; };
-		84D27DD518D4B07000D888E0 /* Myself.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Myself.m; sourceTree = "<group>"; };
-		84D27DD718D4B07000D888E0 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
-		84D27DD818D4B07000D888E0 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		84D27DDA18D4B27200D888E0 /* OSodiumBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSodiumBox.h; sourceTree = "<group>"; };
 		84D27DDB18D4B27200D888E0 /* OSodiumBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSodiumBox.m; sourceTree = "<group>"; };
 		84D27DDD18D4B29900D888E0 /* OSodiumSign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSodiumSign.h; sourceTree = "<group>"; };
@@ -303,18 +327,22 @@
 			isa = PBXGroup;
 			children = (
 				842CB24718BFCCC800804D8D /* YPOM.xcdatamodeld */,
-				84D27DD718D4B07000D888E0 /* User.h */,
-				84D27DD818D4B07000D888E0 /* User.m */,
-				84D27DD418D4B07000D888E0 /* Myself.h */,
-				84D27DD518D4B07000D888E0 /* Myself.m */,
-				84D27DD118D4B07000D888E0 /* Group.h */,
-				84D27DD218D4B07000D888E0 /* Group.m */,
-				84D27DCE18D4B07000D888E0 /* Message.h */,
-				84D27DCF18D4B07000D888E0 /* Message.m */,
-				84D27DCB18D4B07000D888E0 /* Device.h */,
-				84D27DCC18D4B07000D888E0 /* Device.m */,
-				84D27DC818D4B06F00D888E0 /* Broker.h */,
-				84D27DC918D4B06F00D888E0 /* Broker.m */,
+				84C974A218DCC81C0048B22C /* User.h */,
+				84C974A318DCC81C0048B22C /* User.m */,
+				84C9749F18DCC81C0048B22C /* Broker.h */,
+				84C974A018DCC81C0048B22C /* Broker.m */,
+				84C9749C18DCC81C0048B22C /* Message.h */,
+				84C9749D18DCC81C0048B22C /* Message.m */,
+				84C9749918DCC81C0048B22C /* UserGroup.h */,
+				84C9749A18DCC81C0048B22C /* UserGroup.m */,
+				84C9749618DCC81C0048B22C /* Myself.h */,
+				84C9749718DCC81C0048B22C /* Myself.m */,
+				84C9749318DCC81C0048B22C /* Group.h */,
+				84C9749418DCC81C0048B22C /* Group.m */,
+				84C9749018DCC81B0048B22C /* Device.h */,
+				84C9749118DCC81B0048B22C /* Device.m */,
+				8459A4C118DC423A007098EB /* Group+Create.h */,
+				8459A4C218DC423A007098EB /* Group+Create.m */,
 				842CB27718BFEAB100804D8D /* CoreDataTVC.h */,
 				842CB27818BFEAB100804D8D /* CoreDataTVC.m */,
 				842CB26218BFCEAE00804D8D /* Myself+Create.h */,
@@ -485,6 +513,8 @@
 			children = (
 				84C1B38318BE8AA100C77138 /* YPOMAppDelegate.h */,
 				84C1B38418BE8AA100C77138 /* YPOMAppDelegate.m */,
+				8459A4F818DCAFEA007098EB /* YPOMInvitation.h */,
+				8459A4F918DCAFEA007098EB /* YPOMInvitation.m */,
 				842ECF7718D0BE5F00AF6268 /* YPOMTheme.h */,
 				842ECF7818D0BE5F00AF6268 /* YPOMTheme.m */,
 				8454B7BB18D8EE090046624C /* YPOMThemes.h */,
@@ -506,8 +536,16 @@
 				8470C49918C2785600133A87 /* YPOMSettingsTVC.m */,
 				842CB27918BFEAB100804D8D /* YPOMUsersTVC.h */,
 				842CB27A18BFEAB100804D8D /* YPOMUsersTVC.m */,
+				84A3623518DC4001009EE9C7 /* YPOMGroupsTVC.h */,
+				84A3623618DC4001009EE9C7 /* YPOMGroupsTVC.m */,
 				842CB28318BFFD7500804D8D /* YPOMMessagesTVC.h */,
 				842CB28418BFFD7500804D8D /* YPOMMessagesTVC.m */,
+				8459A4C418DC973B007098EB /* YPOMMembersTVC.h */,
+				8459A4C518DC973B007098EB /* YPOMMembersTVC.m */,
+				8459A4C718DC975B007098EB /* YPOMGroupTVC.h */,
+				8459A4C818DC975B007098EB /* YPOMGroupTVC.m */,
+				8459A4CA18DC977B007098EB /* YPOMInviteMembersTVC.h */,
+				8459A4CB18DC977B007098EB /* YPOMInviteMembersTVC.m */,
 				84C1B39218BE8AA100C77138 /* Images.xcassets */,
 				84C1B37B18BE8AA100C77138 /* Supporting Files */,
 			);
@@ -688,20 +726,22 @@
 				842ECF6318CFD40D00AF6268 /* NWPushFeedback.m in Sources */,
 				84C1B3B118BE8B1300C77138 /* YPOM.m in Sources */,
 				8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */,
+				84C9749B18DCC81C0048B22C /* UserGroup.m in Sources */,
+				84C9749518DCC81C0048B22C /* Group.m in Sources */,
 				84D27DAE18D48D2400D888E0 /* OSodium.m in Sources */,
-				84D27DD018D4B07000D888E0 /* Message.m in Sources */,
 				842CB28518BFFD7500804D8D /* YPOMMessagesTVC.m in Sources */,
 				84C1B38118BE8AA100C77138 /* main.m in Sources */,
 				8470C49A18C2785600133A87 /* YPOMSettingsTVC.m in Sources */,
+				8459A4FA18DCAFEA007098EB /* YPOMInvitation.m in Sources */,
 				842CB26718BFCEC900804D8D /* User+Create.m in Sources */,
 				842ECF6018CFD40D00AF6268 /* NWHub.m in Sources */,
 				84C1B38518BE8AA100C77138 /* YPOMAppDelegate.m in Sources */,
 				842ECF6518CFD40D00AF6268 /* NWSSLConnection.m in Sources */,
+				8459A4CC18DC977B007098EB /* YPOMInviteMembersTVC.m in Sources */,
 				841F41C718D21D0700D1586D /* YPOMThemesTVC.m in Sources */,
+				84A3623718DC4001009EE9C7 /* YPOMGroupsTVC.m in Sources */,
 				849D457018CCDA2600201BF3 /* NSString+hexStringWithData.m in Sources */,
 				84CC0E8E18C7544D00D5985E /* NSString+HexToData.m in Sources */,
-				84D27DD318D4B07000D888E0 /* Group.m in Sources */,
-				84D27DD618D4B07000D888E0 /* Myself.m in Sources */,
 				84CC0E9718C7584F00D5985E /* YPOM+Wire.m in Sources */,
 				84D27DE218D4C33200D888E0 /* Device+Create.m in Sources */,
 				847A5A4118C4B24F004EF999 /* base32.c in Sources */,
@@ -709,17 +749,22 @@
 				84D27DDC18D4B27200D888E0 /* OSodiumBox.m in Sources */,
 				842ECF6118CFD40D00AF6268 /* NWNotification.m in Sources */,
 				842CB26418BFCEAE00804D8D /* Myself+Create.m in Sources */,
-				84D27DCA18D4B06F00D888E0 /* Broker.m in Sources */,
+				84C974A118DCC81C0048B22C /* Broker.m in Sources */,
 				841F41CA18D2213900D1586D /* YPOMUserExperienceTVC.m in Sources */,
 				842ECF6218CFD40D00AF6268 /* NWPusher.m in Sources */,
 				84D27DB118D48FC400D888E0 /* OSodiumSecretBox.m in Sources */,
-				84D27DCD18D4B07000D888E0 /* Device.m in Sources */,
 				849D457718CCE6EA00201BF3 /* YPOMImageVC.m in Sources */,
+				84C974A418DCC81C0048B22C /* User.m in Sources */,
 				842CB26A18BFCEDC00804D8D /* Broker+Create.m in Sources */,
 				8454B7BD18D8EE090046624C /* YPOMThemes.m in Sources */,
+				84C9749E18DCC81C0048B22C /* Message.m in Sources */,
+				84C9749218DCC81B0048B22C /* Device.m in Sources */,
+				84C9749818DCC81C0048B22C /* Myself.m in Sources */,
 				84CC0E9418C7554D00D5985E /* NSString+stringWithData.m in Sources */,
-				84D27DD918D4B07000D888E0 /* User.m in Sources */,
+				8459A4C918DC975B007098EB /* YPOMGroupTVC.m in Sources */,
 				842CB27B18BFEAB100804D8D /* CoreDataTVC.m in Sources */,
+				8459A4C618DC973B007098EB /* YPOMMembersTVC.m in Sources */,
+				8459A4C318DC423A007098EB /* Group+Create.m in Sources */,
 				842CB26D18BFCEF300804D8D /* Message+Create.m in Sources */,
 				842ECF7918D0BE5F00AF6268 /* YPOMTheme.m in Sources */,
 			);
@@ -987,9 +1032,12 @@
 		842CB24718BFCCC800804D8D /* YPOM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				84A3623B18DC418A009EE9C7 /* YPOM 0.3.xcdatamodel */,
+				8459A4CD18DCA1AE007098EB /* YPOM 0.31.xcdatamodel */,
+				84C9748618DCC5780048B22C /* YPOM 0.32.xcdatamodel */,
 				842CB24818BFCCC800804D8D /* YPOM.xcdatamodel */,
 			);
-			currentVersion = 842CB24818BFCCC800804D8D /* YPOM.xcdatamodel */;
+			currentVersion = 84C9748618DCC5780048B22C /* YPOM 0.32.xcdatamodel */;
 			path = YPOM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

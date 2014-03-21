@@ -19,7 +19,7 @@
 
 @end
 
-@interface YPOMAppDelegate : UIResponder <UIApplicationDelegate, MQTTSessionDelegate, UIDocumentInteractionControllerDelegate>
+@interface YPOMAppDelegate : UIResponder <UIApplicationDelegate, MQTTSessionDelegate, UIDocumentInteractionControllerDelegate, UIAlertViewDelegate>
 
 @property (weak, nonatomic) id<YPOMdelegate> listener;
 
@@ -44,6 +44,7 @@
 - (void)disconnect:(id)object;
 
 - (void)sendPush:(User *)user;
+- (UInt16)safeSend:(NSData *)data to:(User *)user;
 
 - (void)saveContext;
 - (void)connectionClosed;

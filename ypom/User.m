@@ -2,7 +2,7 @@
 //  User.m
 //  ypom
 //
-//  Created by Christoph Krey on 15.03.14.
+//  Created by Christoph Krey on 21.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
@@ -11,6 +11,7 @@
 #import "Group.h"
 #import "Message.h"
 #import "Myself.h"
+#import "UserGroup.h"
 
 
 @implementation User
@@ -21,9 +22,10 @@
 @dynamic seckey;
 @dynamic sigkey;
 @dynamic verkey;
-@dynamic hasMessages;
-@dynamic me;
 @dynamic hasDevices;
 @dynamic hasGroups;
+@dynamic hasMessages;
+@dynamic isGroup;
+@dynamic me;
 
 @end

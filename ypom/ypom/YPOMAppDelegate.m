@@ -19,6 +19,8 @@
 #import "NWPusher.h"
 #import "OSodiumSign.h"
 #import "OSodiumBox.h"
+#import "YPOMInvitation.h"
+#import "Group+Create.h"
 
 @interface YPOMAppDelegate ()
 @property (nonatomic) UIBackgroundTaskIdentifier bgTask;
@@ -31,6 +33,7 @@
 @property (nonatomic) NWPusherResult pusherResult;
 
 @property (strong, nonatomic) UIDocumentInteractionController *dic;
+@property (strong, nonatomic) YPOMInvitation *invitation;
 @end
 
 @implementation YPOMAppDelegate
@@ -363,14 +366,22 @@
                             NSData *content = dictionary[@"content"] ? [[NSData alloc] initWithBase64EncodedString:dictionary[@"content"] options:0] : nil;
                             NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
                             NSString *contentType = dictionary[@"content-type"];
+                            NSDictionary *groupDictionary = dictionary[@"group"];
+                            NSString *groupIdentifier = groupDictionary[@"id"];
+                            User *belongsTo;
+                            if (groupIdentifier) {
+                                belongsTo = [User existsUserWithIdentifier:groupIdentifier inManagedObjectContext:self.managedObjectContext];
+                            } else {
+                                belongsTo = sender;
+                            }
                             Message *message = [Message messageWithContent:content
                                                                contentType:contentType
                                                                  timestamp:timestamp
                                                                   outgoing:NO
-                                                                 belongsTo:sender
+                                                                 belongsTo:belongsTo
                                                     inManagedObjectContext:self.managedObjectContext];
                             //update
-                            sender.identifier = sender.identifier;
+                            belongsTo.identifier = belongsTo.identifier;
                             
                             // send notification
                             
@@ -387,33 +398,20 @@
                                 [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
                             }
                             
-                            // send ACK
-                            message.acknowledged = @(TRUE);
-                            OSodiumBox *box = [[OSodiumBox alloc] init];
-                            box.pubkey = sender.pubkey;
-                            box.seckey = receiver.seckey;
-                            
-                            NSError *error;
-                            NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-                            jsonObject[@"_type"] = @"ack";
-                            jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
-                            if (self.deviceToken) {
-                                jsonObject[@"dev"] = [self.deviceToken base64EncodedStringWithOptions:0];
+                            if (!groupIdentifier) {
+                                // send ACK
+                                message.acknowledged = @(TRUE);
+                                NSError *error;
+                                NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+                                jsonObject[@"_type"] = @"ack";
+                                jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
+                                if (self.deviceToken) {
+                                    jsonObject[@"dev"] = [self.deviceToken base64EncodedStringWithOptions:0];
+                                }
+                                
+                                NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+                                [self safeSend:data to:sender];
                             }
-                            
-                            box.secret = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-                            
-                            OSodiumSign *sign = [[OSodiumSign alloc] init];
-                            sign.verkey = receiver.verkey;
-                            sign.sigkey = receiver.sigkey;
-                            sign.secret = [box boxOnWire];
-                            
-                            [self.session publishData:[[sign signOnWire] base64EncodedDataWithOptions:0]
-                                              onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
-                                                       sender.identifier,
-                                                       receiver.identifier]
-                                               retain:NO
-                                                  qos:2];
                             
                         } else if ([dictionary[@"_type"] isEqualToString:@"ack"]) {
                             NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"timestamp"] doubleValue]];
@@ -436,6 +434,49 @@
                                                                           outgoing:YES
                                                                          belongsTo:sender                                                        inManagedObjectContext:self.managedObjectContext];
                             message.seen = @(TRUE);
+                        } else if ([dictionary[@"_type"] isEqualToString:@"inv"]) {
+                            self.invitation = [[YPOMInvitation alloc] init];
+                            self.invitation.group = dictionary[@"group"];
+                            [self.invitation show];
+                        } else if ([dictionary[@"_type"] isEqualToString:@"join"]) {
+                            NSDictionary *groupDictionary = dictionary[@"group"];
+                            NSString * groupIdentifier = groupDictionary[@"id"];
+                            Group *group = [Group existsGroupWithIdentifier:groupIdentifier
+                                                     inManagedObjectContext:self.managedObjectContext];
+                            NSArray *members = groupDictionary[@"members"];
+                            for (NSString *identifier in members) {
+                                User *user = [User existsUserWithIdentifier:identifier inManagedObjectContext:self.managedObjectContext];
+                                if (user) {
+                                    [group addUser:user];
+                                }
+                            }
+                            UIAlertView *alert = [[UIAlertView alloc]
+                                                  initWithTitle:@"YPOM Group Join"
+                                                  message:[NSString stringWithFormat:@"%@ %@", groupIdentifier, [sender name]]                                                                           delegate:self
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+                            [alert show];
+                            
+                        } else if ([dictionary[@"_type"] isEqualToString:@"leave"]) {
+                            NSDictionary *groupDictionary = dictionary[@"group"];
+                            NSString * groupIdentifier = groupDictionary[@"id"];
+                            Group *group = [Group existsGroupWithIdentifier:groupIdentifier
+                                                     inManagedObjectContext:self.managedObjectContext];
+                            NSArray *members = groupDictionary[@"members"];
+                            for (NSString *identifier in members) {
+                                User *user = [User existsUserWithIdentifier:identifier inManagedObjectContext:self.managedObjectContext];
+                                if (user) {
+                                    [group removeUser:user];
+                                }
+                            }
+
+                            UIAlertView *alert = [[UIAlertView alloc]
+                                                  initWithTitle:@"YPOM Group Leave"
+                                                  message:[NSString stringWithFormat:@"%@ %@", groupIdentifier, [sender name]]                                                                           delegate:self
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+                            [alert show];
+                            
                         } else {
                             NSLog(@"unknown _type:%@", dictionary[@"_type"]);
                         }
@@ -470,6 +511,13 @@
         [self.listener lineState];
     }
     [self saveContext];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex) {
+        
+    }
 }
 
 - (void)messageDelivered:(MQTTSession *)session msgID:(UInt16)msgID
@@ -666,46 +714,53 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
                     identifier = dictionary[@"id"];
                     NSData *pubkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"pubkey"] options:0];
                     NSData *verkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"verkey"] options:0];
-                    NSData *login = [[NSData alloc] initWithBase64EncodedString:dictionary[@"login"] options:0];
                     
                     if (identifier && pubkey && verkey) {
                         User *user = [User userWithIdentifier:identifier inManagedObjectContext:self.managedObjectContext];
                         user.pubkey = pubkey;
                         user.verkey = verkey;
                         
-                        if (login) {
+                        NSString *loginString = dictionary[@"login"];
+                        if (loginString) {
                             
-                            OSodiumSign *sign = [OSodiumSign signFromData:login
-                                                                   verkey:verkey];
-                            if (sign) {
-                                OSodiumBox *box = [OSodiumBox boxFromData:sign.secret
-                                                                   pubkey:pubkey
-                                                                   seckey:self.myself.myUser.seckey];
-                                if (box) {
-                                    NSError *error;
-                                    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:box.secret options:0 error:&error];
-                                    if (dictionary) {
-                                        self.broker.host = dictionary[@"host"];
-                                        NSString *portString = dictionary[@"port"];
-                                        self.broker.port = @([portString integerValue]);
-                                        NSString *tlsString = dictionary[@"tls"];
-                                        self.broker.tls = @([tlsString boolValue]);
-                                        NSString *authString = dictionary[@"auth"];
-                                        self.broker.auth = @([authString boolValue]);
-                                        self.broker.user = dictionary[@"user"];
-                                        self.broker.passwd = dictionary[@"passwd"];
-                                        alert.message = [NSString stringWithFormat:@"Successfully processed %@", identifier];
+                            NSData *login = [[NSData alloc] initWithBase64EncodedString:loginString options:0];
+                            
+                            if (login) {
+                                
+                                OSodiumSign *sign = [OSodiumSign signFromData:login
+                                                                       verkey:verkey];
+                                if (sign) {
+                                    OSodiumBox *box = [OSodiumBox boxFromData:sign.secret
+                                                                       pubkey:pubkey
+                                                                       seckey:self.myself.myUser.seckey];
+                                    if (box) {
+                                        NSError *error;
+                                        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:box.secret options:0 error:&error];
+                                        if (dictionary) {
+                                            self.broker.host = dictionary[@"host"];
+                                            NSString *portString = dictionary[@"port"];
+                                            self.broker.port = @([portString integerValue]);
+                                            NSString *tlsString = dictionary[@"tls"];
+                                            self.broker.tls = @([tlsString boolValue]);
+                                            NSString *authString = dictionary[@"auth"];
+                                            self.broker.auth = @([authString boolValue]);
+                                            self.broker.user = dictionary[@"user"];
+                                            self.broker.passwd = dictionary[@"passwd"];
+                                            alert.message = [NSString stringWithFormat:@"Successfully processed %@", identifier];
+                                        } else {
+                                            alert.message = @"illegal json in login data";
+                                            result = FALSE;
+                                        }
                                     } else {
-                                        alert.message = @"illegal json in login data";
+                                        alert.message = @"cannot boxOpen login data";
                                         result = FALSE;
                                     }
                                 } else {
-                                    alert.message = @"cannot boxOpen login data";
+                                    alert.message = @"signature in login data wrong";
                                     result = FALSE;
                                 }
                             } else {
-                                alert.message = @"signature in login data wrong";
-                                result = FALSE;
+                                alert.message = [NSString stringWithFormat:@"Invalid login data %@", loginString];
                             }
                         } else {
                             alert.message = [NSString stringWithFormat:@"Successfully processed w/o login data %@", identifier];
@@ -728,9 +783,30 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
         }
     }
     [self saveContext];
-    [self connect:nil];
     [alert show];
     return result;
+}
+
+- (UInt16)safeSend:(NSData *)data to:(User *)user
+{
+    OSodiumBox *box = [[OSodiumBox alloc] init];
+    box.pubkey = user.pubkey;
+    box.seckey = self.myself.myUser.seckey;
+    
+    box.secret = data;
+    
+    OSodiumSign *sign = [[OSodiumSign alloc] init];
+    sign.verkey = self.myself.myUser.verkey;
+    sign.sigkey = self.myself.myUser.sigkey;
+    sign.secret = [box boxOnWire];
+    
+    UInt16 msgId = [self.session publishData:[[sign signOnWire] base64EncodedDataWithOptions:0]
+                                     onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
+                                              user.identifier,
+                                              self.myself.myUser.identifier]
+                                      retain:NO
+                                         qos:2];
+    return msgId;
 }
 
 @end

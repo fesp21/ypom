@@ -1,31 +1,24 @@
 //
-//  YPOMUsersTVC.m
-//  YPOM
+//  YPOMMembersTVC.m
+//  ypom
 //
-//  Created by Christoph Krey on 12.11.13.
-//  Copyright (c) 2013 Christoph Krey. All rights reserved.
+//  Created by Christoph Krey on 21.03.14.
+//  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
-#import "YPOMUsersTVC.h"
-#import "User+Create.h"
-#import "Group+Create.h"
-#import "Broker+Create.h"
-#import "Message+Create.h"
+#import "YPOMMembersTVC.h"
 #import "YPOMAppDelegate.h"
-#import "YPOM.h"
-#import <AddressBook/AddressBook.h>
+#import "User+Create.h"
+#import "UserGroup.h"
 
-@interface YPOMUsersTVC () <YPOMdelegate>
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *version;
+@interface YPOMMembersTVC () <YPOMdelegate>
 @end
 
-@implementation YPOMUsersTVC
+@implementation YPOMMembersTVC
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    self.version.title =  [NSBundle mainBundle].infoDictionary[@"CFBundleVersion"];
-
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.listener = self;
@@ -58,19 +51,6 @@
     }
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-    User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
-
-    if ([segue.identifier isEqualToString:@"setUser:"]) {
-        if ([segue.destinationViewController respondsToSelector:@selector(setUser:)]) {
-            [segue.destinationViewController performSelector:@selector(setUser:)
-                                                  withObject:user];
-        }
-    }
-}
-
 #pragma mark - Fetched results controller
 
 - (NSFetchedResultsController *)setupFRC
@@ -78,14 +58,16 @@
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     // Edit the entity name as appropriate.
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"User" inManagedObjectContext:delegate.managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"UserGroup" inManagedObjectContext:delegate.managedObjectContext];
     [fetchRequest setEntity:entity];
+    
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"group = %@", self.group];
     
     // Set the batch size to a suitable number.
     [fetchRequest setFetchBatchSize:20];
     
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor1 = [[NSSortDescriptor alloc] initWithKey:@"identifier" ascending:YES];
+    NSSortDescriptor *sortDescriptor1 = [[NSSortDescriptor alloc] initWithKey:@"user.identifier" ascending:YES];
     NSArray *sortDescriptors = @[sortDescriptor1];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
@@ -113,63 +95,26 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"User" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"GroupMember" forIndexPath:indexPath];
     [self configureCell:cell atIndexPath:indexPath];
     return cell;
 }
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    UserGroup *userGroup = [self.fetchedResultsController objectAtIndexPath:indexPath];
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    cell.textLabel.text = [user name];
+    cell.textLabel.text = [userGroup.user name];
     cell.textLabel.textColor = delegate.theme.textColor;
-
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)[user numberOfUnseenMessages]];
-    cell.detailTextLabel.textColor = delegate.theme.textColor;
-
     
-    /*
-    if (user.online) {
-        if ([user.online boolValue]) {
-            cell.textLabel.textColor = delegate.theme.onlineColor;
-        } else {
-            cell.textLabel.textColor = delegate.theme.offlineColor ;
-        }
-    } else {
-        cell.textLabel.textColor = delegate.theme.unknownColor;
-    }
-
-    */
-    
-    if ([user.identifier isEqualToString:delegate.myself.myUser.identifier]) {
-        cell.backgroundColor = delegate.theme.myColor;
-    } else {
-        cell.backgroundColor = delegate.theme.yourColor;
-    }
+    cell.backgroundColor = delegate.theme.yourColor;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
-        [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
-        
-        NSError *error = nil;
-        if (![context save:&error]) {
-            // Replace this implementation with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
-    }
+    return NO;
 }
 
 
