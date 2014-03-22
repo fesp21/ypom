@@ -7,8 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "User+Create.h"
 
 @interface YPOMInvitation : NSObject <UIAlertViewDelegate>
 @property (strong, nonatomic) NSDictionary *group;
+@property (strong, nonatomic) User *user;
 - (void)show;
 @end

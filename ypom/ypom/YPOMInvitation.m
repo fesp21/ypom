@@ -20,11 +20,14 @@
 
 - (void)show
 {
-    self.alert = [[UIAlertView alloc]
-                          initWithTitle:@"YPOM Group Invitation"
-                          message:self.group[@"name"]                                                                           delegate:self
-                          cancelButtonTitle:@"Ignore"
-                          otherButtonTitles:@"Accept", nil];
+    self.alert = [[UIAlertView alloc] initWithTitle:@"YPOM Group Invitation"
+                                            message:[NSString stringWithFormat:@"👤%@ 👥%@",
+                                                     [self.user displayName],
+                                                     self.group[@"name"] ? self.group[@"name"] : self.group[@"id"]
+                                                     ]
+                                           delegate:self
+                                  cancelButtonTitle:@"Ignore"
+                                  otherButtonTitles:@"Accept", nil];
     [self.alert show];
 }
 
@@ -36,6 +39,7 @@
         NSString *groupIdentifier = self.group[@"id"];
         
         Group *group = [Group groupWithIdentifier:groupIdentifier
+                                        belongsTo:self.user
                            inManagedObjectContext:delegate.managedObjectContext];
         group.name = self.group[@"name"];
         [group addUser:delegate.myself.myUser];

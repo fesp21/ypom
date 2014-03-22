@@ -33,6 +33,8 @@
     self.fetchedResultsController = nil;
     [self.tableView reloadData];
     [self lineState];
+    UITabBarItem *tbi = self.tabBarController.tabBar.items[0];
+    [tbi setBadgeValue:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -123,27 +125,18 @@
     User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    cell.textLabel.text = [user name];
+    if (user.isGroup) {
+        cell.textLabel.text = [NSString stringWithFormat:@"👥%@", [user.isGroup displayName]];
+    } else {
+        cell.textLabel.text = [NSString stringWithFormat:@"👤%@", [user displayName]];
+    }
     cell.textLabel.textColor = delegate.theme.textColor;
 
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)[user numberOfUnseenMessages]];
+    
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", [user numberOfUnseenMessages]];
     cell.detailTextLabel.textColor = delegate.theme.textColor;
 
-    
-    /*
-    if (user.online) {
-        if ([user.online boolValue]) {
-            cell.textLabel.textColor = delegate.theme.onlineColor;
-        } else {
-            cell.textLabel.textColor = delegate.theme.offlineColor ;
-        }
-    } else {
-        cell.textLabel.textColor = delegate.theme.unknownColor;
-    }
-
-    */
-    
-    if ([user.identifier isEqualToString:delegate.myself.myUser.identifier]) {
+    if (user == delegate.myself.myUser || (user.isGroup && user.isGroup.belongsTo == delegate.myself.myUser)) {
         cell.backgroundColor = delegate.theme.myColor;
     } else {
         cell.backgroundColor = delegate.theme.yourColor;

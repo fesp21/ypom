@@ -43,6 +43,11 @@
 		8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8470C4C318C2B9DE00133A87 /* YPOMNewTVCell.m */; };
 		847A52DB18C3DE45004EF999 /* isutf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A52DA18C3DE45004EF999 /* isutf8.c */; };
 		847A5A4118C4B24F004EF999 /* base32.c in Sources */ = {isa = PBXBuildFile; fileRef = 847A5A4018C4B24F004EF999 /* base32.c */; };
+		84849E8718DDA3A700D65D02 /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = 84849E8618DDA3A700D65D02 /* Device.m */; };
+		84849E8A18DDA3A700D65D02 /* Broker.m in Sources */ = {isa = PBXBuildFile; fileRef = 84849E8918DDA3A700D65D02 /* Broker.m */; };
+		84849E8D18DDA3A700D65D02 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 84849E8C18DDA3A700D65D02 /* Message.m */; };
+		84849E9018DDA3A700D65D02 /* Myself.m in Sources */ = {isa = PBXBuildFile; fileRef = 84849E8F18DDA3A700D65D02 /* Myself.m */; };
+		84849E9618DDA3A700D65D02 /* UserGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 84849E9518DDA3A700D65D02 /* UserGroup.m */; };
 		849D456618C9AC3700201BF3 /* MQTTClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D456518C9AC3700201BF3 /* MQTTClient.framework */; };
 		849D456718C9D68F00201BF3 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D455D18C908A900201BF3 /* libsodium.a */; };
 		849D457018CCDA2600201BF3 /* NSString+hexStringWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 849D456F18CCDA2600201BF3 /* NSString+hexStringWithData.m */; };
@@ -62,13 +67,6 @@
 		84C1B3A418BE8AA100C77138 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 84C1B3A218BE8AA100C77138 /* InfoPlist.strings */; };
 		84C1B3A618BE8AA100C77138 /* ypomTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C1B3A518BE8AA100C77138 /* ypomTests.m */; };
 		84C1B3B118BE8B1300C77138 /* YPOM.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C1B3B018BE8B1300C77138 /* YPOM.m */; };
-		84C9749218DCC81B0048B22C /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C9749118DCC81B0048B22C /* Device.m */; };
-		84C9749518DCC81C0048B22C /* Group.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C9749418DCC81C0048B22C /* Group.m */; };
-		84C9749818DCC81C0048B22C /* Myself.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C9749718DCC81C0048B22C /* Myself.m */; };
-		84C9749B18DCC81C0048B22C /* UserGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C9749A18DCC81C0048B22C /* UserGroup.m */; };
-		84C9749E18DCC81C0048B22C /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C9749D18DCC81C0048B22C /* Message.m */; };
-		84C974A118DCC81C0048B22C /* Broker.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C974A018DCC81C0048B22C /* Broker.m */; };
-		84C974A418DCC81C0048B22C /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C974A318DCC81C0048B22C /* User.m */; };
 		84CC0E8E18C7544D00D5985E /* NSString+HexToData.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CC0E8D18C7544D00D5985E /* NSString+HexToData.m */; };
 		84CC0E9418C7554D00D5985E /* NSString+stringWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CC0E9318C7554D00D5985E /* NSString+stringWithData.m */; };
 		84CC0E9718C7584F00D5985E /* YPOM+Wire.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CC0E9618C7584F00D5985E /* YPOM+Wire.m */; };
@@ -77,6 +75,8 @@
 		84D27DDC18D4B27200D888E0 /* OSodiumBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DDB18D4B27200D888E0 /* OSodiumBox.m */; };
 		84D27DDF18D4B29900D888E0 /* OSodiumSign.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DDE18D4B29900D888E0 /* OSodiumSign.m */; };
 		84D27DE218D4C33200D888E0 /* Device+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D27DE118D4C33200D888E0 /* Device+Create.m */; };
+		84ED400F18DDA42200182C0B /* Group.m in Sources */ = {isa = PBXBuildFile; fileRef = 84ED400E18DDA42200182C0B /* Group.m */; };
+		84ED401218DDA42200182C0B /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 84ED401118DDA42200182C0B /* User.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -170,6 +170,17 @@
 		847A52DC18C3DE60004EF999 /* isutf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = isutf8.h; path = ypom/isutf8.h; sourceTree = "<group>"; };
 		847A5A3F18C4B24F004EF999 /* base32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = base32.h; path = ypom/base32.h; sourceTree = "<group>"; };
 		847A5A4018C4B24F004EF999 /* base32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = base32.c; path = ypom/base32.c; sourceTree = "<group>"; };
+		84849E7818DD93AB00D65D02 /* YPOM 0.33.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "YPOM 0.33.xcdatamodel"; sourceTree = "<group>"; };
+		84849E8518DDA3A700D65D02 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
+		84849E8618DDA3A700D65D02 /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
+		84849E8818DDA3A700D65D02 /* Broker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Broker.h; sourceTree = "<group>"; };
+		84849E8918DDA3A700D65D02 /* Broker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Broker.m; sourceTree = "<group>"; };
+		84849E8B18DDA3A700D65D02 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		84849E8C18DDA3A700D65D02 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
+		84849E8E18DDA3A700D65D02 /* Myself.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Myself.h; sourceTree = "<group>"; };
+		84849E8F18DDA3A700D65D02 /* Myself.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Myself.m; sourceTree = "<group>"; };
+		84849E9418DDA3A700D65D02 /* UserGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserGroup.h; sourceTree = "<group>"; };
+		84849E9518DDA3A700D65D02 /* UserGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserGroup.m; sourceTree = "<group>"; };
 		849D452518C9088000201BF3 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		849D452618C9088000201BF3 /* crypto_auth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_auth.h; sourceTree = "<group>"; };
 		849D452718C9088000201BF3 /* crypto_auth_hmacsha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_auth_hmacsha256.h; sourceTree = "<group>"; };
@@ -251,20 +262,6 @@
 		84C1B3AF18BE8B1300C77138 /* YPOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPOM.h; sourceTree = "<group>"; };
 		84C1B3B018BE8B1300C77138 /* YPOM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPOM.m; sourceTree = "<group>"; };
 		84C9748618DCC5780048B22C /* YPOM 0.32.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "YPOM 0.32.xcdatamodel"; sourceTree = "<group>"; };
-		84C9749018DCC81B0048B22C /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
-		84C9749118DCC81B0048B22C /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
-		84C9749318DCC81C0048B22C /* Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Group.h; sourceTree = "<group>"; };
-		84C9749418DCC81C0048B22C /* Group.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Group.m; sourceTree = "<group>"; };
-		84C9749618DCC81C0048B22C /* Myself.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Myself.h; sourceTree = "<group>"; };
-		84C9749718DCC81C0048B22C /* Myself.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Myself.m; sourceTree = "<group>"; };
-		84C9749918DCC81C0048B22C /* UserGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserGroup.h; sourceTree = "<group>"; };
-		84C9749A18DCC81C0048B22C /* UserGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserGroup.m; sourceTree = "<group>"; };
-		84C9749C18DCC81C0048B22C /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
-		84C9749D18DCC81C0048B22C /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
-		84C9749F18DCC81C0048B22C /* Broker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Broker.h; sourceTree = "<group>"; };
-		84C974A018DCC81C0048B22C /* Broker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Broker.m; sourceTree = "<group>"; };
-		84C974A218DCC81C0048B22C /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
-		84C974A318DCC81C0048B22C /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		84CC0E8C18C7544D00D5985E /* NSString+HexToData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+HexToData.h"; path = "ypom/NSString+HexToData.h"; sourceTree = "<group>"; };
 		84CC0E8D18C7544D00D5985E /* NSString+HexToData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+HexToData.m"; path = "ypom/NSString+HexToData.m"; sourceTree = "<group>"; };
 		84CC0E9218C7554D00D5985E /* NSString+stringWithData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+stringWithData.h"; sourceTree = "<group>"; };
@@ -281,6 +278,10 @@
 		84D27DDE18D4B29900D888E0 /* OSodiumSign.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSodiumSign.m; sourceTree = "<group>"; };
 		84D27DE018D4C33200D888E0 /* Device+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Device+Create.h"; sourceTree = "<group>"; };
 		84D27DE118D4C33200D888E0 /* Device+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Device+Create.m"; sourceTree = "<group>"; };
+		84ED400D18DDA42200182C0B /* Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Group.h; sourceTree = "<group>"; };
+		84ED400E18DDA42200182C0B /* Group.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Group.m; sourceTree = "<group>"; };
+		84ED401018DDA42200182C0B /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		84ED401118DDA42200182C0B /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -327,20 +328,20 @@
 			isa = PBXGroup;
 			children = (
 				842CB24718BFCCC800804D8D /* YPOM.xcdatamodeld */,
-				84C974A218DCC81C0048B22C /* User.h */,
-				84C974A318DCC81C0048B22C /* User.m */,
-				84C9749F18DCC81C0048B22C /* Broker.h */,
-				84C974A018DCC81C0048B22C /* Broker.m */,
-				84C9749C18DCC81C0048B22C /* Message.h */,
-				84C9749D18DCC81C0048B22C /* Message.m */,
-				84C9749918DCC81C0048B22C /* UserGroup.h */,
-				84C9749A18DCC81C0048B22C /* UserGroup.m */,
-				84C9749618DCC81C0048B22C /* Myself.h */,
-				84C9749718DCC81C0048B22C /* Myself.m */,
-				84C9749318DCC81C0048B22C /* Group.h */,
-				84C9749418DCC81C0048B22C /* Group.m */,
-				84C9749018DCC81B0048B22C /* Device.h */,
-				84C9749118DCC81B0048B22C /* Device.m */,
+				84ED401018DDA42200182C0B /* User.h */,
+				84ED401118DDA42200182C0B /* User.m */,
+				84ED400D18DDA42200182C0B /* Group.h */,
+				84ED400E18DDA42200182C0B /* Group.m */,
+				84849E9418DDA3A700D65D02 /* UserGroup.h */,
+				84849E9518DDA3A700D65D02 /* UserGroup.m */,
+				84849E8E18DDA3A700D65D02 /* Myself.h */,
+				84849E8F18DDA3A700D65D02 /* Myself.m */,
+				84849E8B18DDA3A700D65D02 /* Message.h */,
+				84849E8C18DDA3A700D65D02 /* Message.m */,
+				84849E8818DDA3A700D65D02 /* Broker.h */,
+				84849E8918DDA3A700D65D02 /* Broker.m */,
+				84849E8518DDA3A700D65D02 /* Device.h */,
+				84849E8618DDA3A700D65D02 /* Device.m */,
 				8459A4C118DC423A007098EB /* Group+Create.h */,
 				8459A4C218DC423A007098EB /* Group+Create.m */,
 				842CB27718BFEAB100804D8D /* CoreDataTVC.h */,
@@ -726,8 +727,8 @@
 				842ECF6318CFD40D00AF6268 /* NWPushFeedback.m in Sources */,
 				84C1B3B118BE8B1300C77138 /* YPOM.m in Sources */,
 				8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */,
-				84C9749B18DCC81C0048B22C /* UserGroup.m in Sources */,
-				84C9749518DCC81C0048B22C /* Group.m in Sources */,
+				84849E9618DDA3A700D65D02 /* UserGroup.m in Sources */,
+				84ED400F18DDA42200182C0B /* Group.m in Sources */,
 				84D27DAE18D48D2400D888E0 /* OSodium.m in Sources */,
 				842CB28518BFFD7500804D8D /* YPOMMessagesTVC.m in Sources */,
 				84C1B38118BE8AA100C77138 /* main.m in Sources */,
@@ -749,17 +750,17 @@
 				84D27DDC18D4B27200D888E0 /* OSodiumBox.m in Sources */,
 				842ECF6118CFD40D00AF6268 /* NWNotification.m in Sources */,
 				842CB26418BFCEAE00804D8D /* Myself+Create.m in Sources */,
-				84C974A118DCC81C0048B22C /* Broker.m in Sources */,
+				84849E8A18DDA3A700D65D02 /* Broker.m in Sources */,
 				841F41CA18D2213900D1586D /* YPOMUserExperienceTVC.m in Sources */,
 				842ECF6218CFD40D00AF6268 /* NWPusher.m in Sources */,
 				84D27DB118D48FC400D888E0 /* OSodiumSecretBox.m in Sources */,
 				849D457718CCE6EA00201BF3 /* YPOMImageVC.m in Sources */,
-				84C974A418DCC81C0048B22C /* User.m in Sources */,
+				84ED401218DDA42200182C0B /* User.m in Sources */,
 				842CB26A18BFCEDC00804D8D /* Broker+Create.m in Sources */,
+				84849E8D18DDA3A700D65D02 /* Message.m in Sources */,
 				8454B7BD18D8EE090046624C /* YPOMThemes.m in Sources */,
-				84C9749E18DCC81C0048B22C /* Message.m in Sources */,
-				84C9749218DCC81B0048B22C /* Device.m in Sources */,
-				84C9749818DCC81C0048B22C /* Myself.m in Sources */,
+				84849E8718DDA3A700D65D02 /* Device.m in Sources */,
+				84849E9018DDA3A700D65D02 /* Myself.m in Sources */,
 				84CC0E9418C7554D00D5985E /* NSString+stringWithData.m in Sources */,
 				8459A4C918DC975B007098EB /* YPOMGroupTVC.m in Sources */,
 				842CB27B18BFEAB100804D8D /* CoreDataTVC.m in Sources */,
@@ -1035,9 +1036,10 @@
 				84A3623B18DC418A009EE9C7 /* YPOM 0.3.xcdatamodel */,
 				8459A4CD18DCA1AE007098EB /* YPOM 0.31.xcdatamodel */,
 				84C9748618DCC5780048B22C /* YPOM 0.32.xcdatamodel */,
+				84849E7818DD93AB00D65D02 /* YPOM 0.33.xcdatamodel */,
 				842CB24818BFCCC800804D8D /* YPOM.xcdatamodel */,
 			);
-			currentVersion = 84C9748618DCC5780048B22C /* YPOM 0.32.xcdatamodel */;
+			currentVersion = 84849E7818DD93AB00D65D02 /* YPOM 0.33.xcdatamodel */;
 			path = YPOM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

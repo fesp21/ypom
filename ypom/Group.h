@@ -2,7 +2,7 @@
 //  Group.h
 //  ypom
 //
-//  Created by Christoph Krey on 21.03.14.
+//  Created by Christoph Krey on 22.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
@@ -15,6 +15,7 @@
 
 @property (nonatomic, retain) NSString * identifier;
 @property (nonatomic, retain) NSString * name;
+@property (nonatomic, retain) User *belongsTo;
 @property (nonatomic, retain) NSSet *hasUsers;
 @property (nonatomic, retain) User *isUser;
 @end

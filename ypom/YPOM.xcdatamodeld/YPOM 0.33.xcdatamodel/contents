@@ -17,6 +17,7 @@
     <entity name="Group" representedClassName="Group" syncable="YES">
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="belongsTo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="ownsGroups" inverseEntity="User" syncable="YES"/>
         <relationship name="hasUsers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserGroup" inverseName="group" inverseEntity="UserGroup" syncable="YES"/>
         <relationship name="isUser" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="User" inverseName="isGroup" inverseEntity="User" syncable="YES"/>
     </entity>
@@ -46,6 +47,7 @@
         <relationship name="hasMessages" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Message" inverseName="belongsTo" inverseEntity="Message" syncable="YES"/>
         <relationship name="isGroup" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Group" inverseName="isUser" inverseEntity="Group" syncable="YES"/>
         <relationship name="me" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Myself" inverseName="myUser" inverseEntity="Myself" syncable="YES"/>
+        <relationship name="ownsGroups" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Group" inverseName="belongsTo" inverseEntity="Group" syncable="YES"/>
     </entity>
     <entity name="UserGroup" representedClassName="UserGroup" syncable="YES">
         <attribute name="confirmed" optional="YES" attributeType="Boolean" syncable="YES"/>
@@ -55,10 +57,10 @@
     <elements>
         <element name="Broker" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Device" positionX="9" positionY="108" width="128" height="103"/>
-        <element name="Group" positionX="18" positionY="90" width="128" height="105"/>
+        <element name="Group" positionX="18" positionY="90" width="128" height="118"/>
         <element name="Message" positionX="0" positionY="0" width="128" height="178"/>
         <element name="Myself" positionX="0" positionY="0" width="128" height="60"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="210"/>
+        <element name="User" positionX="0" positionY="0" width="128" height="225"/>
         <element name="UserGroup" positionX="27" positionY="108" width="128" height="88"/>
     </elements>
 </model>

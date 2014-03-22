@@ -50,7 +50,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     self.fetchedResultsController = nil;
-    self.title = [self.user name];
+    self.title = [NSString stringWithFormat:@"👤 %@", [self.user displayName]];
     [self.tableView reloadData];
 }
 
@@ -63,7 +63,6 @@
     delegate.listener = self;
     
     [self lineState];
-
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -75,20 +74,18 @@
 
 - (void)lineState
 {
-    /*
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    
-    if (self.user.online) {
-        if ([self.user.online boolValue]) {
+    switch (delegate.state) {
+        case 1:
             self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
-        } else {
+            break;
+        case -1:
             self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
-        }
-    } else {
-        self.navigationController.navigationBar.barTintColor = delegate.theme.unknownColor;
-
+            break;
+        default:
+            self.navigationController.navigationBar.barTintColor = delegate.theme.unknownColor;
+            break;
     }
-     */
 }
 
 #pragma mark - Fetched results controller
@@ -158,8 +155,8 @@
     
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
         if (![message.outgoing boolValue] && ![message.seen boolValue]) {
+            message.seen = @(TRUE);
             if (!message.belongsTo.isGroup) {
-                message.seen = @(TRUE);
                 YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
                 NSError *error;
                 NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
@@ -454,7 +451,7 @@
     NSError *error;
     NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
     
-    UInt16 msgId;
+    UInt16 msgId = 0;
     if (to.isGroup) {
         for (UserGroup *userGroup in to.isGroup.hasUsers) {
             if (userGroup.user != delegate.myself.myUser) {

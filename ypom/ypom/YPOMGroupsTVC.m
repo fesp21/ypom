@@ -124,19 +124,24 @@
     Group *group = [self.fetchedResultsController objectAtIndexPath:indexPath];
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    cell.textLabel.text = group.name;
+    cell.textLabel.text = [NSString stringWithFormat:@"👥 %@", [group displayName]];
     cell.textLabel.textColor = delegate.theme.textColor;
     
-    cell.detailTextLabel.text = group.identifier;
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)[group.hasUsers count]];
     cell.detailTextLabel.textColor = delegate.theme.textColor;
     
-    cell.backgroundColor = delegate.theme.yourColor;
+    if (group.belongsTo == delegate.myself.myUser) {
+        cell.backgroundColor = delegate.theme.myColor;
+    } else {
+        cell.backgroundColor = delegate.theme.yourColor;
+    }
 }
 
 - (IBAction)addPressed:(UIBarButtonItem *)sender {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
 
-    [Group newGroupInManageObjectContext:delegate.managedObjectContext];
+    [Group newGroupInManageObjectContext:delegate.managedObjectContext
+                               belongsTo:delegate.myself.myUser];
     
     [delegate saveContext];
 }

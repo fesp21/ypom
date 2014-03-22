@@ -105,10 +105,14 @@
     UserGroup *userGroup = [self.fetchedResultsController objectAtIndexPath:indexPath];
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    cell.textLabel.text = [userGroup.user name];
+    cell.textLabel.text = [NSString stringWithFormat:@"👤%@", [userGroup.user displayName]];
     cell.textLabel.textColor = delegate.theme.textColor;
     
-    cell.backgroundColor = delegate.theme.yourColor;
+    if ([userGroup.user.identifier isEqualToString:delegate.myself.myUser.identifier]) {
+        cell.backgroundColor = delegate.theme.myColor;
+    } else {
+        cell.backgroundColor = delegate.theme.yourColor;
+    }
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath

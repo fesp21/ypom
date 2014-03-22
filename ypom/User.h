@@ -2,7 +2,7 @@
 //  User.h
 //  ypom
 //
-//  Created by Christoph Krey on 21.03.14.
+//  Created by Christoph Krey on 22.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
@@ -24,6 +24,7 @@
 @property (nonatomic, retain) NSSet *hasMessages;
 @property (nonatomic, retain) Group *isGroup;
 @property (nonatomic, retain) Myself *me;
+@property (nonatomic, retain) Group *ownsGroups;
 @end
 
 @interface User (CoreDataGeneratedAccessors)

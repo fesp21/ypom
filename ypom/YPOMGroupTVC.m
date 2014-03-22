@@ -12,6 +12,7 @@
 @interface YPOMGroupTVC ()
 @property (weak, nonatomic) IBOutlet UITextField *name;
 @property (weak, nonatomic) IBOutlet UITextField *number;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *inviteButton;
 
 @end
 
@@ -21,14 +22,22 @@
 {
     [super viewWillAppear:animated];
     
+    self.title = [NSString stringWithFormat:@"👥 %@", [self.group displayName]];
     self.name.text = self.group.name;
     self.number.text = [NSString stringWithFormat:@"%lu", (unsigned long)[self.group.hasUsers count]];
+    
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    if (self.group.belongsTo == delegate.myself.myUser) {
+        self.inviteButton.enabled = TRUE;
+    } else {
+        self.inviteButton.enabled = FALSE;
+    }
 }
-
 
 - (IBAction)nameChanged:(UITextField *)sender {
     self.group.name = sender.text;
-    
+    self.title = [NSString stringWithFormat:@"👥 %@", [self.group displayName]];
+
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     [delegate saveContext];
 }

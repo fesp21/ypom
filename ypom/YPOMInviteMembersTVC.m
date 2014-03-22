@@ -109,7 +109,7 @@
     User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    cell.textLabel.text = [user name];
+    cell.textLabel.text = [NSString stringWithFormat:@"👤%@", [user displayName]];
     cell.textLabel.textColor = delegate.theme.textColor;
     
     if ([user.identifier isEqualToString:delegate.myself.myUser.identifier]) {

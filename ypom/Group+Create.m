@@ -18,6 +18,7 @@
 @implementation Group (Create)
 
 + (Group *)newGroupInManageObjectContext:(NSManagedObjectContext *)context
+                               belongsTo:(User *)belongsTo
 {
     OSodiumBox *box = [[OSodiumBox alloc] init];
     [box createKeyPair];
@@ -31,14 +32,18 @@
     
     NSString *identifier = [NSString stringWithUTF8String:(char *)pk32];
     
-    Group *group = [Group groupWithIdentifier:identifier inManagedObjectContext:context];
-    
+    Group *group = [Group groupWithIdentifier:identifier
+                                    belongsTo:belongsTo
+                       inManagedObjectContext:context];
     return group;
 }
 
-+ (Group *)groupWithIdentifier:(NSString *)identifier inManagedObjectContext:(NSManagedObjectContext *)context
++ (Group *)groupWithIdentifier:(NSString *)identifier
+                     belongsTo:(User *)belongsTo
+        inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    Group *group = [Group existsGroupWithIdentifier:identifier inManagedObjectContext:context];
+    Group *group = [Group existsGroupWithIdentifier:identifier
+                             inManagedObjectContext:context];
     
     if (!group) {
         
@@ -46,6 +51,7 @@
         
         group.identifier = identifier;
         group.isUser = [User userWithIdentifier:identifier inManagedObjectContext:context];
+        group.belongsTo = belongsTo;
     }
     
     return group;
@@ -101,6 +107,11 @@
             [self.managedObjectContext deleteObject:object];
         }
     }
+}
+
+- (NSString *)displayName
+{
+    return self.name ? self.name : [NSString stringWithFormat:@"#%@", self.identifier];
 }
 
 @end

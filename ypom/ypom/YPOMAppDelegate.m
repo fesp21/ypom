@@ -382,6 +382,10 @@
                                                     inManagedObjectContext:self.managedObjectContext];
                             //update
                             belongsTo.identifier = belongsTo.identifier;
+                            [UIApplication sharedApplication].applicationIconBadgeNumber++;
+                            UITabBarController *tbc = (UITabBarController *)self.window.rootViewController;
+                            UITabBarItem *tbi = tbc.tabBar.items[0];
+                            [tbi setBadgeValue:@"📧"];
                             
                             // send notification
                             
@@ -389,7 +393,7 @@
                                 UILocalNotification *notification = [[UILocalNotification alloc] init];
                                 NSString *body = @"Message";
                                 if (self.notificationLevel > 1) {
-                                    body = [body stringByAppendingFormat:@" from %@", [sender name]];
+                                    body = [body stringByAppendingFormat:@" from 👤%@", [sender displayName]];
                                     if (self.notificationLevel > 2) {
                                         body = [body stringByAppendingFormat:@": %@", [message textOfMessage]];
                                     }
@@ -397,9 +401,9 @@
                                 notification.alertBody = body;
                                 [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
                             }
-                            
+
+                            message.acknowledged = @(TRUE);
                             if (!groupIdentifier) {
-                                // send ACK
                                 message.acknowledged = @(TRUE);
                                 NSError *error;
                                 NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
@@ -434,10 +438,13 @@
                                                                           outgoing:YES
                                                                          belongsTo:sender                                                        inManagedObjectContext:self.managedObjectContext];
                             message.seen = @(TRUE);
+                            
                         } else if ([dictionary[@"_type"] isEqualToString:@"inv"]) {
                             self.invitation = [[YPOMInvitation alloc] init];
+                            self.invitation.user = sender;
                             self.invitation.group = dictionary[@"group"];
                             [self.invitation show];
+                            
                         } else if ([dictionary[@"_type"] isEqualToString:@"join"]) {
                             NSDictionary *groupDictionary = dictionary[@"group"];
                             NSString * groupIdentifier = groupDictionary[@"id"];
@@ -450,11 +457,13 @@
                                     [group addUser:user];
                                 }
                             }
-                            UIAlertView *alert = [[UIAlertView alloc]
-                                                  initWithTitle:@"YPOM Group Join"
-                                                  message:[NSString stringWithFormat:@"%@ %@", groupIdentifier, [sender name]]                                                                           delegate:self
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
+                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"YPOM Group Join"
+                                                                            message:[NSString stringWithFormat:@"👤%@ 👥%@",
+                                                                                     [sender displayName],
+                                                                                     [group displayName]
+                                                                                     ]                                                                           delegate:self
+                                                                  cancelButtonTitle:@"OK"
+                                                                  otherButtonTitles:nil];
                             [alert show];
                             
                         } else if ([dictionary[@"_type"] isEqualToString:@"leave"]) {
@@ -470,11 +479,14 @@
                                 }
                             }
 
-                            UIAlertView *alert = [[UIAlertView alloc]
-                                                  initWithTitle:@"YPOM Group Leave"
-                                                  message:[NSString stringWithFormat:@"%@ %@", groupIdentifier, [sender name]]                                                                           delegate:self
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
+                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"YPOM Group Leave"
+                                                                            message:[NSString stringWithFormat:@"👤%@ 👥%@",
+                                                                                     [sender displayName],
+                                                                                     [group displayName]
+                                                                                     ]
+                                                                           delegate:self
+                                                                  cancelButtonTitle:@"OK"
+                                                                  otherButtonTitles:nil];
                             [alert show];
                             
                         } else {
@@ -601,8 +613,6 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
     NSLog(@"App didReceiveRemoteNotification fetchCompletionHandler %@", userInfo);
     
-    [UIApplication sharedApplication].applicationIconBadgeNumber++;
-
     if (self.state == 1 || [UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
         completionHandler(UIBackgroundFetchResultNoData);
     } else {

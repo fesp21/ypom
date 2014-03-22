@@ -86,28 +86,30 @@
 - (NSString *)name
 {
     NSString *name;
-    if (self.isGroup) {
-        name = [NSString stringWithFormat:@"G:%@", self.isGroup.name];
-    } else {
-        name = self.identifier;
-        
-        ABRecordID rid = self.abRecordId ? [self.abRecordId intValue] : kABRecordInvalidID;
-        if (rid && rid != kABRecordInvalidID) {
-            CFErrorRef myError = NULL;
-            ABAddressBookRef abref = ABAddressBookCreateWithOptions(NULL, &myError);
-            if (abref) {
-                ABRecordRef rref = ABAddressBookGetPersonWithRecordID(abref, rid);
-                name = CFBridgingRelease(ABRecordCopyCompositeName(rref));
-                CFRelease(abref);
-            }
+    
+    ABRecordID rid = self.abRecordId ? [self.abRecordId intValue] : kABRecordInvalidID;
+    if (rid && rid != kABRecordInvalidID) {
+        CFErrorRef myError = NULL;
+        ABAddressBookRef abref = ABAddressBookCreateWithOptions(NULL, &myError);
+        if (abref) {
+            ABRecordRef rref = ABAddressBookGetPersonWithRecordID(abref, rid);
+            name = CFBridgingRelease(ABRecordCopyCompositeName(rref));
+            CFRelease(abref);
         }
     }
     return name;
 }
 
-- (NSUInteger)numberOfUnseenMessages
+- (NSString *)displayName
 {
-    NSUInteger u = 0;
+    NSString *name = [self name];
+    return name ? name : [NSString stringWithFormat:@"#%@", self.identifier];
+}
+
+
+- (unsigned long)numberOfUnseenMessages
+{
+    unsigned long u = 0;
     
     for (Message *message in self.hasMessages) {
         if (message.outgoing && ![message.outgoing boolValue]) {
