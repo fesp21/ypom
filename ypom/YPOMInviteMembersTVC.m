@@ -118,11 +118,11 @@
         cell.backgroundColor = delegate.theme.yourColor;
     }
     
+    cell.accessoryType = UITableViewCellAccessoryNone;
     for (UserGroup *userGroup in user.hasGroups) {
         if (userGroup.group == self.group) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        } else {
-            cell.accessoryType = UITableViewCellAccessoryNone;
+            break;
         }
     }
 }
@@ -130,44 +130,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    OSodiumBox *box = [[OSodiumBox alloc] init];
-    box.pubkey = user.pubkey;
-    box.seckey = delegate.myself.myUser.seckey;
+    [self.group invite:user];
     
-    NSError *error;
-    NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-    jsonObject[@"_type"] = @"inv";
-    jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f",
-                                [[NSDate date] timeIntervalSince1970]];
-    NSMutableArray *members = [[NSMutableArray alloc] init];
-    for (UserGroup *userGroup in self.group.hasUsers) {
-        if (userGroup.group == self.group) {
-            [members addObject:userGroup.user.identifier];
-        }
-    }
-    NSDictionary *group = @{
-                            @"id": self.group.identifier,
-                            @"name": self.group.name,
-                            @"members":members
-                            };
-    jsonObject[@"group"] = group;
-    
-    box.secret = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-    
-    OSodiumSign *sign = [[OSodiumSign alloc] init];
-    sign.verkey = delegate.myself.myUser.verkey;
-    sign.sigkey = delegate.myself.myUser.sigkey;
-    sign.secret = [box boxOnWire];
-    
-    [delegate.session publishData:[[sign signOnWire] base64EncodedDataWithOptions:0]
-                          onTopic:[NSString stringWithFormat:@"ypom/%@/%@",
-                                   user.identifier,
-                                   delegate.myself.myUser.identifier]
-                           retain:NO
-                              qos:2];
-
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 

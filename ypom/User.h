@@ -2,7 +2,7 @@
 //  User.h
 //  ypom
 //
-//  Created by Christoph Krey on 22.03.14.
+//  Created by Christoph Krey on 23.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
@@ -24,7 +24,7 @@
 @property (nonatomic, retain) NSSet *hasMessages;
 @property (nonatomic, retain) Group *isGroup;
 @property (nonatomic, retain) Myself *me;
-@property (nonatomic, retain) Group *ownsGroups;
+@property (nonatomic, retain) NSSet *ownsGroups;
 @end
 
 @interface User (CoreDataGeneratedAccessors)
@@ -43,5 +43,10 @@
 - (void)removeHasMessagesObject:(Message *)value;
 - (void)addHasMessages:(NSSet *)values;
 - (void)removeHasMessages:(NSSet *)values;
+
+- (void)addOwnsGroupsObject:(Group *)value;
+- (void)removeOwnsGroupsObject:(Group *)value;
+- (void)addOwnsGroups:(NSSet *)values;
+- (void)removeOwnsGroups:(NSSet *)values;
 
 @end

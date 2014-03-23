@@ -124,7 +124,7 @@
     Group *group = [self.fetchedResultsController objectAtIndexPath:indexPath];
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    cell.textLabel.text = [NSString stringWithFormat:@"👥 %@", [group displayName]];
+    cell.textLabel.text = [NSString stringWithFormat:@"👥%@", [group displayName]];
     cell.textLabel.textColor = delegate.theme.textColor;
     
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)[group.hasUsers count]];
@@ -143,7 +143,6 @@
     [Group newGroupInManageObjectContext:delegate.managedObjectContext
                                belongsTo:delegate.myself.myUser];
     
-    [delegate saveContext];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -154,45 +153,17 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    self.noupdate = TRUE;
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         Group *group = [self.fetchedResultsController objectAtIndexPath:indexPath];
-
-        for (UserGroup *userGroup in group.hasUsers) {
-            NSError *error;
-            NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-            jsonObject[@"_type"] = @"leave";
-            jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f",
-                                        [[NSDate date] timeIntervalSince1970]];
-            NSMutableArray *members = [[NSMutableArray alloc] init];
-            for (UserGroup *userGroup in group.hasUsers) {
-                [members addObject:userGroup.user.identifier];
-            }
-            NSDictionary *groupDictionary = @{
-                                              @"id": group.identifier,
-                                              @"name": group.name,
-                                              @"members":members
-                                              };
-            jsonObject[@"group"] = groupDictionary;
-            
-            YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-            [delegate safeSend:[NSJSONSerialization dataWithJSONObject:jsonObject
-                                                               options:0
-                                                                 error:&error]
-                            to:userGroup.user];
-            [delegate sendPush:userGroup.user];
-        }
+        
+        [group leave];
 
         NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
         [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
-        
-        NSError *error = nil;
-        if (![context save:&error]) {
-            // Replace this implementation with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
     }
+    self.noupdate = FALSE;
+    [self.tableView reloadData];
 }
 
 

@@ -50,7 +50,11 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     self.fetchedResultsController = nil;
-    self.title = [NSString stringWithFormat:@"👤 %@", [self.user displayName]];
+    if (self.user.isGroup) {
+        self.title = [NSString stringWithFormat:@"👥%@", [self.user.isGroup displayName]];
+    } else {
+        self.title = [NSString stringWithFormat:@"👤%@", [self.user displayName]];
+    }
     [self.tableView reloadData];
 }
 
@@ -397,7 +401,6 @@
             
             NSLog(@"contentsize: %lu", (unsigned long)[jsonObject[@"content"] length]);
 
-            [self sendAny:jsonObject to:self.selectedCellForImage.message.belongsTo];
         } else {
             jsonObject[@"content"] = [[@"cannot convert image" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
             jsonObject[@"content-type"] = @"text/plain; charset:\"utf-8\"";
@@ -561,14 +564,6 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
         [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
-        
-        NSError *error = nil;
-        if (![context save:&error]) {
-            // Replace this implementation with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
     }
 }
 

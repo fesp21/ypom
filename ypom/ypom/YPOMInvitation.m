@@ -34,45 +34,13 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex) {
-        YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-        
         NSString *groupIdentifier = self.group[@"id"];
         
         Group *group = [Group groupWithIdentifier:groupIdentifier
                                         belongsTo:self.user
-                           inManagedObjectContext:delegate.managedObjectContext];
+                           inManagedObjectContext:self.user.managedObjectContext];
         group.name = self.group[@"name"];
-        [group addUser:delegate.myself.myUser];
-        
-        NSError *error;
-        NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-        jsonObject[@"_type"] = @"join";
-        jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f",
-                                    [[NSDate date] timeIntervalSince1970]];
-        
-        NSMutableArray *members = [[NSMutableArray alloc] init];
-        for (UserGroup *userGroup in group.hasUsers) {
-            [members addObject:userGroup.user.identifier];
-        }
-        NSDictionary *groupDictionary = @{
-                                          @"id": group.identifier,
-                                          @"name": group.name,
-                                          @"members":members
-                                          };
-        jsonObject[@"group"] = groupDictionary;
-        
-        NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject
-                                                       options:0
-                                                         error:&error];
-        
-        for (NSString *identifier in self.group[@"members"]) {
-            User *user = [User existsUserWithIdentifier:identifier
-                                 inManagedObjectContext:delegate.managedObjectContext];
-            if (user && user != delegate.myself.myUser) {
-                [delegate safeSend:data to:user];
-                [delegate sendPush:user];
-            }
-        }
+        [group join];
     }
 }
 

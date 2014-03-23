@@ -151,6 +151,7 @@
     self.user.text = delegate.broker.user;
     self.password.text = delegate.broker.passwd;
     
+    [self lineState];
 }
 
 - (IBAction)hostChanged:(UITextField *)sender {
@@ -302,6 +303,8 @@
                     user.verkey = [[NSData alloc] initWithBase64EncodedString:dictionary[@"verkey"] options:0];
                     
                     delegate.myself.myUser = user;
+                    [self changed];
+                    
                 } else {
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Load YPOM Identiy"
                                                                     message:@"Illegal JSON"

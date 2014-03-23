@@ -20,9 +20,13 @@
 + (Group *)newGroupInManageObjectContext:(NSManagedObjectContext *)context
                                belongsTo:(User *)belongsTo;
 
-- (void)addUser:(User *)user;
-- (void)removeUser:(User *)user;
+- (BOOL)addUser:(User *)user;
+- (BOOL)removeUser:(User *)user;
 - (NSString *)displayName;
-
+- (void)tell;
+- (void)listen:(NSDictionary *)groupDictionary;
+- (void)invite:(User *)user;
+- (void)leave;
+- (void)join;
 
 @end

@@ -21,6 +21,8 @@
 #import "OSodiumBox.h"
 #import "YPOMInvitation.h"
 #import "Group+Create.h"
+#import "UserGroup.h"
+#import "User+Create.h"
 
 @interface YPOMAppDelegate ()
 @property (nonatomic) UIBackgroundTaskIdentifier bgTask;
@@ -445,50 +447,67 @@
                             self.invitation.group = dictionary[@"group"];
                             [self.invitation show];
                             
+                            // send notification
+                            
+                            if (self.notificationLevel) {
+                                UILocalNotification *notification = [[UILocalNotification alloc] init];
+                                NSString *body = @"Invitation";
+                                if (self.notificationLevel > 1) {
+                                    body = [body stringByAppendingFormat:@" from 👤%@", [sender displayName]];
+                                }
+                                notification.alertBody = body;
+                                [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+                            }
+
+                            
                         } else if ([dictionary[@"_type"] isEqualToString:@"join"]) {
                             NSDictionary *groupDictionary = dictionary[@"group"];
                             NSString * groupIdentifier = groupDictionary[@"id"];
                             Group *group = [Group existsGroupWithIdentifier:groupIdentifier
                                                      inManagedObjectContext:self.managedObjectContext];
-                            NSArray *members = groupDictionary[@"members"];
-                            for (NSString *identifier in members) {
-                                User *user = [User existsUserWithIdentifier:identifier inManagedObjectContext:self.managedObjectContext];
-                                if (user) {
-                                    [group addUser:user];
-                                }
+                            if (group) {
+                                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"YPOM Group Join"
+                                                                                message:[NSString stringWithFormat:@"👤%@ 👥%@",
+                                                                                         [sender displayName],
+                                                                                         [group displayName]
+                                                                                         ]
+                                                                               delegate:self
+                                                                      cancelButtonTitle:@"OK"
+                                                                      otherButtonTitles:nil];
+                                [alert show];
+                                
+                                [group addUser:sender];
+                                [group tell];
                             }
-                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"YPOM Group Join"
-                                                                            message:[NSString stringWithFormat:@"👤%@ 👥%@",
-                                                                                     [sender displayName],
-                                                                                     [group displayName]
-                                                                                     ]                                                                           delegate:self
-                                                                  cancelButtonTitle:@"OK"
-                                                                  otherButtonTitles:nil];
-                            [alert show];
                             
                         } else if ([dictionary[@"_type"] isEqualToString:@"leave"]) {
                             NSDictionary *groupDictionary = dictionary[@"group"];
                             NSString * groupIdentifier = groupDictionary[@"id"];
                             Group *group = [Group existsGroupWithIdentifier:groupIdentifier
                                                      inManagedObjectContext:self.managedObjectContext];
-                            NSArray *members = groupDictionary[@"members"];
-                            for (NSString *identifier in members) {
-                                User *user = [User existsUserWithIdentifier:identifier inManagedObjectContext:self.managedObjectContext];
-                                if (user) {
-                                    [group removeUser:user];
-                                }
+                            if (group) {
+                                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"YPOM Group Leave"
+                                                                                message:[NSString stringWithFormat:@"👤%@ 👥%@",
+                                                                                         [sender displayName],
+                                                                                         [group displayName]
+                                                                                         ]
+                                                                               delegate:self
+                                                                      cancelButtonTitle:@"OK"
+                                                                      otherButtonTitles:nil];
+                                [alert show];
+                                
+                                [group removeUser:sender];
+                                [group tell];
                             }
-
-                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"YPOM Group Leave"
-                                                                            message:[NSString stringWithFormat:@"👤%@ 👥%@",
-                                                                                     [sender displayName],
-                                                                                     [group displayName]
-                                                                                     ]
-                                                                           delegate:self
-                                                                  cancelButtonTitle:@"OK"
-                                                                  otherButtonTitles:nil];
-                            [alert show];
                             
+                        } else if ([dictionary[@"_type"] isEqualToString:@"tell"]) {
+                            NSDictionary *groupDictionary = dictionary[@"group"];
+                            NSString * groupIdentifier = groupDictionary[@"id"];
+                            Group *group = [Group existsGroupWithIdentifier:groupIdentifier
+                                                     inManagedObjectContext:self.managedObjectContext];
+                            if (group) {
+                                [group listen:groupDictionary];
+                            }
                         } else {
                             NSLog(@"unknown _type:%@", dictionary[@"_type"]);
                         }
@@ -523,13 +542,6 @@
         [self.listener lineState];
     }
     [self saveContext];
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex) {
-        
-    }
 }
 
 - (void)messageDelivered:(MQTTSession *)session msgID:(UInt16)msgID

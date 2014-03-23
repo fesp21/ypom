@@ -29,8 +29,10 @@
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     if (self.group.belongsTo == delegate.myself.myUser) {
         self.inviteButton.enabled = TRUE;
+        self.name.enabled = TRUE;
     } else {
         self.inviteButton.enabled = FALSE;
+        self.name.enabled = FALSE;
     }
 }
 
