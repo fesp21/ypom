@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5063" systemVersion="13C64" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Broker" representedClassName="Broker" syncable="YES">
+        <attribute name="auth" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="host" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="passwd" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="port" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="tls" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="user" optional="YES" attributeType="String" syncable="YES"/>
+        <fetchedProperty name="fetchedProperty" optional="YES" syncable="YES">
+            <fetchRequest name="fetchedPropertyFetchRequest" entity="Broker"/>
+        </fetchedProperty>
+    </entity>
+    <entity name="Device" representedClassName="Device" syncable="YES">
+        <attribute name="deviceToken" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="online" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <relationship name="belongsTo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="hasDevices" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="Group" representedClassName="Group" syncable="YES">
+        <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="belongsTo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="ownsGroups" inverseEntity="User" syncable="YES"/>
+        <relationship name="hasUsers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserGroup" inverseName="group" inverseEntity="UserGroup" syncable="YES"/>
+        <relationship name="isUser" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="User" inverseName="isGroup" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="Message" representedClassName="Message" syncable="YES">
+        <attribute name="acknowledged" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="content" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="contenttype" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="delivered" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="msgid" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="outgoing" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="seen" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" syncable="YES"/>
+        <relationship name="belongsTo" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="hasMessages" inverseEntity="User" syncable="YES"/>
+        <relationship name="sentBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="sentMessage" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="Myself" representedClassName="Myself" syncable="YES">
+        <relationship name="myUser" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="me" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="User" representedClassName="User" syncable="YES">
+        <attribute name="abRecordId" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pubkey" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="seckey" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="sigkey" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="verkey" optional="YES" attributeType="Binary" syncable="YES"/>
+        <relationship name="hasDevices" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Device" inverseName="belongsTo" inverseEntity="Device" syncable="YES"/>
+        <relationship name="hasGroups" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserGroup" inverseName="user" inverseEntity="UserGroup" syncable="YES"/>
+        <relationship name="hasMessages" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Message" inverseName="belongsTo" inverseEntity="Message" syncable="YES"/>
+        <relationship name="isGroup" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Group" inverseName="isUser" inverseEntity="Group" syncable="YES"/>
+        <relationship name="me" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Myself" inverseName="myUser" inverseEntity="Myself" syncable="YES"/>
+        <relationship name="ownsGroups" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Group" inverseName="belongsTo" inverseEntity="Group" syncable="YES"/>
+        <relationship name="sentMessage" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Message" inverseName="sentBy" inverseEntity="Message" syncable="YES"/>
+        <fetchedProperty name="lastMessage" optional="YES" syncable="YES">
+            <fetchRequest name="fetchedPropertyFetchRequest" entity="User"/>
+        </fetchedProperty>
+    </entity>
+    <entity name="UserGroup" representedClassName="UserGroup" syncable="YES">
+        <attribute name="confirmed" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <relationship name="group" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Group" inverseName="hasUsers" inverseEntity="Group" syncable="YES"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="hasGroups" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Broker" positionX="0" positionY="0" width="128" height="164"/>
+        <element name="Device" positionX="9" positionY="108" width="128" height="103"/>
+        <element name="Group" positionX="18" positionY="90" width="128" height="120"/>
+        <element name="Message" positionX="0" positionY="0" width="128" height="193"/>
+        <element name="Myself" positionX="0" positionY="0" width="128" height="60"/>
+        <element name="User" positionX="0" positionY="0" width="128" height="269"/>
+        <element name="UserGroup" positionX="27" positionY="108" width="128" height="88"/>
+    </elements>
+</model>

@@ -33,6 +33,7 @@
 @property (strong, nonatomic) void (^handler)(UIBackgroundFetchResult result);
 @property (strong, nonatomic) NWPusher *pusher;
 @property (nonatomic) NWPusherResult pusherResult;
+@property (strong, nonatomic) NSTimer *reconnectTimer;
 
 @property (strong, nonatomic) UIDocumentInteractionController *dic;
 @property (strong, nonatomic) YPOMInvitation *invitation;
@@ -96,7 +97,11 @@
     NSLog(@"applicationWillResignActive");
     
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
-
+    
+    UITabBarController *tbc = (UITabBarController *)self.window.rootViewController;
+    UITabBarItem *tbi = tbc.tabBar.items[0];
+    [tbi setBadgeValue:[NSString stringWithFormat:@"%d", [UIApplication sharedApplication].applicationIconBadgeNumber]];
+    
     [self saveContext];
     [self disconnect:nil];
     [self.pusher disconnect];
@@ -315,12 +320,24 @@
     
     switch (eventCode) {
         case MQTTSessionEventConnected:
-            [self subscribe:self.myself.myUser];
+            if (self.reconnectTimer) {
+                [self.reconnectTimer invalidate];
+                self.reconnectTimer = nil;
+            }
             self.state = 1;
+            [self subscribe:self.myself.myUser];
             break;
         case MQTTSessionEventConnectionError:
-            self.state = -1;
+        case MQTTSessionEventConnectionRefused:
+        case MQTTSessionEventProtocolError:
+        case MQTTSessionEventConnectionClosed:
         default:
+            if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+                if (!self.reconnectTimer) {
+                    self.reconnectTimer = [NSTimer timerWithTimeInterval:10 target:self selector:@selector(reconnect:) userInfo:nil repeats:NO];
+                    [[NSRunLoop currentRunLoop] addTimer:self.reconnectTimer forMode:NSRunLoopCommonModes];
+                }
+            }
             self.state = 0;
             break;
     }
@@ -376,47 +393,56 @@
                             } else {
                                 belongsTo = sender;
                             }
-                            Message *message = [Message messageWithContent:content
-                                                               contentType:contentType
-                                                                 timestamp:timestamp
-                                                                  outgoing:NO
-                                                                 belongsTo:belongsTo
-                                                    inManagedObjectContext:self.managedObjectContext];
-                            //update
-                            belongsTo.identifier = belongsTo.identifier;
-                            [UIApplication sharedApplication].applicationIconBadgeNumber++;
-                            UITabBarController *tbc = (UITabBarController *)self.window.rootViewController;
-                            UITabBarItem *tbi = tbc.tabBar.items[0];
-                            [tbi setBadgeValue:@"📧"];
                             
-                            // send notification
-                            
-                            if (self.notificationLevel) {
-                                UILocalNotification *notification = [[UILocalNotification alloc] init];
-                                NSString *body = @"Message";
-                                if (self.notificationLevel > 1) {
-                                    body = [body stringByAppendingFormat:@" from 👤%@", [sender displayName]];
-                                    if (self.notificationLevel > 2) {
-                                        body = [body stringByAppendingFormat:@": %@", [message textOfMessage]];
+                            if (belongsTo) {
+                                Message *message = [Message messageWithContent:content
+                                                                   contentType:contentType
+                                                                     timestamp:timestamp
+                                                                      outgoing:NO
+                                                                     belongsTo:belongsTo
+                                                        inManagedObjectContext:self.managedObjectContext];
+                                
+                                // update
+                                message.sentBy = sender;
+                                sender.identifier = sender.identifier;
+                                belongsTo.identifier = belongsTo.identifier;
+                                
+                                // send notification
+                                
+                                if (self.notificationLevel) {
+                                    [UIApplication sharedApplication].applicationIconBadgeNumber++;
+                                    
+                                    UITabBarController *tbc = (UITabBarController *)self.window.rootViewController;
+                                    UITabBarItem *tbi = tbc.tabBar.items[0];
+                                    [tbi setBadgeValue:[NSString stringWithFormat:@"%d", [UIApplication sharedApplication].applicationIconBadgeNumber]];
+                                    
+                                    UILocalNotification *notification = [[UILocalNotification alloc] init];
+                                    NSString *body = @"Message";
+                                    if (self.notificationLevel > 1) {
+                                        body = [body stringByAppendingFormat:@" from 👤%@", [sender displayName]];
+                                        if (self.notificationLevel > 2) {
+                                            body = [body stringByAppendingFormat:@": %@", [message textOfMessage]];
+                                        }
                                     }
-                                }
-                                notification.alertBody = body;
-                                [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-                            }
-
-                            message.acknowledged = @(TRUE);
-                            if (!groupIdentifier) {
-                                message.acknowledged = @(TRUE);
-                                NSError *error;
-                                NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
-                                jsonObject[@"_type"] = @"ack";
-                                jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
-                                if (self.deviceToken) {
-                                    jsonObject[@"dev"] = [self.deviceToken base64EncodedStringWithOptions:0];
+                                    notification.alertBody = body;
+                                    notification.soundName = UILocalNotificationDefaultSoundName;
+                                    [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
                                 }
                                 
-                                NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
-                                [self safeSend:data to:sender];
+                                message.acknowledged = @(TRUE);
+                                if (!groupIdentifier) {
+                                    message.acknowledged = @(TRUE);
+                                    NSError *error;
+                                    NSMutableDictionary *jsonObject = [[NSMutableDictionary alloc] init];
+                                    jsonObject[@"_type"] = @"ack";
+                                    jsonObject[@"timestamp"] = [NSString stringWithFormat:@"%.3f", [timestamp timeIntervalSince1970]];
+                                    if (self.deviceToken) {
+                                        jsonObject[@"dev"] = [self.deviceToken base64EncodedStringWithOptions:0];
+                                    }
+                                    
+                                    NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject options:0 error:&error];
+                                    [self safeSend:data to:sender];
+                                }
                             }
                             
                         } else if ([dictionary[@"_type"] isEqualToString:@"ack"]) {
@@ -450,12 +476,15 @@
                             // send notification
                             
                             if (self.notificationLevel) {
+                                [UIApplication sharedApplication].applicationIconBadgeNumber++;
+                                
                                 UILocalNotification *notification = [[UILocalNotification alloc] init];
                                 NSString *body = @"Invitation";
                                 if (self.notificationLevel > 1) {
                                     body = [body stringByAppendingFormat:@" from 👤%@", [sender displayName]];
                                 }
                                 notification.alertBody = body;
+                                notification.soundName = UILocalNotificationDefaultSoundName;
                                 [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
                             }
 
@@ -598,8 +627,18 @@
     [self.session unsubscribeTopic:[NSString stringWithFormat:@"ypom/%@/+", user.identifier]];
 }
 
+- (void)reconnect:(NSTimer *)timer
+{
+    self.reconnectTimer = nil;
+    [self connect:nil];
+}
+
 - (void)disconnect:(id)object
 {
+    if (self.reconnectTimer) {
+        [self.reconnectTimer invalidate];
+        self.reconnectTimer = nil;
+    }
     [self.session close];
 }
 
@@ -634,6 +673,8 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
                                                               selector:@selector(backgroundDisconnect:)
                                                               userInfo:nil
                                                                repeats:NO];
+        [[NSRunLoop currentRunLoop] addTimer:self.backgroundTimer forMode:NSRunLoopCommonModes];
+
         [self connect:nil];
         
     }

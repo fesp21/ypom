@@ -2,7 +2,7 @@
 //  Message.h
 //  ypom
 //
-//  Created by Christoph Krey on 23.03.14.
+//  Created by Christoph Krey on 25.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
@@ -22,5 +22,6 @@
 @property (nonatomic, retain) NSNumber * seen;
 @property (nonatomic, retain) NSDate * timestamp;
 @property (nonatomic, retain) User *belongsTo;
+@property (nonatomic, retain) User *sentBy;
 
 @end

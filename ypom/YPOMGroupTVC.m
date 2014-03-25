@@ -46,7 +46,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:@"setGroupForInvite:"] || [segue.identifier isEqualToString:@"setGroupForMembers:"]) {
+    if ([segue.identifier isEqualToString:@"setGroupForMembers:"]) {
         if ([segue.destinationViewController respondsToSelector:@selector(setGroup:)]) {
             [segue.destinationViewController performSelector:@selector(setGroup:)
                                                   withObject:self.group];

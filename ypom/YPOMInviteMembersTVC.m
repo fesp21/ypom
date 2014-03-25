@@ -46,11 +46,8 @@
         case 1:
             self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
             break;
-        case -1:
-            self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
-            break;
         default:
-            self.navigationController.navigationBar.barTintColor = delegate.theme.unknownColor;
+            self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
             break;
     }
 }

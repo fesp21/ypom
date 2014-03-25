@@ -90,6 +90,12 @@
                                      metadata:@{}
                               completionBlock:^(NSURL *assetURL, NSError *error) {
                                   NSLog(@"writeImageDataToSavedPhotosAlbum %@ %@", assetURL, error);
+                                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Image Save"
+                                                                                  message:error ? [NSString stringWithFormat:@"Error: %@", error] : @"Successfull"
+                                                                                 delegate:self
+                                                                        cancelButtonTitle:@"OK"
+                                                                        otherButtonTitles:nil];
+                                  [alert show];
                               }];
 }
 

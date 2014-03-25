@@ -42,12 +42,20 @@
         case 1:
             self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
             break;
-        case -1:
+        default:
             self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
             break;
-        default:
-            self.navigationController.navigationBar.barTintColor = delegate.theme.unknownColor;
-            break;
+    }
+}
+
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"setGroupForInvite:"]) {
+        if ([segue.destinationViewController respondsToSelector:@selector(setGroup:)]) {
+            [segue.destinationViewController performSelector:@selector(setGroup:)
+                                                  withObject:self.group];
+        }
     }
 }
 

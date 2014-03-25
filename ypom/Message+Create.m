@@ -32,6 +32,7 @@
         message.content = content;
         message.contenttype = contentType;
         message.belongsTo = user;
+        user.lastMessage = timestamp;
         message.delivered = @(NO);
         message.acknowledged = @(NO);
         message.seen = @(NO);

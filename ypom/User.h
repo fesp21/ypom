@@ -2,7 +2,7 @@
 //  User.h
 //  ypom
 //
-//  Created by Christoph Krey on 23.03.14.
+//  Created by Christoph Krey on 25.03.14.
 //  Copyright (c) 2014 Christoph Krey. All rights reserved.
 //
 
@@ -15,6 +15,7 @@
 
 @property (nonatomic, retain) NSNumber * abRecordId;
 @property (nonatomic, retain) NSString * identifier;
+@property (nonatomic, retain) NSDate * lastMessage;
 @property (nonatomic, retain) NSData * pubkey;
 @property (nonatomic, retain) NSData * seckey;
 @property (nonatomic, retain) NSData * sigkey;
@@ -25,6 +26,7 @@
 @property (nonatomic, retain) Group *isGroup;
 @property (nonatomic, retain) Myself *me;
 @property (nonatomic, retain) NSSet *ownsGroups;
+@property (nonatomic, retain) NSSet *sentMessage;
 @end
 
 @interface User (CoreDataGeneratedAccessors)
@@ -48,5 +50,10 @@
 - (void)removeOwnsGroupsObject:(Group *)value;
 - (void)addOwnsGroups:(NSSet *)values;
 - (void)removeOwnsGroups:(NSSet *)values;
+
+- (void)addSentMessageObject:(Message *)value;
+- (void)removeSentMessageObject:(Message *)value;
+- (void)addSentMessage:(NSSet *)values;
+- (void)removeSentMessage:(NSSet *)values;
 
 @end

@@ -25,6 +25,7 @@
 #include "isutf8.h"
 
 @interface YPOMMessagesTVC () <YPOMdelegate>
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *addressBookButton;
 @property (weak, nonatomic) YPOMNewTVCell *selectedCellForImage;
 @end
 
@@ -52,8 +53,10 @@
     self.fetchedResultsController = nil;
     if (self.user.isGroup) {
         self.title = [NSString stringWithFormat:@"👥%@", [self.user.isGroup displayName]];
+        self.addressBookButton.enabled = FALSE;
     } else {
         self.title = [NSString stringWithFormat:@"👤%@", [self.user displayName]];
+        self.addressBookButton.enabled = TRUE;
     }
     [self.tableView reloadData];
 }
@@ -83,14 +86,12 @@
         case 1:
             self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
             break;
-        case -1:
-            self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
-            break;
         default:
-            self.navigationController.navigationBar.barTintColor = delegate.theme.unknownColor;
+            self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
             break;
     }
 }
+
 
 #pragma mark - Fetched results controller
 
@@ -256,10 +257,11 @@
 
 - (NSString *)statusText:(Message *)message
 {
-    return [NSString stringWithFormat:@"%@%@%@ %@ (%lu)",
+    return [NSString stringWithFormat:@"%@%@%@ %@ %@ (%lu)",
             [message.delivered boolValue] ? @"✔︎": @"",
             [message.acknowledged boolValue] ? @"✔︎": @"",
             [message.seen boolValue] ? @"✔︎": @"",
+            [message.sentBy displayName],
             [NSDateFormatter localizedStringFromDate:message.timestamp
                                            dateStyle:NSDateFormatterShortStyle
                                            timeStyle:NSDateFormatterMediumStyle],
@@ -478,6 +480,7 @@
                             inManagedObjectContext:to.managedObjectContext];
     
     message.msgid = @(msgId);
+    message.sentBy = delegate.myself.myUser;
     if (msgId) {
         message.delivered = @(FALSE);
     } else {
