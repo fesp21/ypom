@@ -25,6 +25,7 @@
 #include "isutf8.h"
 
 @interface YPOMMessagesTVC () <YPOMdelegate>
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *imageButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addressBookButton;
 @property (weak, nonatomic) YPOMNewTVCell *selectedCellForImage;
 @end
@@ -55,9 +56,12 @@
         self.title = [NSString stringWithFormat:@"👥%@", [self.user.isGroup displayName]];
         self.addressBookButton.enabled = FALSE;
     } else {
-        self.title = [NSString stringWithFormat:@"👤%@", [self.user displayName]];
+        self.title = [NSString stringWithFormat:@"%@", [self.user displayName]];
         self.addressBookButton.enabled = TRUE;
     }
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    self.view.backgroundColor = delegate.theme.backgroundColor;
+    [self lineState];
     [self.tableView reloadData];
 }
 
@@ -66,10 +70,7 @@
     [super viewDidAppear:animated];
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    self.view.backgroundColor = delegate.theme.backgroundColor;
     delegate.listener = self;
-    
-    [self lineState];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -85,9 +86,11 @@
     switch (delegate.state) {
         case 1:
             self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
+            self.tabBarController.tabBar.barTintColor = delegate.theme.onlineColor;
             break;
         default:
             self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
+            self.tabBarController.tabBar.barTintColor = delegate.theme.onlineColor;
             break;
     }
 }
@@ -312,7 +315,7 @@
     } else {
         NSRange range = [message.contenttype rangeOfString:@"image" options:NSCaseInsensitiveSearch];
         if (range.location != NSNotFound) {
-            return 7 + 100 + 8 + 12 + 7;
+            return 0 + 100 + 4 + 12 + 0 + 3;
         } else {
             NSString *text = [message textOfMessage];
             NSStringDrawingContext *sdc = [[NSStringDrawingContext alloc] init];
@@ -325,7 +328,7 @@
                            CGRectMake(0, 0, tableView.frame.size.width * 0.8, tableView.frame.size.height)
                                 limitedToNumberOfLines:0];
             
-            return 7 + ceil(rect.size.height) + 8 + 12 + 7;
+            return 0 + ceil(rect.size.height) + 4 + 12 + 3;
         }
     }
 }

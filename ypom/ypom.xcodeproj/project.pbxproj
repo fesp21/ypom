@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		840BBDCC18E33B0900DC113C /* icon-29@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 840BBDCB18E33B0900DC113C /* icon-29@2x.png */; };
+		840BBDCF18E33B7C00DC113C /* icon-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 840BBDCD18E33B7C00DC113C /* icon-40@2x.png */; };
+		840BBDD018E33B7C00DC113C /* icon-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 840BBDCE18E33B7C00DC113C /* icon-60@2x.png */; };
 		8418BB5218E1A50A00DF490A /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 8418BB5118E1A50A00DF490A /* User.m */; };
 		841F41C118D20F5700D1586D /* YPOMThemes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 841F41C018D20F5700D1586D /* YPOMThemes.plist */; };
 		841F41C718D21D0700D1586D /* YPOMThemesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 841F41C618D21D0700D1586D /* YPOMThemesTVC.m */; };
@@ -104,6 +107,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		840BBDCB18E33B0900DC113C /* icon-29@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon-29@2x.png"; path = "../../icon-29@2x.png"; sourceTree = "<group>"; };
+		840BBDCD18E33B7C00DC113C /* icon-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon-40@2x.png"; path = "../../icon-40@2x.png"; sourceTree = "<group>"; };
+		840BBDCE18E33B7C00DC113C /* icon-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon-60@2x.png"; path = "../../icon-60@2x.png"; sourceTree = "<group>"; };
 		8418BB4718E1920000DF490A /* YPOM 0.38.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "YPOM 0.38.xcdatamodel"; sourceTree = "<group>"; };
 		8418BB4B18E1A1C900DF490A /* YPOM 0.39.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "YPOM 0.39.xcdatamodel"; sourceTree = "<group>"; };
 		8418BB4F18E1A4EC00DF490A /* YPOM 0.3A.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "YPOM 0.3A.xcdatamodel"; sourceTree = "<group>"; };
@@ -563,6 +569,9 @@
 		84C1B37B18BE8AA100C77138 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				840BBDCB18E33B0900DC113C /* icon-29@2x.png */,
+				840BBDCD18E33B7C00DC113C /* icon-40@2x.png */,
+				840BBDCE18E33B7C00DC113C /* icon-60@2x.png */,
 				84C1B38618BE8AA100C77138 /* Main_iPhone.storyboard */,
 				84C1B37C18BE8AA100C77138 /* ypom-Info.plist */,
 				84C1B37D18BE8AA100C77138 /* InfoPlist.strings */,
@@ -703,9 +712,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				842ECF4D18CFC31C00AF6268 /* ypom.entitlements in Resources */,
+				840BBDCC18E33B0900DC113C /* icon-29@2x.png in Resources */,
 				842ECF6E18CFD60200AF6268 /* ypom-dev.p12 in Resources */,
 				841F41C118D20F5700D1586D /* YPOMThemes.plist in Resources */,
 				84C1B39318BE8AA100C77138 /* Images.xcassets in Resources */,
+				840BBDCF18E33B7C00DC113C /* icon-40@2x.png in Resources */,
+				840BBDD018E33B7C00DC113C /* icon-60@2x.png in Resources */,
 				84C1B38818BE8AA100C77138 /* Main_iPhone.storyboard in Resources */,
 				84C1B37F18BE8AA100C77138 /* InfoPlist.strings in Resources */,
 			);

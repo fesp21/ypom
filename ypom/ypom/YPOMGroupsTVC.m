@@ -43,9 +43,11 @@
     switch (delegate.state) {
         case 1:
             self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
+            self.tabBarController.tabBar.barTintColor = delegate.theme.onlineColor;
             break;
         default:
             self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
+            self.tabBarController.tabBar.barTintColor = delegate.theme.onlineColor;
             break;
     }
 }
@@ -124,7 +126,7 @@
     cell.textLabel.text = [NSString stringWithFormat:@"👥%@", [group displayName]];
     cell.textLabel.textColor = delegate.theme.textColor;
     
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)[group.hasUsers count]];
+    cell.detailTextLabel.text = [group displayMembers];
     cell.detailTextLabel.textColor = delegate.theme.textColor;
     
     if (group.belongsTo == delegate.myself.myUser) {

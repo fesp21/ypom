@@ -20,5 +20,6 @@ inManagedObjectContext:(NSManagedObjectContext *)context;
 
 - (NSString *)displayName;
 - (unsigned long)numberOfUnseenMessages;
+- (NSData *)imageData;
 
 @end

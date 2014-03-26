@@ -17,14 +17,14 @@
 				<key>alpha</key>
 				<integer>1</integer>
 			</dict>
-			<key>barColor</key>
+			<key>alertColor</key>
 			<dict>
 				<key>red</key>
 				<integer>240</integer>
 				<key>green</key>
-				<integer>240</integer>
+				<integer>0</integer>
 				<key>blue</key>
-				<integer>240</integer>
+				<integer>0</integer>
 				<key>alpha</key>
 				<integer>1</integer>
 			</dict>
@@ -112,14 +112,14 @@
 				<key>alpha</key>
 				<integer>1</integer>
 			</dict>
-			<key>barColor</key>
+			<key>alertColor</key>
 			<dict>
 				<key>red</key>
 				<integer>240</integer>
 				<key>green</key>
-				<integer>240</integer>
+				<integer>0</integer>
 				<key>blue</key>
-				<integer>240</integer>
+				<integer>0</integer>
 				<key>alpha</key>
 				<integer>1</integer>
 			</dict>
@@ -205,14 +205,14 @@
 				<key>alpha</key>
 				<integer>1</integer>
 			</dict>
-			<key>barColor</key>
+			<key>alertColor</key>
 			<dict>
 				<key>red</key>
 				<integer>250</integer>
 				<key>green</key>
-				<integer>250</integer>
+				<integer>0</integer>
 				<key>blue</key>
-				<integer>250</integer>
+				<integer>0</integer>
 				<key>alpha</key>
 				<integer>1</integer>
 			</dict>

@@ -47,7 +47,7 @@
         if (fileTheme && [fileTheme isKindOfClass:[NSDictionary class]]) {
             theme.name = name;
             theme.backgroundColor = [self colorFromDictionary:fileTheme[@"backgroundColor"]];
-            theme.barColor = [self colorFromDictionary:fileTheme[@"barColor"]];
+            theme.alertColor = [self colorFromDictionary:fileTheme[@"alertColor"]];
             theme.textColor = [self colorFromDictionary:fileTheme[@"textColor"]];
             theme.onlineColor = [self colorFromDictionary:fileTheme[@"onlineColor"]];
             theme.offlineColor = [self colorFromDictionary:fileTheme[@"offlineColor"]];

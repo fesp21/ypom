@@ -60,7 +60,7 @@
     CGContextDrawPath(cRef, kCGPathFill);
 
     CGContextBeginPath(cRef);
-    CGContextSetFillColorWithColor(cRef, theme.barColor.CGColor);
+    CGContextSetFillColorWithColor(cRef, theme.alertColor.CGColor);
     CGContextAddRect(cRef, CGRectMake(4, IMAGESIZE / 4 * 0, IMAGESIZE / 2 - 8, IMAGESIZE / 4));
     CGContextDrawPath(cRef, kCGPathFill);
     

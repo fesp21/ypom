@@ -121,4 +121,24 @@
     return u;
 }
 
+- (NSData *)imageData
+{
+    NSData *imageData = nil;
+    ABRecordID rid = self.abRecordId ? [self.abRecordId intValue] : kABRecordInvalidID;
+    if (rid && rid != kABRecordInvalidID) {
+        CFErrorRef myError = NULL;
+        ABAddressBookRef abref = ABAddressBookCreateWithOptions(NULL, &myError);
+        if (abref) {
+            ABRecordRef rref = ABAddressBookGetPersonWithRecordID(abref, rid);
+            if (ABPersonHasImageData(rref)) {
+                CFDataRef ir = ABPersonCopyImageDataWithFormat(rref, kABPersonImageFormatThumbnail);
+                imageData = CFBridgingRelease(ir);
+            }
+            CFRelease(abref);
+        }
+    }
+    return imageData;
+}
+
+
 @end

@@ -23,6 +23,7 @@
 - (BOOL)addUser:(User *)user;
 - (BOOL)removeUser:(User *)user;
 - (NSString *)displayName;
+- (NSString *)displayMembers;
 - (void)tell;
 - (void)listen:(NSDictionary *)groupDictionary;
 - (void)invite:(User *)user;

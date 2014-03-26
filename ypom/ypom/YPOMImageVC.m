@@ -8,6 +8,7 @@
 
 #import "YPOMImageVC.h"
 #import <AssetsLibrary/AssetsLibrary.h>
+#import "YPOMAppDelegate.h"
 
 @interface YPOMImageVC () <UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -16,6 +17,14 @@
 @end
 
 @implementation YPOMImageVC
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    self.view.backgroundColor = delegate.theme.backgroundColor;
+}
 
 - (void)setImageData:(NSData *)imageData
 {

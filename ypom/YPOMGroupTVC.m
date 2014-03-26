@@ -34,6 +34,8 @@
         self.inviteButton.enabled = FALSE;
         self.name.enabled = FALSE;
     }
+    
+    self.tableView.backgroundColor = delegate.theme.backgroundColor;
 }
 
 - (IBAction)nameChanged:(UITextField *)sender {

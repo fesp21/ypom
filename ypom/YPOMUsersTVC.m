@@ -21,18 +21,25 @@
 
 @implementation YPOMUsersTVC
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
+    [super viewWillAppear:animated];
     self.version.title =  [NSBundle mainBundle].infoDictionary[@"CFBundleVersion"];
-
+    
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    delegate.listener = self;
     self.view.backgroundColor = delegate.theme.backgroundColor;
     self.fetchedResultsController = nil;
     [self.tableView reloadData];
     [self lineState];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    delegate.listener = self;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -48,9 +55,11 @@
     switch (delegate.state) {
         case 1:
             self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
+            self.tabBarController.tabBar.barTintColor = delegate.theme.onlineColor;
             break;
         default:
             self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
+            self.tabBarController.tabBar.barTintColor = delegate.theme.onlineColor;
             break;
     }
 }
@@ -114,19 +123,27 @@
     if (user.isGroup) {
         cell.textLabel.text = [NSString stringWithFormat:@"👥%@", [user.isGroup displayName]];
     } else {
-        cell.textLabel.text = [NSString stringWithFormat:@"👤%@", [user displayName]];
+        cell.textLabel.text = [NSString stringWithFormat:@"%@", [user displayName]];
     }
     cell.textLabel.textColor = delegate.theme.textColor;
 
+    Message *lastMessage = [Message existsMessageWithTimestamp:user.lastMessage belongsTo:user inManagedObjectContext:user.managedObjectContext];
+        cell.detailTextLabel.text = lastMessage ? [lastMessage textOfMessage] : @"./.";
     
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu", [user numberOfUnseenMessages]];
-    cell.detailTextLabel.textColor = delegate.theme.textColor;
+    if ([user numberOfUnseenMessages]) {
+        cell.detailTextLabel.textColor = delegate.theme.alertColor;
+    } else {
+        cell.detailTextLabel.textColor = delegate.theme.textColor;
+    }
 
     if (user == delegate.myself.myUser || (user.isGroup && user.isGroup.belongsTo == delegate.myself.myUser)) {
         cell.backgroundColor = delegate.theme.myColor;
     } else {
         cell.backgroundColor = delegate.theme.yourColor;
     }
+    
+    NSData *imageData = [user imageData];
+    cell.imageView.image = imageData ? [UIImage imageWithData:imageData] : [UIImage imageNamed:@"icon-40"];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath

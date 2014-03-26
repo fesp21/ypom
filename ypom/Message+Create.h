@@ -23,6 +23,10 @@ inManagedObjectContext:(NSManagedObjectContext *)context;
                               belongsTo:(User *)user
                  inManagedObjectContext:(NSManagedObjectContext *)context;
 
++ (Message *)existsMessageWithTimestamp:(NSDate *)timestamp
+                              belongsTo:(User *)user
+                 inManagedObjectContext:(NSManagedObjectContext *)context;
+
 + (Message *)existsMessageWithMsgId:(UInt16)msgId
              inManagedObjectContext:(NSManagedObjectContext *)context;
 

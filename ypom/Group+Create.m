@@ -125,6 +125,20 @@
     return self.name ? self.name : [NSString stringWithFormat:@"#%@", self.identifier];
 }
 
+- (NSString *)displayMembers
+{
+    NSString *members = @"";
+    
+    for (UserGroup *userGroup in self.hasUsers) {
+        if (members.length) {
+            members = [members stringByAppendingFormat:@", "];
+        }
+        members = [members stringByAppendingString:[userGroup.user displayName]];
+    }
+
+    return members;
+}
+
 - (void)tell
 {
     NSError *error;
@@ -173,7 +187,7 @@
         if (!identifier) {
             [usersLeft addObject:userGroup.user];
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"YPOM Group Leave"
-                                                            message:[NSString stringWithFormat:@"👤%@ 👥%@",
+                                                            message:[NSString stringWithFormat:@"%@ 👥%@",
                                                                      [userGroup.user displayName],
                                                                      [self displayName]
                                                                      ]
@@ -194,7 +208,7 @@
             if ([self addUser:user]) {
                 user.identifier = user.identifier; // touch
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"YPOM Group Join"
-                                                                message:[NSString stringWithFormat:@"👤%@ 👥%@",
+                                                                message:[NSString stringWithFormat:@"%@ 👥%@",
                                                                          [user displayName],
                                                                          [self displayName]
                                                                          ]

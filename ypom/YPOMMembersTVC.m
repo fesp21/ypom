@@ -16,16 +16,23 @@
 
 @implementation YPOMMembersTVC
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
+    self.view.backgroundColor = delegate.theme.backgroundColor;
+    self.fetchedResultsController = nil;
+    [self.tableView reloadData];
+    [self lineState];
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.listener = self;
-    self.view.backgroundColor = delegate.theme.backgroundColor;
-    self.fetchedResultsController = nil;
-    [self.tableView reloadData];
-    [self lineState];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -41,9 +48,11 @@
     switch (delegate.state) {
         case 1:
             self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
+            self.tabBarController.tabBar.barTintColor = delegate.theme.onlineColor;
             break;
         default:
             self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
+            self.tabBarController.tabBar.barTintColor = delegate.theme.onlineColor;
             break;
     }
 }
@@ -113,7 +122,7 @@
     UserGroup *userGroup = [self.fetchedResultsController objectAtIndexPath:indexPath];
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     
-    cell.textLabel.text = [NSString stringWithFormat:@"👤%@", [userGroup.user displayName]];
+    cell.textLabel.text = [NSString stringWithFormat:@"%@", [userGroup.user displayName]];
     cell.textLabel.textColor = delegate.theme.textColor;
     
     if ([userGroup.user.identifier isEqualToString:delegate.myself.myUser.identifier]) {

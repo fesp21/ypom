@@ -21,7 +21,7 @@
 - (void)show
 {
     self.alert = [[UIAlertView alloc] initWithTitle:@"YPOM Group Invitation"
-                                            message:[NSString stringWithFormat:@"👤%@ 👥%@",
+                                            message:[NSString stringWithFormat:@"%@ 👥%@",
                                                      [self.user displayName],
                                                      self.group[@"name"] ? self.group[@"name"] : self.group[@"id"]
                                                      ]

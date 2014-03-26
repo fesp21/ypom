@@ -50,8 +50,33 @@
     Message *message = nil;
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Message"];
-    request.predicate = [NSPredicate predicateWithFormat:@"timestamp = %@ AND outgoing = %@AND belongsTo = %@",
+    request.predicate = [NSPredicate predicateWithFormat:@"timestamp = %@ AND outgoing = %@ AND belongsTo = %@",
                          timestamp, @(outgoing), user];
+    
+    NSError *error = nil;
+    
+    NSArray *matches = [context executeFetchRequest:request error:&error];
+    
+    if (!matches) {
+        // handle error
+    } else {
+        if ([matches count]) {
+            message = [matches lastObject];
+        }
+    }
+    
+    return message;
+}
+
++ (Message *)existsMessageWithTimestamp:(NSDate *)timestamp
+                              belongsTo:(User *)user
+                 inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    Message *message = nil;
+    
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Message"];
+    request.predicate = [NSPredicate predicateWithFormat:@"timestamp = %@ AND belongsTo = %@",
+                         timestamp, user];
     
     NSError *error = nil;
     

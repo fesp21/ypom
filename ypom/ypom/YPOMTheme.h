@@ -12,7 +12,7 @@
 
 @property (strong, nonatomic) NSString *name;
 @property (strong, nonatomic) UIColor *backgroundColor;
-@property (strong, nonatomic) UIColor *barColor;
+@property (strong, nonatomic) UIColor *alertColor;
 @property (strong, nonatomic) UIColor *textColor;
 @property (strong, nonatomic) UIColor *onlineColor;
 @property (strong, nonatomic) UIColor *offlineColor;

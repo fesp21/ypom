@@ -481,7 +481,7 @@
                                 UILocalNotification *notification = [[UILocalNotification alloc] init];
                                 NSString *body = @"Invitation";
                                 if (self.notificationLevel > 1) {
-                                    body = [body stringByAppendingFormat:@" from 👤%@", [sender displayName]];
+                                    body = [body stringByAppendingFormat:@" from %@", [sender displayName]];
                                 }
                                 notification.alertBody = body;
                                 notification.soundName = UILocalNotificationDefaultSoundName;
@@ -496,7 +496,7 @@
                                                      inManagedObjectContext:self.managedObjectContext];
                             if (group) {
                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"YPOM Group Join"
-                                                                                message:[NSString stringWithFormat:@"👤%@ 👥%@",
+                                                                                message:[NSString stringWithFormat:@"%@ 👥%@",
                                                                                          [sender displayName],
                                                                                          [group displayName]
                                                                                          ]
@@ -516,7 +516,7 @@
                                                      inManagedObjectContext:self.managedObjectContext];
                             if (group) {
                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"YPOM Group Leave"
-                                                                                message:[NSString stringWithFormat:@"👤%@ 👥%@",
+                                                                                message:[NSString stringWithFormat:@"%@ 👥%@",
                                                                                          [sender displayName],
                                                                                          [group displayName]
                                                                                          ]

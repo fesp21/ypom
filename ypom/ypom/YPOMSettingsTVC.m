@@ -81,7 +81,6 @@
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.listener = self;
     
-    [self lineState];
 }
 
 
@@ -112,14 +111,14 @@
 - (void)lineState
 {
     YPOMAppDelegate *delegate = (YPOMAppDelegate *)[UIApplication sharedApplication].delegate;
-    self.title = [NSString stringWithFormat:@"%@-%@", delegate.myself.myUser.identifier, delegate.broker.host];
-
     switch (delegate.state) {
         case 1:
             self.navigationController.navigationBar.barTintColor = delegate.theme.onlineColor;
+            self.tabBarController.tabBar.barTintColor = delegate.theme.onlineColor;
             break;
         default:
             self.navigationController.navigationBar.barTintColor = delegate.theme.offlineColor;
+            self.tabBarController.tabBar.barTintColor = delegate.theme.onlineColor;
             break;
     }
 }
