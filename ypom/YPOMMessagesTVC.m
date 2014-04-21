@@ -416,6 +416,7 @@
         if (self.selectedCellForImage.message.belongsTo.isGroup) {
             jsonObject[@"group"] = @{@"id": self.selectedCellForImage.message.belongsTo.isGroup.identifier};
         }
+        
         [self sendAny:jsonObject to:self.selectedCellForImage.message.belongsTo];
     }];
 }
@@ -464,12 +465,18 @@
         for (UserGroup *userGroup in to.isGroup.hasUsers) {
             if (userGroup.user != delegate.myself.myUser) {
                 msgId = [delegate safeSend:data to:userGroup.user];
+                NSLog(@"safeSend finished");
+
                 [delegate sendPush:userGroup.user];
+                NSLog(@"push finished");
             }
         }
     } else {
         msgId = [delegate safeSend:data to:to];
+        NSLog(@"safeSend finished");
+
         [delegate sendPush:to];
+        NSLog(@"push finished");
     }
     
     Message *message = [Message messageWithContent:

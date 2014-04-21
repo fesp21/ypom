@@ -699,43 +699,50 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 - (void)sendPush:(User *)user
 {
     if ([user.hasDevices count]) {
-        NSURL *url = [NSBundle.mainBundle URLForResource:@"ypom-dev.p12" withExtension:nil];
-        NSData *pkcs12 = [NSData dataWithContentsOfURL:url];
-        if (!self.pusher) {
-            self.pusher = [[NWPusher alloc] init];
-            self.pusherResult = [self.pusher connectWithPKCS12Data:pkcs12 password:@"pa$$word"];
-        }
-        if (self.pusherResult == kNWPusherResultSuccess) {
-            NSLog(@"Connected to APN");
-        } else {
-            NSLog(@"Unable to connect: %@", [NWPusher stringFromResult:self.pusherResult]);
-            self.pusher = nil;
-        }
-        
-        if (self.pusherResult == kNWPusherResultSuccess) {
-            for (Device *dev in user.hasDevices) {
-                NSString *payload = @"{\"aps\":{\"content-available\":\"1\"}}";
-                NSString *token = [NSString hexStringWithData:dev.deviceToken];
-                NWPusherResult pushed = [self.pusher pushPayload:payload token:token identifier:rand()];
-                if (pushed == kNWPusherResultSuccess) {
-                    NSLog(@"Notification sending");
-                } else {
-                    NSLog(@"Unable to sent: %@", [NWPusher stringFromResult:pushed]);
-                    [self.pusher disconnect];
-                    self.pusher = nil;
-                }
-                if (pushed) {
-                    NSUInteger identifier = 0;
-                    NWPusherResult accepted = [self.pusher fetchFailedIdentifier:&identifier];
-                    if (accepted == kNWPusherResultSuccess) {
-                        NSLog(@"Notification sent successfully");
+        dispatch_queue_t pushQ = dispatch_queue_create("pushQ", NULL);
+        dispatch_async(pushQ, ^{
+            NSURL *url = [NSBundle.mainBundle URLForResource:@"ypom-dev.p12" withExtension:nil];
+            NSData *pkcs12 = [NSData dataWithContentsOfURL:url];
+            if (!self.pusher) {
+                self.pusher = [[NWPusher alloc] init];
+                self.pusherResult = [self.pusher connectWithPKCS12Data:pkcs12 password:@"pa$$word"];
+            }
+            if (self.pusherResult == kNWPusherResultSuccess) {
+                NSLog(@"Connected to APN");
+            } else {
+                NSLog(@"Unable to connect: %@", [NWPusher stringFromResult:self.pusherResult]);
+                self.pusher = nil;
+            }
+            
+            if (self.pusherResult == kNWPusherResultSuccess) {
+                for (Device *dev in user.hasDevices) {
+                    NSString *payload = @"{\"aps\":{\"content-available\":\"1\"}}";
+                    NSString *token = [NSString hexStringWithData:dev.deviceToken];
+                    NWPusherResult pushed = [self.pusher pushPayload:payload token:token identifier:rand()];
+                    if (pushed == kNWPusherResultSuccess) {
+                        NSLog(@"Notification sending");
                     } else {
-                        NSLog(@"Notification with identifier %i rejected: %@", (int)identifier,
-                              [NWPusher stringFromResult:accepted]);
+                        NSLog(@"Unable to sent: %@", [NWPusher stringFromResult:pushed]);
+                        [self.pusher disconnect];
+                        self.pusher = nil;
+                    }
+                    if (pushed) {
+                        NSUInteger identifier = 0;
+                        NWPusherResult accepted = [self.pusher fetchFailedIdentifier:&identifier];
+                        if (accepted == kNWPusherResultSuccess) {
+                            NSLog(@"Notification sent successfully");
+                        } else {
+                            NSLog(@"Notification with identifier %i rejected: %@", (int)identifier,
+                                  [NWPusher stringFromResult:accepted]);
+                        }
                     }
                 }
             }
-        }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // nothing to do in main queue, e.g. interface update
+            });
+        });
     }
 }
 
