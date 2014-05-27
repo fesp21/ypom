@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8402BCD5193525D70021CFC5 /* NWHub.m in Sources */ = {isa = PBXBuildFile; fileRef = 8402BCC8193525D70021CFC5 /* NWHub.m */; };
+		8402BCD6193525D70021CFC5 /* NWNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 8402BCCA193525D70021CFC5 /* NWNotification.m */; };
+		8402BCD7193525D70021CFC5 /* NWPusher.m in Sources */ = {isa = PBXBuildFile; fileRef = 8402BCCC193525D70021CFC5 /* NWPusher.m */; };
+		8402BCD8193525D70021CFC5 /* NWPushFeedback.m in Sources */ = {isa = PBXBuildFile; fileRef = 8402BCCE193525D70021CFC5 /* NWPushFeedback.m */; };
+		8402BCD9193525D70021CFC5 /* NWSecTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 8402BCD0193525D70021CFC5 /* NWSecTools.m */; };
+		8402BCDA193525D70021CFC5 /* NWSSLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 8402BCD2193525D70021CFC5 /* NWSSLConnection.m */; };
+		8402BCDB193525D70021CFC5 /* NWType.m in Sources */ = {isa = PBXBuildFile; fileRef = 8402BCD4193525D70021CFC5 /* NWType.m */; };
 		840BBDCC18E33B0900DC113C /* icon-29@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 840BBDCB18E33B0900DC113C /* icon-29@2x.png */; };
 		840BBDCF18E33B7C00DC113C /* icon-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 840BBDCD18E33B7C00DC113C /* icon-40@2x.png */; };
 		840BBDD018E33B7C00DC113C /* icon-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 840BBDCE18E33B7C00DC113C /* icon-60@2x.png */; };
@@ -23,13 +30,6 @@
 		842CB27C18BFEAB100804D8D /* YPOMUsersTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB27A18BFEAB100804D8D /* YPOMUsersTVC.m */; };
 		842CB28518BFFD7500804D8D /* YPOMMessagesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 842CB28418BFFD7500804D8D /* YPOMMessagesTVC.m */; };
 		842ECF4D18CFC31C00AF6268 /* ypom.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 842ECF4C18CFC31C00AF6268 /* ypom.entitlements */; };
-		842ECF5F18CFD40D00AF6268 /* ioSock.c in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5118CFD40D00AF6268 /* ioSock.c */; };
-		842ECF6018CFD40D00AF6268 /* NWHub.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5418CFD40D00AF6268 /* NWHub.m */; };
-		842ECF6118CFD40D00AF6268 /* NWNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5618CFD40D00AF6268 /* NWNotification.m */; };
-		842ECF6218CFD40D00AF6268 /* NWPusher.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5818CFD40D00AF6268 /* NWPusher.m */; };
-		842ECF6318CFD40D00AF6268 /* NWPushFeedback.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5A18CFD40D00AF6268 /* NWPushFeedback.m */; };
-		842ECF6418CFD40D00AF6268 /* NWSecTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5C18CFD40D00AF6268 /* NWSecTools.m */; };
-		842ECF6518CFD40D00AF6268 /* NWSSLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 842ECF5E18CFD40D00AF6268 /* NWSSLConnection.m */; };
 		842ECF6818CFD42F00AF6268 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 842ECF6718CFD42F00AF6268 /* CFNetwork.framework */; };
 		842ECF6A18CFD43B00AF6268 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 842ECF6918CFD43B00AF6268 /* Security.framework */; };
 		842ECF6E18CFD60200AF6268 /* ypom-dev.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 842ECF6D18CFD60200AF6268 /* ypom-dev.p12 */; };
@@ -107,6 +107,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8402BCC7193525D70021CFC5 /* NWHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWHub.h; sourceTree = "<group>"; };
+		8402BCC8193525D70021CFC5 /* NWHub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWHub.m; sourceTree = "<group>"; };
+		8402BCC9193525D70021CFC5 /* NWNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWNotification.h; sourceTree = "<group>"; };
+		8402BCCA193525D70021CFC5 /* NWNotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWNotification.m; sourceTree = "<group>"; };
+		8402BCCB193525D70021CFC5 /* NWPusher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWPusher.h; sourceTree = "<group>"; };
+		8402BCCC193525D70021CFC5 /* NWPusher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWPusher.m; sourceTree = "<group>"; };
+		8402BCCD193525D70021CFC5 /* NWPushFeedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWPushFeedback.h; sourceTree = "<group>"; };
+		8402BCCE193525D70021CFC5 /* NWPushFeedback.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWPushFeedback.m; sourceTree = "<group>"; };
+		8402BCCF193525D70021CFC5 /* NWSecTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWSecTools.h; sourceTree = "<group>"; };
+		8402BCD0193525D70021CFC5 /* NWSecTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWSecTools.m; sourceTree = "<group>"; };
+		8402BCD1193525D70021CFC5 /* NWSSLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWSSLConnection.h; sourceTree = "<group>"; };
+		8402BCD2193525D70021CFC5 /* NWSSLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWSSLConnection.m; sourceTree = "<group>"; };
+		8402BCD3193525D70021CFC5 /* NWType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWType.h; sourceTree = "<group>"; };
+		8402BCD4193525D70021CFC5 /* NWType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWType.m; sourceTree = "<group>"; };
 		840BBDCB18E33B0900DC113C /* icon-29@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon-29@2x.png"; path = "../../icon-29@2x.png"; sourceTree = "<group>"; };
 		840BBDCD18E33B7C00DC113C /* icon-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon-40@2x.png"; path = "../../icon-40@2x.png"; sourceTree = "<group>"; };
 		840BBDCE18E33B7C00DC113C /* icon-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon-60@2x.png"; path = "../../icon-60@2x.png"; sourceTree = "<group>"; };
@@ -137,20 +151,6 @@
 		842CB28318BFFD7500804D8D /* YPOMMessagesTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YPOMMessagesTVC.h; path = ../YPOMMessagesTVC.h; sourceTree = "<group>"; };
 		842CB28418BFFD7500804D8D /* YPOMMessagesTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YPOMMessagesTVC.m; path = ../YPOMMessagesTVC.m; sourceTree = "<group>"; };
 		842ECF4C18CFC31C00AF6268 /* ypom.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ypom.entitlements; sourceTree = "<group>"; };
-		842ECF5118CFD40D00AF6268 /* ioSock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioSock.c; sourceTree = "<group>"; };
-		842ECF5218CFD40D00AF6268 /* ioSock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioSock.h; sourceTree = "<group>"; };
-		842ECF5318CFD40D00AF6268 /* NWHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWHub.h; sourceTree = "<group>"; };
-		842ECF5418CFD40D00AF6268 /* NWHub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWHub.m; sourceTree = "<group>"; };
-		842ECF5518CFD40D00AF6268 /* NWNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWNotification.h; sourceTree = "<group>"; };
-		842ECF5618CFD40D00AF6268 /* NWNotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWNotification.m; sourceTree = "<group>"; };
-		842ECF5718CFD40D00AF6268 /* NWPusher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWPusher.h; sourceTree = "<group>"; };
-		842ECF5818CFD40D00AF6268 /* NWPusher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWPusher.m; sourceTree = "<group>"; };
-		842ECF5918CFD40D00AF6268 /* NWPushFeedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWPushFeedback.h; sourceTree = "<group>"; };
-		842ECF5A18CFD40D00AF6268 /* NWPushFeedback.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWPushFeedback.m; sourceTree = "<group>"; };
-		842ECF5B18CFD40D00AF6268 /* NWSecTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWSecTools.h; sourceTree = "<group>"; };
-		842ECF5C18CFD40D00AF6268 /* NWSecTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWSecTools.m; sourceTree = "<group>"; };
-		842ECF5D18CFD40D00AF6268 /* NWSSLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWSSLConnection.h; sourceTree = "<group>"; };
-		842ECF5E18CFD40D00AF6268 /* NWSSLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWSSLConnection.m; sourceTree = "<group>"; };
 		842ECF6718CFD42F00AF6268 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		842ECF6918CFD43B00AF6268 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		842ECF6D18CFD60200AF6268 /* ypom-dev.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ypom-dev.p12"; sourceTree = "<group>"; };
@@ -375,20 +375,20 @@
 		842ECF6618CFD41600AF6268 /* NWPusher */ = {
 			isa = PBXGroup;
 			children = (
-				842ECF5118CFD40D00AF6268 /* ioSock.c */,
-				842ECF5218CFD40D00AF6268 /* ioSock.h */,
-				842ECF5318CFD40D00AF6268 /* NWHub.h */,
-				842ECF5418CFD40D00AF6268 /* NWHub.m */,
-				842ECF5518CFD40D00AF6268 /* NWNotification.h */,
-				842ECF5618CFD40D00AF6268 /* NWNotification.m */,
-				842ECF5718CFD40D00AF6268 /* NWPusher.h */,
-				842ECF5818CFD40D00AF6268 /* NWPusher.m */,
-				842ECF5918CFD40D00AF6268 /* NWPushFeedback.h */,
-				842ECF5A18CFD40D00AF6268 /* NWPushFeedback.m */,
-				842ECF5B18CFD40D00AF6268 /* NWSecTools.h */,
-				842ECF5C18CFD40D00AF6268 /* NWSecTools.m */,
-				842ECF5D18CFD40D00AF6268 /* NWSSLConnection.h */,
-				842ECF5E18CFD40D00AF6268 /* NWSSLConnection.m */,
+				8402BCC7193525D70021CFC5 /* NWHub.h */,
+				8402BCC8193525D70021CFC5 /* NWHub.m */,
+				8402BCC9193525D70021CFC5 /* NWNotification.h */,
+				8402BCCA193525D70021CFC5 /* NWNotification.m */,
+				8402BCCB193525D70021CFC5 /* NWPusher.h */,
+				8402BCCC193525D70021CFC5 /* NWPusher.m */,
+				8402BCCD193525D70021CFC5 /* NWPushFeedback.h */,
+				8402BCCE193525D70021CFC5 /* NWPushFeedback.m */,
+				8402BCCF193525D70021CFC5 /* NWSecTools.h */,
+				8402BCD0193525D70021CFC5 /* NWSecTools.m */,
+				8402BCD1193525D70021CFC5 /* NWSSLConnection.h */,
+				8402BCD2193525D70021CFC5 /* NWSSLConnection.m */,
+				8402BCD3193525D70021CFC5 /* NWType.h */,
+				8402BCD4193525D70021CFC5 /* NWType.m */,
 			);
 			name = NWPusher;
 			sourceTree = "<group>";
@@ -736,12 +736,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				842ECF6418CFD40D00AF6268 /* NWSecTools.m in Sources */,
+				8402BCD5193525D70021CFC5 /* NWHub.m in Sources */,
 				84D27DDF18D4B29900D888E0 /* OSodiumSign.m in Sources */,
-				842ECF5F18CFD40D00AF6268 /* ioSock.c in Sources */,
 				842CB27C18BFEAB100804D8D /* YPOMUsersTVC.m in Sources */,
 				847A52DB18C3DE45004EF999 /* isutf8.c in Sources */,
-				842ECF6318CFD40D00AF6268 /* NWPushFeedback.m in Sources */,
 				84C1B3B118BE8B1300C77138 /* YPOM.m in Sources */,
 				848DE88B18E18C2B00D83584 /* Device.m in Sources */,
 				8470C4C418C2B9DE00133A87 /* YPOMNewTVCell.m in Sources */,
@@ -753,30 +751,32 @@
 				8459A4FA18DCAFEA007098EB /* YPOMInvitation.m in Sources */,
 				848DE89718E18C2C00D83584 /* Group.m in Sources */,
 				842CB26718BFCEC900804D8D /* User+Create.m in Sources */,
-				842ECF6018CFD40D00AF6268 /* NWHub.m in Sources */,
 				84C1B38518BE8AA100C77138 /* YPOMAppDelegate.m in Sources */,
-				842ECF6518CFD40D00AF6268 /* NWSSLConnection.m in Sources */,
+				8402BCD9193525D70021CFC5 /* NWSecTools.m in Sources */,
 				8459A4CC18DC977B007098EB /* YPOMInviteMembersTVC.m in Sources */,
 				841F41C718D21D0700D1586D /* YPOMThemesTVC.m in Sources */,
+				8402BCDA193525D70021CFC5 /* NWSSLConnection.m in Sources */,
 				84A3623718DC4001009EE9C7 /* YPOMGroupsTVC.m in Sources */,
 				849D457018CCDA2600201BF3 /* NSString+hexStringWithData.m in Sources */,
+				8402BCD7193525D70021CFC5 /* NWPusher.m in Sources */,
 				84CC0E8E18C7544D00D5985E /* NSString+HexToData.m in Sources */,
 				84CC0E9718C7584F00D5985E /* YPOM+Wire.m in Sources */,
 				84D27DE218D4C33200D888E0 /* Device+Create.m in Sources */,
+				8402BCDB193525D70021CFC5 /* NWType.m in Sources */,
 				847A5A4118C4B24F004EF999 /* base32.c in Sources */,
 				842CB24918BFCCC800804D8D /* YPOM.xcdatamodeld in Sources */,
 				848DE89418E18C2C00D83584 /* Message.m in Sources */,
 				84D27DDC18D4B27200D888E0 /* OSodiumBox.m in Sources */,
-				842ECF6118CFD40D00AF6268 /* NWNotification.m in Sources */,
 				848DE88E18E18C2B00D83584 /* UserGroup.m in Sources */,
 				842CB26418BFCEAE00804D8D /* Myself+Create.m in Sources */,
 				841F41CA18D2213900D1586D /* YPOMUserExperienceTVC.m in Sources */,
-				842ECF6218CFD40D00AF6268 /* NWPusher.m in Sources */,
 				8418BB5218E1A50A00DF490A /* User.m in Sources */,
 				84D27DB118D48FC400D888E0 /* OSodiumSecretBox.m in Sources */,
 				849D457718CCE6EA00201BF3 /* YPOMImageVC.m in Sources */,
 				848DE88818E18C2B00D83584 /* Broker.m in Sources */,
+				8402BCD8193525D70021CFC5 /* NWPushFeedback.m in Sources */,
 				842CB26A18BFCEDC00804D8D /* Broker+Create.m in Sources */,
+				8402BCD6193525D70021CFC5 /* NWNotification.m in Sources */,
 				8454B7BD18D8EE090046624C /* YPOMThemes.m in Sources */,
 				84CC0E9418C7554D00D5985E /* NSString+stringWithData.m in Sources */,
 				8459A4C918DC975B007098EB /* YPOMGroupTVC.m in Sources */,

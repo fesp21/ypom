@@ -100,7 +100,7 @@
     
     UITabBarController *tbc = (UITabBarController *)self.window.rootViewController;
     UITabBarItem *tbi = tbc.tabBar.items[0];
-    [tbi setBadgeValue:[NSString stringWithFormat:@"%d", [UIApplication sharedApplication].applicationIconBadgeNumber]];
+    [tbi setBadgeValue:[NSString stringWithFormat:@"%ld", (long)[UIApplication sharedApplication].applicationIconBadgeNumber]];
     
     [self saveContext];
     [self disconnect:nil];
@@ -296,7 +296,7 @@
                         @"MQTTSessionEventProtocolError"
                         ];
     
-    NSLog(@"handleEvent: %@ (%d) %@", events[eventCode % [events count]], eventCode, [error description]);
+    NSLog(@"handleEvent: %@ (%ld) %@", events[eventCode % [events count]], eventCode, [error description]);
 #endif
     
     if (session != self.session) {
@@ -414,7 +414,7 @@
                                     
                                     UITabBarController *tbc = (UITabBarController *)self.window.rootViewController;
                                     UITabBarItem *tbi = tbc.tabBar.items[0];
-                                    [tbi setBadgeValue:[NSString stringWithFormat:@"%d", [UIApplication sharedApplication].applicationIconBadgeNumber]];
+                                    [tbi setBadgeValue:[NSString stringWithFormat:@"%ld", (long)[UIApplication sharedApplication].applicationIconBadgeNumber]];
                                     
                                     UILocalNotification *notification = [[UILocalNotification alloc] init];
                                     NSString *body = @"Message";
@@ -710,7 +710,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
             if (self.pusherResult == kNWPusherResultSuccess) {
                 NSLog(@"Connected to APN");
             } else {
-                NSLog(@"Unable to connect: %@", [NWPusher stringFromResult:self.pusherResult]);
+                NSLog(@"Unable to connect: %@", [NWErrorUtil stringWithError:self.pusherResult]);
                 self.pusher = nil;
             }
             
@@ -722,18 +722,19 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
                     if (pushed == kNWPusherResultSuccess) {
                         NSLog(@"Notification sending");
                     } else {
-                        NSLog(@"Unable to sent: %@", [NWPusher stringFromResult:pushed]);
+                        NSLog(@"Unable to sent: %@", [NWErrorUtil stringWithError:pushed]);
                         [self.pusher disconnect];
                         self.pusher = nil;
                     }
                     if (pushed) {
                         NSUInteger identifier = 0;
-                        NWPusherResult accepted = [self.pusher fetchFailedIdentifier:&identifier];
+                        NWError error;
+                        NWPusherResult accepted = [self.pusher fetchFailedIdentifier:&identifier apnError:&error];
                         if (accepted == kNWPusherResultSuccess) {
                             NSLog(@"Notification sent successfully");
                         } else {
                             NSLog(@"Notification with identifier %i rejected: %@", (int)identifier,
-                                  [NWPusher stringFromResult:accepted]);
+                                  [NWErrorUtil stringWithError:error]);
                         }
                     }
                 }
